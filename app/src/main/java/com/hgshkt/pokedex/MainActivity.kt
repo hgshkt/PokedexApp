@@ -16,6 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -33,8 +34,6 @@ import java.util.Locale
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    val viewModel: ListViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -44,20 +43,27 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val pokemons: LazyPagingItems<Pokemon> =
-                        viewModel.pokemons.collectAsLazyPagingItems()
-
-                    LazyColumn {
-                        items(
-                            count = pokemons.itemCount,
-                            key = pokemons.itemKey { it.id },
-                            contentType = pokemons.itemContentType { "pokemons" }
-                        ) { index ->
-                            val pokemon = pokemons[index]
-                            PokemonCard(pokemon)
-                        }
-                    }
+                    ListScreen()
                 }
+            }
+        }
+    }
+
+    @Composable
+    fun ListScreen(
+        viewModel: ListViewModel = hiltViewModel()
+    ) {
+        val pokemons: LazyPagingItems<Pokemon> =
+            viewModel.pokemons.collectAsLazyPagingItems()
+
+        LazyColumn {
+            items(
+                count = pokemons.itemCount,
+                key = pokemons.itemKey { it.id },
+                contentType = pokemons.itemContentType { "pokemons" }
+            ) { index ->
+                val pokemon = pokemons[index]
+                PokemonCard(pokemon)
             }
         }
     }
