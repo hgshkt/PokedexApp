@@ -1,8 +1,8 @@
 package com.hgshkt.domain.data
 
-import androidx.paging.Pager
+import androidx.paging.PagingSource
 import com.hgshkt.domain.model.Pokemon
 
 interface PokemonRemoteRepository {
-    fun loadPokemons(): Pager<Int, Pokemon>
+    fun loadPokemons(): PagingSource<Int, Pokemon>
 }
