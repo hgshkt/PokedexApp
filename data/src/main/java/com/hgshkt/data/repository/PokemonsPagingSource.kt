@@ -3,12 +3,13 @@ package com.hgshkt.data.repository
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.hgshkt.data.repository.network.PokemonApiService
+import com.hgshkt.data.repository.network.model.PokemonFromResponseDTO
 import com.hgshkt.domain.model.Pokemon
 import retrofit2.HttpException
 
 class PokemonsPagingSource(
     private val pokemonService: PokemonApiService
-): PagingSource<Int, Pokemon>() {
+) : PagingSource<Int, Pokemon>() {
 
     private val pageSize = 20
     private val limit = 20
@@ -26,7 +27,8 @@ class PokemonsPagingSource(
             val response = pokemonService.pokemons(offset, limit)
 
             if (response.isSuccessful) {
-                val pokemons: List<Pokemon> = response.body()!!.results.map { it.toPokemon() }
+                val pokemons: List<Pokemon> = response.body()!!.results
+                        .mapNotNull { loadFinalPokemon(it) }
 
                 val prevOffset = if (pokemons.isEmpty()) null else offset + pageSize
                 val nextOffset = if (offset == defaultOffset) defaultOffset else offset - pageSize
@@ -40,5 +42,15 @@ class PokemonsPagingSource(
         } catch (e: Exception) {
             return LoadResult.Error(e)
         }
+    }
+
+    private suspend fun loadFinalPokemon(pokemonFromResponseDTO: PokemonFromResponseDTO): Pokemon? {
+        val id = pokemonFromResponseDTO.url?.split('/')?.last()!!
+        val response = pokemonService.pokemon(id)
+
+        if (response.isSuccessful) {
+            return response.body()?.toPokemon()
+        }
+        return null
     }
 }
