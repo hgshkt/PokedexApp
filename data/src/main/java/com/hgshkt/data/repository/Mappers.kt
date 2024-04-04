@@ -1,6 +1,5 @@
 package com.hgshkt.data.repository
 
-import com.hgshkt.data.repository.network.model.PokemonFromResponseDTO
 import com.hgshkt.data.repository.network.model.finalPokemon.FinalPokemonDTO
 import com.hgshkt.domain.model.Pokemon
 

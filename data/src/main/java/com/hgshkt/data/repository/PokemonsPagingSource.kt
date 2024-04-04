@@ -45,7 +45,7 @@ class PokemonsPagingSource(
     }
 
     private suspend fun loadFinalPokemon(pokemonFromResponseDTO: PokemonFromResponseDTO): Pokemon? {
-        val id = pokemonFromResponseDTO.url?.split('/')?.last()!!
+        val id = pokemonFromResponseDTO.url?.split('/')?.last { it.isNotEmpty() }!!
         val response = pokemonService.pokemon(id)
 
         if (response.isSuccessful) {

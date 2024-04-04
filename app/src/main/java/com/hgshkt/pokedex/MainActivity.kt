@@ -17,6 +17,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
+import coil.compose.AsyncImage
 import com.hgshkt.domain.model.Pokemon
 import com.hgshkt.pokedex.ui.list.ListViewModel
 import com.hgshkt.pokedex.ui.theme.PokedexTheme
@@ -64,6 +65,7 @@ class MainActivity : ComponentActivity() {
         pokemon?.let {
             Card {
                 Column {
+                    AsyncImage(model = pokemon.imageUrl, contentDescription = "Pokemon image")
                     Text("№${pokemon.id}")
                     Text(pokemon.name.uppercase(Locale.ROOT))
                 }
