@@ -18,7 +18,7 @@ class PokemonsPagingSource(
     override fun getRefreshKey(state: PagingState<Int, Pokemon>): Int? {
         val anchorPosition = state.anchorPosition ?: return null
         val anchorPage = state.closestPageToPosition(anchorPosition) ?: return null
-        return anchorPage.prevKey?.plus(pageSize) ?: anchorPage.nextKey?.minus(pageSize)
+        return anchorPage.prevKey?.plus(1) ?: anchorPage.nextKey?.minus(1)
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Pokemon> {
@@ -30,10 +30,10 @@ class PokemonsPagingSource(
                 val pokemons: List<Pokemon> = response.body()!!.results
                         .mapNotNull { loadFinalPokemon(it) }
 
-                val prevOffset = if (pokemons.isEmpty()) null else offset + pageSize
-                val nextOffset = if (offset == defaultOffset) defaultOffset else offset - pageSize
+                val nextOffset = if (pokemons.isEmpty()) null else offset + pageSize
+                val prevOffset = if (offset == defaultOffset) null else offset - pageSize
 
-                return LoadResult.Page(pokemons, prevOffset, nextOffset)
+                return LoadResult.Page(pokemons, prevKey = prevOffset, nextKey = nextOffset)
             } else {
                 return LoadResult.Error(HttpException(response))
             }
