@@ -67,6 +67,10 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("androidx.compose.material3:material3-window-size-class-android:1.2.1")
+    implementation("androidx.compose.material3.adaptive:adaptive:1.0.0-alpha07")
+    implementation("androidx.compose.material3.adaptive:adaptive-layout:1.0.0-alpha07")
+    implementation("androidx.compose.material3.adaptive:adaptive-navigation:1.0.0-alpha07")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
