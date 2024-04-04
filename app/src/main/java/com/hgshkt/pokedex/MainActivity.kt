@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,6 +37,8 @@ import coil.compose.AsyncImage
 import com.hgshkt.domain.model.Pokemon
 import com.hgshkt.pokedex.ui.custom.text.AutoResizedText
 import com.hgshkt.pokedex.ui.list.ListViewModel
+import com.hgshkt.pokedex.ui.listDetail.MainScreen
+import com.hgshkt.pokedex.ui.listDetail.PokemonSaver
 import com.hgshkt.pokedex.ui.theme.PokedexTheme
 import com.hgshkt.pokedex.ui.theme.pokemonCardBackgroundColor
 import com.hgshkt.pokedex.ui.theme.pokemonNameStyle
@@ -54,56 +57,59 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ListScreen()
+                    MainScreen()
                 }
             }
         }
     }
+}
 
-    @Composable
-    fun ListScreen(
-        viewModel: ListViewModel = hiltViewModel()
+@Composable
+fun ListScreen(
+    viewModel: ListViewModel = hiltViewModel(),
+    onItemClick: (PokemonSaver) -> Unit
+) {
+    val pokemons: LazyPagingItems<Pokemon> =
+        viewModel.pokemons.collectAsLazyPagingItems()
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+        horizontalArrangement = Arrangement.SpaceAround
     ) {
-        val pokemons: LazyPagingItems<Pokemon> =
-            viewModel.pokemons.collectAsLazyPagingItems()
+        items(
+            count = pokemons.itemCount,
+            key = pokemons.itemKey { it.id },
+            contentType = pokemons.itemContentType { "pokemons" }
+        ) { index ->
+            val pokemon = pokemons[index]
+            PokemonCard(
+                pokemon = pokemon,
+                modifier = Modifier.width(100.dp).clickable {
+                    onItemClick(PokemonSaver(pokemon!!))
+                }
+            )
+        }
+    }
+}
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            horizontalArrangement = Arrangement.SpaceAround
+@Composable
+fun PokemonCard(
+    pokemon: Pokemon?,
+    modifier: Modifier = Modifier
+) {
+    pokemon?.let {
+        Card(
+            modifier = modifier.padding(4.dp),
+            shape = RoundedCornerShape(8.dp),
         ) {
-            items(
-                count = pokemons.itemCount,
-                key = pokemons.itemKey { it.id },
-                contentType = pokemons.itemContentType { "pokemons" }
-            ) { index ->
-                val pokemon = pokemons[index]
-                PokemonCard(
-                    pokemon = pokemon,
-                    modifier = Modifier.width(100.dp)
-                )
-            }
-        }
-    }
-
-    @Composable
-    fun PokemonCard(
-        pokemon: Pokemon?,
-        modifier: Modifier = Modifier
-    ) {
-        pokemon?.let {
-            Card(
-                modifier = modifier.padding(4.dp),
-                shape = RoundedCornerShape(8.dp),
+            Column(
+                modifier = Modifier.background(pokemonCardBackgroundColor).padding(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceEvenly
             ) {
-                Column(
-                    modifier = Modifier.background(pokemonCardBackgroundColor).padding(4.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    AsyncImage(model = pokemon.imageUrl, contentDescription = "Pokemon image")
-                    Text("№${pokemon.id}")
-                    AutoResizedText(pokemon.name.uppercase(), style = pokemonNameStyle)
-                }
+                AsyncImage(model = pokemon.imageUrl, contentDescription = "Pokemon image")
+                Text("№${pokemon.id}")
+                AutoResizedText(pokemon.name.uppercase(), style = pokemonNameStyle)
             }
         }
     }
