@@ -1,6 +1,5 @@
 package com.hgshkt.pokedex.ui.listDetail
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
@@ -40,8 +39,6 @@ fun MainScreen() {
                 onItemClick = { pokemon ->
                     selectedItem = pokemon
                     navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
-                    Log.i("asdf", selectedItem?.pokemon?.name ?: "ppp")
-                    Log.i("asdf", pokemon.pokemon.name ?: "ppp")
                 },
             )
         },

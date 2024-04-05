@@ -5,5 +5,5 @@ import androidx.compose.ui.unit.sp
 
 
 val pokemonNameStyle = TextStyle(
-    fontSize = 18.sp
+    fontSize = 24.sp
 )
