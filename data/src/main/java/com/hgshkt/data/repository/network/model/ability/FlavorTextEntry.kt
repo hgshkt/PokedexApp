@@ -2,8 +2,8 @@ package com.hgshkt.data.repository.network.model.ability
 
 import com.google.gson.annotations.SerializedName
 
-
-data class Names (
+data class FlavorTextEntry (
+	@SerializedName("flavor_text") val flavorText : String,
 	@SerializedName("language") val language : Language,
-	@SerializedName("name") val name : String
+	@SerializedName("version_group") val versionGroup : VersionGroup
 )

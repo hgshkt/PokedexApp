@@ -12,8 +12,8 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.hgshkt.domain.model.Pokemon
-import com.hgshkt.pokedex.ListScreen
 import com.hgshkt.pokedex.ui.detail.DetailScreen
+import com.hgshkt.pokedex.ui.list.ListScreen
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable

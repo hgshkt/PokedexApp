@@ -1,9 +1,12 @@
 package com.hgshkt.pokedex.di
 
+import com.hgshkt.data.repository.AbilityRemoteRepositoryImpl
 import com.hgshkt.data.repository.PokemonRemoteRepositoryImpl
 import com.hgshkt.data.repository.PokemonsPagingSource
+import com.hgshkt.data.repository.network.AbilityApiService
 import com.hgshkt.data.repository.network.PokemonApiService
 import com.hgshkt.data.repository.network.RetrofitClient.pokemonClient
+import com.hgshkt.domain.data.AbilityRemoteRepository
 import com.hgshkt.domain.data.PokemonRemoteRepository
 import com.hgshkt.domain.useCases.LoadPokemonsUseCase
 import com.hgshkt.pokedex.ui.list.ListUseCases
@@ -29,9 +32,10 @@ class AppModule {
     @Provides
     @Singleton
     fun provideLoadPokemonsUseCase(
-        pokemonRemoteRepository: PokemonRemoteRepository
+        pokemonRemoteRepository: PokemonRemoteRepository,
+        abilityRemoteRepository: AbilityRemoteRepository
     ): LoadPokemonsUseCase {
-        return LoadPokemonsUseCase(pokemonRemoteRepository)
+        return LoadPokemonsUseCase(pokemonRemoteRepository, abilityRemoteRepository)
     }
 
     @Provides
@@ -40,6 +44,15 @@ class AppModule {
         pokemonsPagingSource: PokemonsPagingSource
     ): PokemonRemoteRepositoryImpl {
         return PokemonRemoteRepositoryImpl(pokemonsPagingSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAbilityRemoteRepositoryImpl(
+        pokemonsPagingSource: PokemonsPagingSource
+    ): AbilityRemoteRepositoryImpl {
+        val pokemonApiService = pokemonClient.create(AbilityApiService::class.java)
+        return AbilityRemoteRepositoryImpl(pokemonApiService)
     }
 
     @Provides
@@ -57,4 +70,9 @@ abstract class Binder {
     abstract fun bindPokemonRemoteRepository(
         pokemonRemoteRepositoryImpl: PokemonRemoteRepositoryImpl
     ): PokemonRemoteRepository
+
+    @Binds
+    abstract fun bindAbilityRemoteRepository(
+        abilityRemoteRepositoryImpl: AbilityRemoteRepositoryImpl
+    ): AbilityRemoteRepository
 }
