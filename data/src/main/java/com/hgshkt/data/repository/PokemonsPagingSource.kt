@@ -4,30 +4,31 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.hgshkt.data.repository.network.PokemonApiService
 import com.hgshkt.data.repository.network.model.PokemonFromResponseDTO
+import com.hgshkt.domain.data.model.DPokemon
 import com.hgshkt.domain.model.Pokemon
 import retrofit2.HttpException
 
 class PokemonsPagingSource(
     private val pokemonService: PokemonApiService
-) : PagingSource<Int, Pokemon>() {
+) : PagingSource<Int, DPokemon>() {
 
     private val pageSize = 20
     private val limit = 20
     private val defaultOffset = 0
 
-    override fun getRefreshKey(state: PagingState<Int, Pokemon>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, DPokemon>): Int? {
         val anchorPosition = state.anchorPosition ?: return null
         val anchorPage = state.closestPageToPosition(anchorPosition) ?: return null
         return anchorPage.prevKey?.plus(1) ?: anchorPage.nextKey?.minus(1)
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Pokemon> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, DPokemon> {
         try {
             val offset = params.key ?: defaultOffset
             val response = pokemonService.pokemons(offset, limit)
 
             if (response.isSuccessful) {
-                val pokemons: List<Pokemon> = response.body()!!.results
+                val pokemons: List<DPokemon> = response.body()!!.results
                         .mapNotNull { loadFinalPokemon(it) }
 
                 val nextOffset = if (pokemons.isEmpty()) null else offset + pageSize
@@ -44,12 +45,12 @@ class PokemonsPagingSource(
         }
     }
 
-    private suspend fun loadFinalPokemon(pokemonFromResponseDTO: PokemonFromResponseDTO): Pokemon? {
+    private suspend fun loadFinalPokemon(pokemonFromResponseDTO: PokemonFromResponseDTO): DPokemon? {
         val id = pokemonFromResponseDTO.url?.split('/')?.last { it.isNotEmpty() }!!
         val response = pokemonService.pokemon(id)
 
         if (response.isSuccessful) {
-            return response.body()?.toPokemon()
+            return response.body()?.toDPokemon()
         }
         return null
     }
