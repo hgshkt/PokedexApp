@@ -2,6 +2,7 @@ package com.hgshkt.pokedex.ui.listDetail
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
@@ -11,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import com.hgshkt.domain.model.Pokemon
 import com.hgshkt.pokedex.ui.list.ListScreen
 import com.hgshkt.pokedex.ui.detail.DetailScreen
@@ -30,17 +32,21 @@ fun MainScreen() {
         directive = navigator.scaffoldDirective,
         value = navigator.scaffoldValue,
         detailPane = {
-            selectedItem?.let { item ->
-                DetailScreen(item.pokemon)
+            AnimatedPane(Modifier) {
+                selectedItem?.let { item ->
+                    DetailScreen(item.pokemon)
+                }
             }
         },
         listPane = {
-            ListScreen(
-                onItemClick = { pokemon ->
-                    selectedItem = pokemon
-                    navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
-                },
-            )
+            AnimatedPane(Modifier) {
+                ListScreen(
+                    onItemClick = { pokemon ->
+                        selectedItem = pokemon
+                        navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
+                    },
+                )
+            }
         },
     )
 }
