@@ -17,7 +17,9 @@ fun FinalPokemonDTO.toDPokemon(): DPokemon {
             it.ability?.url ?: "null ability"
         },
         types = types.toList().map { it.toDType() },
-        stats = stats.toDStats()
+        stats = stats.toDStats(),
+        weight = weight ?: -1,
+        height = height ?: -1
     )
 }
 

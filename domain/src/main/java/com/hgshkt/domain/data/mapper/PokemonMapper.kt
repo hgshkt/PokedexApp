@@ -15,7 +15,9 @@ fun DPokemon.toPokemon(abilities: List<Ability>): Pokemon {
         imageUrl = imageUrl,
         abilities = abilities,
         types = types.map { it.toType() },
-        stats = stats.toStats()
+        stats = stats.toStats(),
+        weight = weight,
+        height = height
     )
 }
 

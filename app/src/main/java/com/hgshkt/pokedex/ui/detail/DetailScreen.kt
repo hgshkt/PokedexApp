@@ -66,10 +66,9 @@ fun DetailScreen(pokemon: Pokemon) {
                 }
             }
             Row {
-                Text("Height: ")
-                Text("Weight: ")
+                Text("Height: ${pokemon.height}")
+                Text("Weight: ${pokemon.weight}")
             }
-
         }
     }
 }

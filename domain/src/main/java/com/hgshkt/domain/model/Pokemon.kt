@@ -6,7 +6,9 @@ data class Pokemon(
     var imageUrl: String,
     var abilities: List<Ability>,
     var types: List<Type>,
-    val stats: Stats
+    val stats: Stats,
+    val weight: Int,
+    val height: Int
 )
 
 data class Stats(

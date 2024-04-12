@@ -6,7 +6,9 @@ data class DPokemon(
     var imageUrl: String,
     var abilitiesUrl: List<String>,
     var types: List<DType>,
-    val stats: DStats
+    val stats: DStats,
+    val weight: Int,
+    val height: Int
 )
 
 data class DStats(
