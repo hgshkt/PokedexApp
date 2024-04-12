@@ -1,9 +1,11 @@
 package com.hgshkt.domain.data.mapper
 
 import com.hgshkt.domain.data.model.DPokemon
+import com.hgshkt.domain.data.model.DStats
 import com.hgshkt.domain.data.model.DType
 import com.hgshkt.domain.model.Ability
 import com.hgshkt.domain.model.Pokemon
+import com.hgshkt.domain.model.Stats
 import com.hgshkt.domain.model.Type
 
 fun DPokemon.toPokemon(abilities: List<Ability>): Pokemon {
@@ -12,12 +14,13 @@ fun DPokemon.toPokemon(abilities: List<Ability>): Pokemon {
         name = name,
         imageUrl = imageUrl,
         abilities = abilities,
-        types = types.map { it.toType() }
+        types = types.map { it.toType() },
+        stats = stats.toStats()
     )
 }
 
 fun DType.toType(): Type {
-    return when(this) {
+    return when (this) {
         DType.NORMAL -> Type.NORMAL
         DType.FIRE -> Type.FIRE
         DType.WATER -> Type.WATER
@@ -37,4 +40,16 @@ fun DType.toType(): Type {
         DType.STEEL -> Type.STEEL
         DType.FAIRY -> Type.FAIRY
     }
+}
+
+fun DStats.toStats(): Stats {
+    return Stats(
+        hp = hp,
+        attack = attack,
+        defense = defense,
+        specialAttack = specialAttack,
+        specialDefense = specialDefense,
+        speed = speed,
+        total = total
+    )
 }

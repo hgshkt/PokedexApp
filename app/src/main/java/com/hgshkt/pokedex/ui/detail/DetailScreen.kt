@@ -4,9 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -51,14 +53,15 @@ fun DetailScreen(pokemon: Pokemon) {
                 Text("Stats:")
                 Row {
                     Column {
-                        Text("HP:")
-                        Text("Attack")
-                        Text("Defense")
+                        Text("HP: ${pokemon.stats.hp}")
+                        Text("Attack: ${pokemon.stats.attack}")
+                        Text("Defense: ${pokemon.stats.defense}")
                     }
+                    Spacer(modifier = Modifier.width(20.dp))
                     Column {
-                        Text("Sp. Atk:")
-                        Text("Sp. Def")
-                        Text("Speed")
+                        Text("Sp. Atk: ${pokemon.stats.specialAttack}")
+                        Text("Sp. Def: ${pokemon.stats.specialDefense}")
+                        Text("Speed: ${pokemon.stats.speed}")
                     }
                 }
             }
