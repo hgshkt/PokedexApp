@@ -1,10 +1,10 @@
 package com.hgshkt.pokedex.di
 
-import com.hgshkt.data.repository.AbilityRemoteRepositoryImpl
-import com.hgshkt.data.repository.PokemonRemoteRepositoryImpl
+import com.hgshkt.data.repository.ability.AbilityRemoteRepositoryImpl
+import com.hgshkt.data.repository.pokemon.PokemonRemoteRepositoryImpl
 import com.hgshkt.data.repository.PokemonsPagingSource
-import com.hgshkt.data.repository.network.AbilityApiService
-import com.hgshkt.data.repository.network.PokemonApiService
+import com.hgshkt.data.repository.ability.network.AbilityApiService
+import com.hgshkt.data.repository.pokemon.network.PokemonApiService
 import com.hgshkt.data.repository.network.RetrofitClient.pokemonClient
 import com.hgshkt.domain.data.AbilityRemoteRepository
 import com.hgshkt.domain.data.PokemonRemoteRepository
