@@ -1,5 +1,6 @@
 package com.hgshkt.pokedex.ui.detail
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,11 +41,11 @@ fun DetailScreen(pokemon: Pokemon) {
                 modifier = Modifier.padding(8.dp),
                 abilities = pokemon.abilities
             )
-            Text("Type:")
+            Text("Types:")
             Row {
-//                pokemon.types.forEach { type ->
-//                    PokemonType(type)
-//                }
+                pokemon.types.forEach { type ->
+                    PokemonType(type.toUIType())
+                }
             }
             Column(modifier = Modifier.padding(4.dp)) {
                 Text("Stats:")
@@ -67,6 +68,13 @@ fun DetailScreen(pokemon: Pokemon) {
             }
 
         }
+    }
+}
+
+@Composable
+fun PokemonType(type: UIType) {
+    Box(modifier = Modifier.padding(4.dp).background(type.color)) {
+        Text(type.text)
     }
 }
 

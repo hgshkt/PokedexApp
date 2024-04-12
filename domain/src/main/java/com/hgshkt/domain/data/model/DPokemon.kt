@@ -4,5 +4,6 @@ data class DPokemon(
     var id: Int,
     var name: String,
     var imageUrl: String,
-    var abilitiesUrl: List<String>
+    var abilitiesUrl: List<String>,
+    var types: List<DType>
 )
