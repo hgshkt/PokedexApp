@@ -21,7 +21,7 @@ fun ListScreen(
     onItemClick: (PokemonSaver) -> Unit
 ) {
     val pokemons: LazyPagingItems<Pokemon> =
-        viewModel.pokemons.collectAsLazyPagingItems()
+        viewModel.pokemonsState.collectAsLazyPagingItems()
 
     LazyVerticalGrid(
         modifier = Modifier.wrapContentWidth(),
