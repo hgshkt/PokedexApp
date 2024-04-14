@@ -4,10 +4,15 @@ import com.hgshkt.data.repository.pokemon.local.model.PokemonEntity
 import com.hgshkt.data.repository.pokemon.network.model.finalPokemon.FinalPokemonDTO
 import com.hgshkt.data.repository.pokemon.network.model.finalPokemon.Stats
 import com.hgshkt.data.repository.pokemon.network.model.finalPokemon.Types
+import com.hgshkt.domain.data.mapper.toStats
+import com.hgshkt.domain.data.mapper.toType
 import com.hgshkt.domain.data.model.DPokemon
 import com.hgshkt.domain.data.model.DStats
 import com.hgshkt.domain.data.model.DType
 import com.hgshkt.domain.data.model.DType.*
+import com.hgshkt.domain.model.Ability
+import com.hgshkt.domain.model.Pokemon
+import com.hgshkt.domain.model.Type
 
 fun FinalPokemonDTO.toDPokemon(): DPokemon {
     return DPokemon(
@@ -45,11 +50,62 @@ fun FinalPokemonDTO.toEntity(): PokemonEntity {
     )
 }
 
+fun PokemonEntity.toPokemon(abilities: List<Ability>): Pokemon {
+    val types = mutableListOf<Type>()
+    type1name?.let { types.add(typeByName(it)) }
+    type2name?.let { types.add(typeByName(it)) }
+
+    val stats = com.hgshkt.domain.model.Stats(
+        hp = hp,
+        attack = attack,
+        defense = defense,
+        specialAttack = specialAttack,
+        specialDefense = specialDefense,
+        speed = speed
+    )
+
+    return Pokemon(
+        id = id,
+        name = name,
+        imageUrl = imageUrl,
+        abilities = abilities,
+        types = types,
+        stats = stats,
+        weight = weight,
+        height = height
+    )
+}
+
+private fun typeByName(name: String): Type {
+    return when (name) {
+        "normal" -> Type.NORMAL
+        "fire" -> Type.FIRE
+        "water" -> Type.WATER
+        "electric" -> Type.ELECTRIC
+        "grass" -> Type.GRASS
+        "ice" -> Type.ICE
+        "fighting" -> Type.FIGHTING
+        "poison" -> Type.POISON
+        "ground" -> Type.GROUND
+        "flying" -> Type.FLYING
+        "physic" -> Type.PHYSIC
+        "bug" -> Type.BUG
+        "rock" -> Type.ROCK
+        "ghost" -> Type.GHOST
+        "dragon" -> Type.DRAGON
+        "dark" -> Type.DARK
+        "steel" -> Type.STEEL
+        "fairy" -> Type.FAIRY
+        // unreadable code part
+        else -> Type.NORMAL
+    }
+}
+
 private fun <T> List<T>.getOrNull(index: Int): T? {
     return getOrElse(0) { null }
 }
 
-fun  ArrayList<Stats>.toDStats(): DStats {
+fun ArrayList<Stats>.toDStats(): DStats {
     return DStats(
         hp = find { it.stat?.name == "hp" }?.baseStat ?: -1,
         attack = find { it.stat?.name == "attack" }?.baseStat ?: -1,
