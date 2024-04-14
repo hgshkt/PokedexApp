@@ -1,12 +1,12 @@
 package com.hgshkt.data.repository.ability
 
 import com.hgshkt.data.repository.ability.network.AbilityApiService
-import com.hgshkt.domain.data.AbilityRemoteRepository
+import com.hgshkt.domain.data.AbilityRemoteStorage
 import com.hgshkt.domain.data.model.DAbility
 
-class AbilityRemoteRepositoryImpl(
+class AbilityRemoteStorageImpl(
     private val abilityApiService: AbilityApiService
-): AbilityRemoteRepository {
+): AbilityRemoteStorage {
     override suspend fun getAbility(url: String): DAbility {
         val id = url.split('/').last { it.isNotEmpty() }
         return getAbilityById(id)
