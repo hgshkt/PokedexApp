@@ -1,5 +1,6 @@
 package com.hgshkt.data.repository.pokemon
 
+import com.hgshkt.data.repository.pokemon.local.model.PokemonEntity
 import com.hgshkt.data.repository.pokemon.network.model.finalPokemon.FinalPokemonDTO
 import com.hgshkt.data.repository.pokemon.network.model.finalPokemon.Stats
 import com.hgshkt.data.repository.pokemon.network.model.finalPokemon.Types
@@ -21,6 +22,31 @@ fun FinalPokemonDTO.toDPokemon(): DPokemon {
         weight = weight ?: -1,
         height = height ?: -1
     )
+}
+
+fun FinalPokemonDTO.toEntity(): PokemonEntity {
+    return PokemonEntity(
+        id = id ?: -1,
+        name = name ?: "null name",
+        imageUrl = sprites?.other?.officialArtwork?.frontDefault ?: "null imageUrl",
+        ability1Url = abilities.getOrNull(0)?.ability?.url,
+        ability2Url = abilities.getOrNull(1)?.ability?.url,
+        ability3Url = abilities.getOrNull(2)?.ability?.url,
+        type1name = types.getOrNull(0)?.type?.name,
+        type2name = types.getOrNull(1)?.type?.name,
+        weight = weight ?: -1,
+        height = height ?: -1,
+        hp = stats.find { it.stat?.name == "hp" }?.baseStat ?: -1,
+        attack = stats.find { it.stat?.name == "attack" }?.baseStat ?: -1,
+        defense = stats.find { it.stat?.name == "defense" }?.baseStat ?: -1,
+        specialAttack = stats.find { it.stat?.name == "special-attack" }?.baseStat ?: -1,
+        specialDefense = stats.find { it.stat?.name == "special-defense" }?.baseStat ?: -1,
+        speed = stats.find { it.stat?.name == "speed" }?.baseStat ?: -1
+    )
+}
+
+private fun <T> List<T>.getOrNull(index: Int): T? {
+    return getOrElse(0) { null }
 }
 
 fun  ArrayList<Stats>.toDStats(): DStats {

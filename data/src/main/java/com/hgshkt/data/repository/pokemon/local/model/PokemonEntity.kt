@@ -8,8 +8,11 @@ data class PokemonEntity(
     @PrimaryKey var id: Int,
     var name: String,
     var imageUrl: String,
-    var abilitiesUrl: List<String>,
-    var types: List<String>,
+    var ability1Url: String?,
+    var ability2Url: String?,
+    var ability3Url: String?,
+    var type1name: String?,
+    var type2name: String?,
     val weight: Int,
     val height: Int,
     // stats
@@ -19,5 +22,5 @@ data class PokemonEntity(
     val specialAttack: Int,
     val specialDefense: Int,
     val speed: Int,
-    val total: Int
+    val total: Int = hp + attack + defense + specialAttack + specialDefense + speed
 )

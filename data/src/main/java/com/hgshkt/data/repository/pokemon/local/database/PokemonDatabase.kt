@@ -1,6 +1,7 @@
 package com.hgshkt.data.repository.pokemon.local.database
 
 import androidx.room.Database
+import androidx.room.RoomDatabase
 import com.hgshkt.data.repository.pokemon.local.dao.PokemonDao
 import com.hgshkt.data.repository.pokemon.local.model.PokemonEntity
 
@@ -8,6 +9,6 @@ import com.hgshkt.data.repository.pokemon.local.model.PokemonEntity
     entities = [PokemonEntity::class],
     version = 1
 )
-abstract class PokemonDatabase {
+abstract class PokemonDatabase: RoomDatabase() {
     abstract val dao: PokemonDao
 }
