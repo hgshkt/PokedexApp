@@ -5,15 +5,12 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.hgshkt.data.repository.pokemon.local.database.PokemonDatabase
-import com.hgshkt.data.repository.pokemon.local.model.PokemonEntity
-import com.hgshkt.data.repository.pokemon.network.PokemonApiService
-import com.hgshkt.data.repository.pokemon.network.model.PokemonFromResponseDTO
-import com.hgshkt.data.repository.pokemon.network.model.finalPokemon.FinalPokemonDTO
-import com.hgshkt.data.repository.pokemon.toDPokemon
-import com.hgshkt.data.repository.pokemon.toEntity
-import com.hgshkt.domain.data.model.DPokemon
-import com.hgshkt.domain.model.Pokemon
+import com.hgshkt.data.repository.local.pokemon.PokemonDatabase
+import com.hgshkt.data.repository.local.pokemon.PokemonEntity
+import com.hgshkt.data.repository.mappers.toEntity
+import com.hgshkt.data.repository.remote.pokemon.network.PokemonApiService
+import com.hgshkt.data.repository.remote.pokemon.network.model.PokemonFromResponseDTO
+import com.hgshkt.data.repository.remote.pokemon.network.model.finalPokemon.FinalPokemonDTO
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -50,9 +47,9 @@ class PokemonRemoteMediator(
 
                 pokemonDatabase.withTransaction {
                     if (loadType == LoadType.REFRESH) {
-                        pokemonDatabase.dao.deleteAll()
+                        pokemonDatabase.pokemonDao.deleteAll()
                     }
-                    pokemonDatabase.dao.upsertAll(pokemonEntities)
+                    pokemonDatabase.pokemonDao.upsertAll(pokemonEntities)
                 }
                 MediatorResult.Success(
                     endOfPaginationReached = pokemonEntities.isEmpty()

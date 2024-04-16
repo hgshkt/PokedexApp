@@ -5,8 +5,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.hgshkt.data.repository.pokemon.local.database.PokemonDatabase
-import com.hgshkt.data.repository.pokemon.toPokemon
+import com.hgshkt.data.repository.local.pokemon.PokemonDatabase
+import com.hgshkt.data.repository.mappers.toPokemon
 import com.hgshkt.domain.data.AbilityRemoteStorage
 import com.hgshkt.domain.data.PokemonRepository
 import com.hgshkt.domain.data.mapper.toAbility

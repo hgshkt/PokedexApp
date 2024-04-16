@@ -2,8 +2,9 @@ package com.hgshkt.data.repository
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.hgshkt.data.repository.pokemon.network.PokemonApiService
-import com.hgshkt.data.repository.pokemon.toDPokemon
+import com.hgshkt.data.repository.mappers.toDPokemon
+import com.hgshkt.data.repository.remote.pokemon.network.PokemonApiService
+import com.hgshkt.data.repository.remote.pokemon.network.model.PokemonFromResponseDTO
 import com.hgshkt.domain.data.model.DPokemon
 import retrofit2.HttpException
 
@@ -44,7 +45,7 @@ class PokemonsPagingSource(
         }
     }
 
-    private suspend fun loadFinalPokemon(pokemonFromResponseDTO: com.hgshkt.data.repository.pokemon.network.model.PokemonFromResponseDTO): DPokemon? {
+    private suspend fun loadFinalPokemon(pokemonFromResponseDTO: PokemonFromResponseDTO): DPokemon? {
         val id = pokemonFromResponseDTO.url?.split('/')?.last { it.isNotEmpty() }!!
         val response = pokemonService.pokemon(id)
 
