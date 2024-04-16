@@ -5,7 +5,6 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.hgshkt.data.repository.local.PokemonLocalStorage
-import com.hgshkt.data.repository.local.pokemon.PokemonDatabase
 import com.hgshkt.data.repository.local.pokemon.PokemonEntity
 import com.hgshkt.data.repository.mappers.toEntity
 import com.hgshkt.data.repository.remote.PokemonRemoteStorage
@@ -59,14 +58,22 @@ class PokemonRemoteMediator(
 
         val pokemonEntities = pokemons.map { it.toEntity() }
 
+        pokemons.forEach { saveAbilitiesToLocal(it) }
+
         pokemonLocalStorage.updatePokemonEntities(
             pokemonEntities = pokemonEntities,
             refresh = loadType == LoadType.REFRESH
         )
 
-
         return MediatorResult.Success(
             endOfPaginationReached = pokemonEntities.isEmpty()
         )
+    }
+
+    private suspend fun saveAbilitiesToLocal(finalPokemonDTO: FinalPokemonDTO) {
+        finalPokemonDTO.abilities.forEach {
+            val abilityId = it.ability?.url?.split('/')?.last { it.isNotEmpty() }!!
+            pokemonLocalStorage.saveAbilityRef(finalPokemonDTO.id!!, abilityId.toInt())
+        }
     }
 }

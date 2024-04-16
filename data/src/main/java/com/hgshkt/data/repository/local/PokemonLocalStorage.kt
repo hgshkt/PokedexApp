@@ -6,4 +6,5 @@ import com.hgshkt.data.repository.local.pokemon.PokemonEntity
 interface PokemonLocalStorage {
     fun pokemonsAsPagingSource(): PagingSource<Int, PokemonEntity>
     suspend fun updatePokemonEntities(pokemonEntities: List<PokemonEntity>, refresh: Boolean)
+    suspend fun saveAbilityRef(pokemonId: Int, abilityId: Int)
 }
