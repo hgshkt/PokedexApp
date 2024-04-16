@@ -4,7 +4,7 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
-import androidx.room.withTransaction
+import com.hgshkt.data.repository.local.PokemonLocalStorage
 import com.hgshkt.data.repository.local.pokemon.PokemonDatabase
 import com.hgshkt.data.repository.local.pokemon.PokemonEntity
 import com.hgshkt.data.repository.mappers.toEntity
@@ -15,8 +15,8 @@ import java.io.IOException
 
 @OptIn(ExperimentalPagingApi::class)
 class PokemonRemoteMediator(
-    private val pokemonDatabase: PokemonDatabase,
-    private val pokemonRemoteStorage: PokemonRemoteStorage
+    private val pokemonRemoteStorage: PokemonRemoteStorage,
+    private val pokemonLocalStorage: PokemonLocalStorage
 ) : RemoteMediator<Int, PokemonEntity>() {
     override suspend fun load(
         loadType: LoadType,
@@ -59,12 +59,11 @@ class PokemonRemoteMediator(
 
         val pokemonEntities = pokemons.map { it.toEntity() }
 
-        pokemonDatabase.withTransaction {
-            if (loadType == LoadType.REFRESH) {
-                pokemonDatabase.pokemonDao.deleteAll()
-            }
-            pokemonDatabase.pokemonDao.upsertAll(pokemonEntities)
-        }
+        pokemonLocalStorage.updatePokemonEntities(
+            pokemonEntities = pokemonEntities,
+            refresh = loadType == LoadType.REFRESH
+        )
+
 
         return MediatorResult.Success(
             endOfPaginationReached = pokemonEntities.isEmpty()
