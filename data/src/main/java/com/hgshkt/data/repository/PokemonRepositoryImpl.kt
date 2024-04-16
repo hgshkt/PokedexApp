@@ -26,7 +26,7 @@ class PokemonRepositoryImpl(
             config = PagingConfig(pageSize = 20),
             remoteMediator = remoteMediator,
             pagingSourceFactory = {
-                pokemonDatabase.dao.pagingSource()
+                pokemonDatabase.pokemonDao.pagingSource()
             }
         ).flow
             .map { pagingData ->

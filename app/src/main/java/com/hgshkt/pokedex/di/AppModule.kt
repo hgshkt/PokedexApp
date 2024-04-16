@@ -5,10 +5,10 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.room.Room
 import com.hgshkt.data.repository.PokemonRemoteMediator
 import com.hgshkt.data.repository.PokemonRepositoryImpl
-import com.hgshkt.data.repository.ability.AbilityRemoteStorageImpl
-import com.hgshkt.data.repository.pokemon.PokemonRemoteRepositoryImpl
+import com.hgshkt.data.repository.ability.remote.AbilityRemoteStorageImpl
+import com.hgshkt.data.repository.pokemon.remote.PokemonRemoteRepositoryImpl
 import com.hgshkt.data.repository.PokemonsPagingSource
-import com.hgshkt.data.repository.ability.network.AbilityApiService
+import com.hgshkt.data.repository.ability.remote.network.AbilityApiService
 import com.hgshkt.data.repository.pokemon.network.PokemonApiService
 import com.hgshkt.data.repository.network.RetrofitClient.pokemonClient
 import com.hgshkt.data.repository.pokemon.local.database.PokemonDatabase

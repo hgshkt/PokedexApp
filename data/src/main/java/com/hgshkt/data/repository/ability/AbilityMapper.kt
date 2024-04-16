@@ -1,6 +1,6 @@
 package com.hgshkt.data.repository.ability
 
-import com.hgshkt.data.repository.ability.network.model.ability.ResponseAbility
+import com.hgshkt.data.repository.ability.remote.network.model.ability.ResponseAbility
 import com.hgshkt.domain.data.model.DAbility
 
 fun ResponseAbility.toDAbility(): DAbility {
