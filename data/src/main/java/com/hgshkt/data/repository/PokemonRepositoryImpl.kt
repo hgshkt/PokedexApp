@@ -5,6 +5,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
+import com.hgshkt.data.repository.local.PokemonLocalStorage
 import com.hgshkt.data.repository.local.pokemon.PokemonDatabase
 import com.hgshkt.data.repository.mappers.toPokemon
 import com.hgshkt.domain.data.AbilityRemoteStorage
@@ -19,7 +20,8 @@ import kotlinx.coroutines.flow.map
 class PokemonRepositoryImpl(
     private val remoteMediator: PokemonRemoteMediator,
     private val pokemonDatabase: PokemonDatabase,
-    private val abilityRemoteStorage: AbilityRemoteStorage
+    private val abilityRemoteStorage: AbilityRemoteStorage,
+    private val pokemonLocalStorage: PokemonLocalStorage
 ) : PokemonRepository {
     override suspend fun getPokemons(): Flow<PagingData<Pokemon>> {
         return Pager(
@@ -34,9 +36,7 @@ class PokemonRepositoryImpl(
                     with(pokemonEntity) {
                         val abilities = mutableListOf<Ability>()
 
-                        loadAbility(ability1Url) { result -> abilities.add(result) }
-                        loadAbility(ability2Url) { result -> abilities.add(result) }
-                        loadAbility(ability3Url) { result -> abilities.add(result) }
+                        val refs = pokemonLocalStorage.getAbilityRefsForPokemon(id)
 
                         toPokemon(abilities)
                     }

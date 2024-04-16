@@ -13,7 +13,7 @@ interface PokemonRemoteStorage {
      * Remote storage response
      */
     sealed class RSResponse {
-        data class Success(val pokemons: List<FinalPokemonDTO>): RSResponse()
+        data class PokemonSuccess(val pokemons: List<FinalPokemonDTO>): RSResponse()
         data class Error(val httpException: HttpException): RSResponse()
     }
 }

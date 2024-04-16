@@ -37,7 +37,7 @@ class PokemonRemoteMediator(
             val rsresponse = pokemonRemoteStorage.getPokemons(offset, 20)
 
             when (rsresponse) {
-                is PokemonRemoteStorage.RSResponse.Success -> {
+                is PokemonRemoteStorage.RSResponse.PokemonSuccess -> {
                     return handleSuccessfulResponse(rsresponse.pokemons, loadType)
                 }
 
@@ -58,7 +58,9 @@ class PokemonRemoteMediator(
 
         val pokemonEntities = pokemons.map { it.toEntity() }
 
-        pokemons.forEach { saveAbilitiesToLocal(it) }
+        pokemons.forEach {
+            saveAbilityRefsToLocal(it)
+        }
 
         pokemonLocalStorage.updatePokemonEntities(
             pokemonEntities = pokemonEntities,
@@ -70,7 +72,7 @@ class PokemonRemoteMediator(
         )
     }
 
-    private suspend fun saveAbilitiesToLocal(finalPokemonDTO: FinalPokemonDTO) {
+    private suspend fun saveAbilityRefsToLocal(finalPokemonDTO: FinalPokemonDTO) {
         finalPokemonDTO.abilities.forEach {
             val abilityId = it.ability?.url?.split('/')?.last { it.isNotEmpty() }!!
             pokemonLocalStorage.saveAbilityRef(finalPokemonDTO.id!!, abilityId.toInt())

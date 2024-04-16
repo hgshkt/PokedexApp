@@ -19,7 +19,7 @@ class PokemonRemoteStorageImpl(
             val pokemons = response.body()!!.results
                 .mapNotNull { loadFinalPokemon(it) }
 
-            RSResponse.Success(pokemons)
+            RSResponse.PokemonSuccess(pokemons)
 
         } else
             RSResponse.Error(HttpException(response))

@@ -36,4 +36,8 @@ class PokemonLocalStorageImpl(
             PokemonAbilityCrossRef(pokemonId, abilityId)
         )
     }
+
+    override suspend fun getAbilityRefsForPokemon(id: Int): List<PokemonAbilityCrossRef> {
+        return pokemonAbilityCrossRefDao.getAbilitiesForPokemon(id)
+    }
 }
