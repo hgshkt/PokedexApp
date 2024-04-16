@@ -8,8 +8,7 @@ import androidx.room.withTransaction
 import com.hgshkt.data.repository.local.pokemon.PokemonDatabase
 import com.hgshkt.data.repository.local.pokemon.PokemonEntity
 import com.hgshkt.data.repository.mappers.toEntity
-import com.hgshkt.data.repository.remote.pokemon.network.PokemonApiService
-import com.hgshkt.data.repository.remote.pokemon.network.model.PokemonFromResponseDTO
+import com.hgshkt.data.repository.remote.PokemonRemoteStorage
 import com.hgshkt.data.repository.remote.pokemon.network.model.finalPokemon.FinalPokemonDTO
 import retrofit2.HttpException
 import java.io.IOException
@@ -17,7 +16,7 @@ import java.io.IOException
 @OptIn(ExperimentalPagingApi::class)
 class PokemonRemoteMediator(
     private val pokemonDatabase: PokemonDatabase,
-    private val pokemonApiService: PokemonApiService
+    private val pokemonRemoteStorage: PokemonRemoteStorage
 ) : RemoteMediator<Int, PokemonEntity>() {
     override suspend fun load(
         loadType: LoadType,
@@ -36,44 +35,39 @@ class PokemonRemoteMediator(
                 }
             }
 
-            val response = pokemonApiService.pokemons(
-                offset = offset,
-                limit = 20
-            )
-            if(response.isSuccessful) {
+            val rsresponse = pokemonRemoteStorage.getPokemons(offset, 20)
 
-                val pokemonEntities: List<PokemonEntity> = response.body()!!.results
-                    .mapNotNull { loadFinalPokemon(it)?.toEntity() }
-
-                pokemonDatabase.withTransaction {
-                    if (loadType == LoadType.REFRESH) {
-                        pokemonDatabase.pokemonDao.deleteAll()
-                    }
-                    pokemonDatabase.pokemonDao.upsertAll(pokemonEntities)
+            when (rsresponse) {
+                is PokemonRemoteStorage.RSResponse.Success -> {
+                    return handleSuccessfulResponse(rsresponse.pokemons, loadType)
                 }
-                MediatorResult.Success(
-                    endOfPaginationReached = pokemonEntities.isEmpty()
-                )
-            } else {
-                MediatorResult.Error(HttpException(response))
+
+                is PokemonRemoteStorage.RSResponse.Error -> {
+                    MediatorResult.Error(rsresponse.httpException)
+                }
             }
-        } catch(e: IOException) {
+        } catch (e: IOException) {
             MediatorResult.Error(e)
-        } catch(e: HttpException) {
+        } catch (e: HttpException) {
             MediatorResult.Error(e)
         }
     }
 
+    private suspend fun handleSuccessfulResponse(
+        pokemons: List<FinalPokemonDTO>, loadType: LoadType
+    ): MediatorResult.Success {
 
-    private suspend fun loadFinalPokemon(
-        pokemonFromResponseDTO: PokemonFromResponseDTO
-    ): FinalPokemonDTO? {
-        val id = pokemonFromResponseDTO.url?.split('/')?.last { it.isNotEmpty() }!!
-        val response = pokemonApiService.pokemon(id)
+        val pokemonEntities = pokemons.map { it.toEntity() }
 
-        if (response.isSuccessful) {
-            return response.body()
+        pokemonDatabase.withTransaction {
+            if (loadType == LoadType.REFRESH) {
+                pokemonDatabase.pokemonDao.deleteAll()
+            }
+            pokemonDatabase.pokemonDao.upsertAll(pokemonEntities)
         }
-        return null
+
+        return MediatorResult.Success(
+            endOfPaginationReached = pokemonEntities.isEmpty()
+        )
     }
 }
