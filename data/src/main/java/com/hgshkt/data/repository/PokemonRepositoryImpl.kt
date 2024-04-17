@@ -44,10 +44,11 @@ class PokemonRepositoryImpl(
                         // Receive abilities from remote by refs.
                         refs.forEach { ref ->
                             var ability = abilityRemoteStorage.getAbility(ref.abilityId)?.toAbility()
-                            // If abilities not received, replace with fake.
+                            // If abilities not received, receive from local database.
                             // --- for example Ability(name = "undefined", effect = "undefined")
                             if (ability == null) {
-                                ability = fakeAbility
+                                ability = pokemonLocalStorage.getAbility(ref.abilityId)?.toAbility()
+                                    ?: fakeAbility
                             } else {
                                 // Else -> save ability (without refs) to local db
                                 pokemonLocalStorage.saveAbility(ability.toEntity()) // entity

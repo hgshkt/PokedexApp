@@ -19,3 +19,11 @@ fun Ability.toEntity(): AbilityEntity {
         effect = effect
     )
 }
+
+fun AbilityEntity.toAbility(): Ability {
+    return Ability(
+        id = id,
+        name = name,
+        effect = effect
+    )
+}

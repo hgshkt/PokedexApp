@@ -8,6 +8,7 @@ import com.hgshkt.data.repository.local.ability.ref.PokemonAbilityCrossRef
 import com.hgshkt.data.repository.local.ability.ref.PokemonAbilityCrossRefDao
 import com.hgshkt.data.repository.local.pokemon.PokemonDao
 import com.hgshkt.data.repository.local.pokemon.PokemonEntity
+import com.hgshkt.domain.model.Ability
 
 class PokemonLocalStorageImpl(
     private val pokemonDao: PokemonDao,
@@ -43,5 +44,9 @@ class PokemonLocalStorageImpl(
 
     override suspend fun saveAbility(abilityEntity: AbilityEntity) {
         abilityDao.insert(abilityEntity)
+    }
+
+    override suspend fun getAbility(abilityId: Int): AbilityEntity? {
+        return abilityDao.get(abilityId)
     }
 }
