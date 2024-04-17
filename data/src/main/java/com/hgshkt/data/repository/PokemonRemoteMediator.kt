@@ -23,14 +23,14 @@ class PokemonRemoteMediator(
     ): MediatorResult {
         return try {
             val offset = when (loadType) {
-                LoadType.REFRESH -> 1
+                LoadType.REFRESH -> 0
                 LoadType.PREPEND -> return MediatorResult.Success(
                     endOfPaginationReached = true
                 )
 
                 LoadType.APPEND -> {
                     val lastItem = state.lastItemOrNull()
-                    lastItem?.id ?: 1
+                    lastItem?.id ?: 0
                 }
             }
 

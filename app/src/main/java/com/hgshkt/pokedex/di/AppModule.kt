@@ -5,13 +5,14 @@ import androidx.room.Room
 import com.hgshkt.data.repository.PokemonRemoteMediator
 import com.hgshkt.data.repository.PokemonRepositoryImpl
 import com.hgshkt.data.repository.PokemonsPagingSource
+import com.hgshkt.data.repository.local.PokemonDatabase
 import com.hgshkt.data.repository.local.PokemonLocalStorage
 import com.hgshkt.data.repository.local.PokemonLocalStorageImpl
 import com.hgshkt.data.repository.local.ability.AbilityDao
 import com.hgshkt.data.repository.local.ability.ref.PokemonAbilityCrossRefDao
 import com.hgshkt.data.repository.local.pokemon.PokemonDao
-import com.hgshkt.data.repository.local.PokemonDatabase
-import com.hgshkt.data.repository.network.RetrofitClient.pokemonClient
+import com.hgshkt.data.repository.network.NetworkInterceptor
+import com.hgshkt.data.repository.network.RetrofitClient
 import com.hgshkt.data.repository.remote.PokemonRemoteStorage
 import com.hgshkt.data.repository.remote.PokemonRemoteStorageImpl
 import com.hgshkt.data.repository.remote.ability.AbilityRemoteStorage
@@ -107,14 +108,18 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun providePokemonApiService(): PokemonApiService {
-        return pokemonClient.create(PokemonApiService::class.java)
+    fun providePokemonApiService(
+        retrofitClient: RetrofitClient
+    ): PokemonApiService {
+        return retrofitClient.pokemonClient.create(PokemonApiService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideAbilityApiService(): AbilityApiService {
-        return pokemonClient.create(AbilityApiService::class.java)
+    fun provideAbilityApiService(
+        retrofitClient: RetrofitClient
+    ): AbilityApiService {
+        return retrofitClient.pokemonClient.create(AbilityApiService::class.java)
     }
 
     @Provides
@@ -123,6 +128,22 @@ class AppModule {
         pokemonApiService: PokemonApiService
     ): PokemonsPagingSource {
         return PokemonsPagingSource(pokemonApiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRetrofitClient(
+        networkInterceptor: NetworkInterceptor
+    ): RetrofitClient {
+        return RetrofitClient(networkInterceptor)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNetworkInterceptor(
+        @ApplicationContext context: Context
+    ): NetworkInterceptor {
+        return NetworkInterceptor(context)
     }
 
     @Provides

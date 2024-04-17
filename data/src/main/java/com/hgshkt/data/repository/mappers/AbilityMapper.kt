@@ -8,7 +8,7 @@ fun ResponseAbility.toAbility(): Ability {
     return Ability(
         id = id,
         name = name,
-        effect = effectEntries.find { it.language.name == "en" }!!.effect
+        effect = effectEntries.find { it.language.name == "en" }?.effect ?: "undefined"
     )
 }
 
