@@ -8,6 +8,6 @@ import retrofit2.http.Path
 interface AbilityApiService {
     @GET("/api/v2/ability/{id}")
     suspend fun loadAbility(
-        @Path("id") id: String
+        @Path("id") id: Int
     ): Response<ResponseAbility>
 }

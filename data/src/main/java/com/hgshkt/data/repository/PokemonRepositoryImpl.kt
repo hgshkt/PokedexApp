@@ -7,10 +7,11 @@ import androidx.paging.PagingData
 import androidx.paging.map
 import com.hgshkt.data.repository.local.PokemonLocalStorage
 import com.hgshkt.data.repository.local.pokemon.PokemonDatabase
+import com.hgshkt.data.repository.mappers.toAbility
+import com.hgshkt.data.repository.mappers.toEntity
 import com.hgshkt.data.repository.mappers.toPokemon
-import com.hgshkt.domain.data.AbilityRemoteStorage
+import com.hgshkt.data.repository.remote.ability.AbilityRemoteStorage
 import com.hgshkt.domain.data.PokemonRepository
-import com.hgshkt.domain.data.mapper.toAbility
 import com.hgshkt.domain.model.Ability
 import com.hgshkt.domain.model.Pokemon
 import kotlinx.coroutines.flow.Flow
@@ -23,6 +24,8 @@ class PokemonRepositoryImpl(
     private val abilityRemoteStorage: AbilityRemoteStorage,
     private val pokemonLocalStorage: PokemonLocalStorage
 ) : PokemonRepository {
+
+    private val fakeAbility = Ability(id = -1, name = "undefined", effect = "undefined")
     override suspend fun getPokemons(): Flow<PagingData<Pokemon>> {
         return Pager(
             config = PagingConfig(pageSize = 20),
@@ -38,19 +41,24 @@ class PokemonRepositoryImpl(
 
                         val refs = pokemonLocalStorage.getAbilityRefsForPokemon(id)
 
+                        // Receive abilities from remote by refs.
+                        refs.forEach { ref ->
+                            val ability = abilityRemoteStorage.getAbility(ref.abilityId)?.toAbility()
+                            // If abilities not received, replace with fake.
+                            // --- for example Ability(name = "undefined", effect = "undefined")
+                            if (ability == null) {
+                                abilities.add(fakeAbility)
+                            } else {
+                                // Else -> save ability (without refs) to local db
+                                pokemonLocalStorage.saveAbility(ability.toEntity()) // entity
+                            }
+                        }
+
+
+                        // pass abilities into toPokemon(abilities)
                         toPokemon(abilities)
                     }
                 }
             }
-    }
-
-    private suspend fun loadAbility(url: String?, onResult: (Ability) -> Unit) {
-        url?.let {
-            val ability = abilityRemoteStorage
-                .getAbility(it)
-                .toAbility()
-
-            onResult(ability)
-        }
     }
 }

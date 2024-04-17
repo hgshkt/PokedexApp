@@ -3,6 +3,7 @@ package com.hgshkt.data.repository.local
 import androidx.paging.PagingSource
 import androidx.room.withTransaction
 import com.hgshkt.data.repository.local.ability.AbilityDao
+import com.hgshkt.data.repository.local.ability.AbilityEntity
 import com.hgshkt.data.repository.local.ability.ref.PokemonAbilityCrossRef
 import com.hgshkt.data.repository.local.ability.ref.PokemonAbilityCrossRefDao
 import com.hgshkt.data.repository.local.pokemon.PokemonDao
@@ -39,5 +40,9 @@ class PokemonLocalStorageImpl(
 
     override suspend fun getAbilityRefsForPokemon(id: Int): List<PokemonAbilityCrossRef> {
         return pokemonAbilityCrossRefDao.getAbilitiesForPokemon(id)
+    }
+
+    override suspend fun saveAbility(abilityEntity: AbilityEntity) {
+        abilityDao.insert(abilityEntity)
     }
 }
