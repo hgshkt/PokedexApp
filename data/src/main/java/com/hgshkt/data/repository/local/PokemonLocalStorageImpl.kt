@@ -7,7 +7,6 @@ import com.hgshkt.data.repository.local.ability.AbilityEntity
 import com.hgshkt.data.repository.local.ability.ref.PokemonAbilityCrossRef
 import com.hgshkt.data.repository.local.ability.ref.PokemonAbilityCrossRefDao
 import com.hgshkt.data.repository.local.pokemon.PokemonDao
-import com.hgshkt.data.repository.local.pokemon.PokemonDatabase
 import com.hgshkt.data.repository.local.pokemon.PokemonEntity
 
 class PokemonLocalStorageImpl(
