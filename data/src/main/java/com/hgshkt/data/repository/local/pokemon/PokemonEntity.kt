@@ -3,14 +3,11 @@ package com.hgshkt.data.repository.local.pokemon
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(tableName = "pokemons")
 data class PokemonEntity(
     @PrimaryKey var id: Int,
     var name: String,
     var imageUrl: String,
-    var ability1Url: String?,
-    var ability2Url: String?,
-    var ability3Url: String?,
     var type1name: String?,
     var type2name: String?,
     val weight: Int,
