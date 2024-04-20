@@ -1,8 +1,12 @@
 package com.hgshkt.pokedex.ui.list
 
+import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -11,6 +15,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -18,6 +25,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import com.hgshkt.domain.model.Pokemon
+import com.hgshkt.pokedex.R
 import com.hgshkt.pokedex.ui.listDetail.PokemonSaver
 
 @Composable
@@ -33,18 +41,21 @@ fun ListScreen(
         || pokemons.loadState.refresh == LoadState.Loading
         || pokemons.loadState.prepend == LoadState.Loading
     ) {
+        Log.i("PokemonTag", "Loading")
         LoadingBox()
     } 
     
     else if (
-        pokemons.loadState.append == LoadState.Loading
-        || pokemons.loadState.refresh == LoadState.Loading
-        || pokemons.loadState.prepend == LoadState.Loading
+        pokemons.loadState.append is LoadState.Error
+        || pokemons.loadState.refresh is LoadState.Error
+        || pokemons.loadState.prepend is LoadState.Error
     ) {
+        Log.i("PokemonTag", "Error")
         ErrorBox()
     } 
     
     else {
+        Log.i("PokemonTag", "Success")
         LazyVerticalGrid(
             modifier = Modifier.wrapContentWidth(),
             columns = GridCells.Fixed(3),
@@ -71,7 +82,16 @@ fun ErrorBox() {
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "Something went wrong...")
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = "Something went wrong...", fontSize = 25.sp)
+            Image(
+                painter = painterResource(R.drawable.error_image),
+                modifier = Modifier.size(100.dp),
+                contentDescription = "sad pikachu"
+            )
+        }
     }
 }
 
