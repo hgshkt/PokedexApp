@@ -70,7 +70,7 @@ fun DetailScreenPreview() {
 @Composable
 fun DetailScreen(pokemon: Pokemon) {
     with(pokemon) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
             AsyncImage(
                 model = imageUrl,
                 contentDescription = "pokemon image",

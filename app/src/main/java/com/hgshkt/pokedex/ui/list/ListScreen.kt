@@ -1,5 +1,6 @@
 package com.hgshkt.pokedex.ui.list
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -12,7 +13,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import com.hgshkt.domain.model.Pokemon
-import com.hgshkt.pokedex.ui.custom.cards.PokemonCard
 import com.hgshkt.pokedex.ui.listDetail.PokemonSaver
 
 @Composable

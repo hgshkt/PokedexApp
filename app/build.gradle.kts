@@ -103,6 +103,9 @@ dependencies {
     kapt("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
     implementation("androidx.room:room-paging:$room_version")
+
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.6.0")
 }
 
 kapt {
