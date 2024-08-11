@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.hgshkt.domain.model.Pokemon
+import com.hgshkt.pokedex.ui.custom.image.PokemonImage
 import com.hgshkt.pokedex.ui.custom.text.AutoResizedText
 import com.hgshkt.pokedex.ui.theme.pokemonCardColors
 import com.hgshkt.pokedex.ui.theme.pokemonNameStyle
@@ -46,36 +47,7 @@ fun PokemonCard(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    SubcomposeAsyncImage(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        model = pokemon.imageUrl,
-                        contentDescription = "Pokemon image",
-                        loading = {
-                            Box(
-                                modifier = Modifier
-                                    .wrapContentWidth()
-                                    .aspectRatio(1f),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.widthIn(0.dp, 30.dp)
-                                )
-                            }
-                        },
-                        error = {
-                            Box(
-                                modifier = Modifier
-                                    .wrapContentWidth()
-                                    .aspectRatio(1f),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.widthIn(0.dp, 30.dp)
-                                )
-                            }
-                        }
-                    )
+                    PokemonImage(modifier = Modifier.fillMaxSize(), url = pokemon.imageUrl)
                     Text("№${pokemon.id}")
                     AutoResizedText(pokemon.name.uppercase(), style = pokemonNameStyle)
                 }

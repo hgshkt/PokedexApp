@@ -21,18 +21,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import com.hgshkt.domain.model.Ability
 import com.hgshkt.domain.model.Pokemon
 import com.hgshkt.domain.model.Stats
 import com.hgshkt.domain.model.Type
+import com.hgshkt.pokedex.ui.custom.image.PokemonImage
 import com.hgshkt.pokedex.ui.custom.text.AutoResizedText
 
 private val idStyle = TextStyle(fontSize = 20.sp)
@@ -71,8 +70,8 @@ fun DetailScreenPreview() {
 fun DetailScreen(pokemon: Pokemon) {
     with(pokemon) {
         Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-            AsyncImage(
-                model = imageUrl,
+            PokemonImage(
+                url = imageUrl,
                 contentDescription = "pokemon image",
                 modifier = Modifier
                     .widthIn(0.dp, 400.dp)
