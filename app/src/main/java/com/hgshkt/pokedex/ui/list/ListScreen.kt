@@ -24,8 +24,8 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
-import com.hgshkt.domain.model.Pokemon
 import com.hgshkt.pokedex.R
+import com.hgshkt.pokedex.data.model.UiPokemon
 import com.hgshkt.pokedex.ui.listDetail.PokemonSaver
 
 @Composable
@@ -33,7 +33,7 @@ fun ListScreen(
     viewModel: ListViewModel = hiltViewModel(),
     onItemClick: (PokemonSaver) -> Unit
 ) {
-    val pokemons: LazyPagingItems<Pokemon> =
+    val pokemons: LazyPagingItems<UiPokemon> =
         viewModel.pokemonsState.collectAsLazyPagingItems()
     
     if (

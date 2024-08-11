@@ -28,9 +28,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hgshkt.domain.model.Ability
-import com.hgshkt.domain.model.Pokemon
-import com.hgshkt.domain.model.Stats
-import com.hgshkt.domain.model.Type
+import com.hgshkt.pokedex.data.model.UiPokemon
+import com.hgshkt.pokedex.data.model.UiPokemonAbility
+import com.hgshkt.pokedex.data.model.UiStats
+import com.hgshkt.pokedex.data.model.UiType
 import com.hgshkt.pokedex.ui.custom.image.PokemonImage
 import com.hgshkt.pokedex.ui.custom.text.AutoResizedText
 
@@ -43,16 +44,16 @@ private val statsBorder = Color(0xFFD3F0FF)
 @Preview
 @Composable
 fun DetailScreenPreview() {
-    val pokemon = Pokemon(
+    val pokemon = UiPokemon(
         id = 1,
         name = "Name",
         imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png",
         abilities = listOf(
-            Ability(id = 1, name = "First Ability", effect = "First ability do something"),
-            Ability(id = 1, name = "Second Ability", effect = "Second ability do something"),
+            UiPokemonAbility(id = 1, name = "First Ability", effect = "First ability do something"),
+            UiPokemonAbility(id = 1, name = "Second Ability", effect = "Second ability do something"),
         ),
-        types = listOf(Type.POISON, Type.DARK),
-        stats = Stats(
+        types = listOf(UiType.POISON, UiType.DARK),
+        stats = UiStats(
             hp = 13,
             attack = 45,
             defense = 100,
@@ -67,7 +68,7 @@ fun DetailScreenPreview() {
 }
 
 @Composable
-fun DetailScreen(pokemon: Pokemon) {
+fun DetailScreen(pokemon: UiPokemon) {
     with(pokemon) {
         Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
             PokemonImage(
@@ -96,7 +97,7 @@ fun DetailScreen(pokemon: Pokemon) {
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     types.forEach { type ->
-                        PokemonType(type.toUIType())
+                        PokemonType(type)
                     }
                 }
                 Spacer(modifier = Modifier.height(12.dp))
@@ -154,7 +155,7 @@ fun DetailScreen(pokemon: Pokemon) {
 }
 
 @Composable
-fun PokemonType(type: UIType) {
+fun PokemonType(type: UiType) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
@@ -171,7 +172,7 @@ fun PokemonType(type: UIType) {
 }
 
 @Composable
-fun AbilityList(modifier: Modifier, abilities: List<Ability>) {
+fun AbilityList(modifier: Modifier, abilities: List<UiPokemonAbility>) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally

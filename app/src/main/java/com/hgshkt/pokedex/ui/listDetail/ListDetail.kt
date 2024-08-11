@@ -14,6 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.hgshkt.domain.model.Pokemon
+import com.hgshkt.pokedex.data.model.UiPokemon
 import com.hgshkt.pokedex.ui.list.ListScreen
 import com.hgshkt.pokedex.ui.detail.DetailScreen
 
@@ -51,9 +52,9 @@ fun MainScreen() {
     )
 }
 
-class PokemonSaver(val pokemon: Pokemon) {
+class PokemonSaver(val pokemon: UiPokemon) {
     companion object {
-        val Saver: Saver<PokemonSaver?, Pokemon> = Saver(
+        val Saver: Saver<PokemonSaver?, UiPokemon> = Saver(
             { it?.pokemon },
             ::PokemonSaver,
         )
