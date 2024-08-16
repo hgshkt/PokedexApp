@@ -18,7 +18,7 @@ class PokemonsPagingSource(
     override fun getRefreshKey(state: PagingState<Int, DPokemon>): Int? {
         val anchorPosition = state.anchorPosition ?: return null
         val anchorPage = state.closestPageToPosition(anchorPosition) ?: return null
-        return anchorPage.prevKey?.plus(1) ?: anchorPage.nextKey?.minus(1)
+        return anchorPage.prevKey?.plus(pageSize) ?: anchorPage.nextKey?.minus(pageSize)
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, DPokemon> {

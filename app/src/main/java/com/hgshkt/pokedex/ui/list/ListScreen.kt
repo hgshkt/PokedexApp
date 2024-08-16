@@ -1,6 +1,5 @@
 package com.hgshkt.pokedex.ui.list
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,7 +24,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import com.hgshkt.pokedex.R
-import com.hgshkt.pokedex.data.model.UiPokemon
 import com.hgshkt.pokedex.data.model.UiSimplePokemon
 import com.hgshkt.pokedex.ui.listDetail.PokemonSaver
 
@@ -38,11 +36,8 @@ fun ListScreen(
         viewModel.pokemonsState.collectAsLazyPagingItems()
     
     if (
-        pokemons.loadState.append == LoadState.Loading
-        || pokemons.loadState.refresh == LoadState.Loading
-        || pokemons.loadState.prepend == LoadState.Loading
+        pokemons.itemCount == 0
     ) {
-        Log.i("PokemonTag", "Loading")
         LoadingBox()
     } 
     
@@ -51,12 +46,10 @@ fun ListScreen(
         || pokemons.loadState.refresh is LoadState.Error
         || pokemons.loadState.prepend is LoadState.Error
     ) {
-        Log.i("PokemonTag", "Error")
         ErrorBox()
     } 
     
     else {
-        Log.i("PokemonTag", "Success")
         LazyVerticalGrid(
             modifier = Modifier.wrapContentWidth(),
             columns = GridCells.Fixed(3),
