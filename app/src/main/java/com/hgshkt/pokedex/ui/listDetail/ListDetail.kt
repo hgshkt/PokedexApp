@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.hgshkt.domain.model.Pokemon
 import com.hgshkt.pokedex.data.model.UiPokemon
+import com.hgshkt.pokedex.data.model.UiSimplePokemon
 import com.hgshkt.pokedex.ui.list.ListScreen
 import com.hgshkt.pokedex.ui.detail.DetailScreen
 
@@ -35,7 +36,7 @@ fun MainScreen() {
         detailPane = {
             AnimatedPane(Modifier) {
                 selectedItem?.let { item ->
-                    DetailScreen(item.pokemon)
+                    DetailScreen(item.pokemon.id)
                 }
             }
         },
@@ -52,9 +53,9 @@ fun MainScreen() {
     )
 }
 
-class PokemonSaver(val pokemon: UiPokemon) {
+class PokemonSaver(val pokemon: UiSimplePokemon) {
     companion object {
-        val Saver: Saver<PokemonSaver?, UiPokemon> = Saver(
+        val Saver: Saver<PokemonSaver?, UiSimplePokemon> = Saver(
             { it?.pokemon },
             ::PokemonSaver,
         )

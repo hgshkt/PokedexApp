@@ -64,94 +64,94 @@ fun DetailScreenPreview() {
         weight = 10,
         height = 90
     )
-    DetailScreen(pokemon)
+//    DetailScreen(pokemon)
 }
 
 @Composable
-fun DetailScreen(pokemon: UiPokemon) {
-    with(pokemon) {
-        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-            PokemonImage(
-                url = imageUrl,
-                contentDescription = "pokemon image",
-                modifier = Modifier
-                    .widthIn(0.dp, 400.dp)
-                    .fillMaxWidth()
-            )
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxWidth()
-                    .padding(24.dp)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(text = "№$id", style = idStyle)
-                    AutoResizedText(text = name, style = pokemonNameStyle)
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    types.forEach { type ->
-                        PokemonType(type)
-                    }
-                }
-                Spacer(modifier = Modifier.height(12.dp))
-                AbilityList(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    abilities = abilities
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(16.dp))
-                        .border(4.dp, statsBorder, shape = RoundedCornerShape(16.dp))
-                        .padding(20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    val statSize = 26.sp
-                    with(stats) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceAround
-                        ) {
-
-                            Column {
-                                Text("HP: $hp", fontSize = statSize)
-                                Text("Attack: $attack", fontSize = statSize)
-                                Text("Defense: $defense", fontSize = statSize)
-                            }
-                            Spacer(modifier = Modifier.width(20.dp))
-                            Column {
-                                Text("Sp. Atk: $specialAttack", fontSize = statSize)
-                                Text("Sp. Def: $specialDefense", fontSize = statSize)
-                                Text("Speed: $speed", fontSize = statSize)
-                            }
-
-                        }
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text("Total: $total", fontSize = statSize)
-                    }
-                }
-                Spacer(modifier = Modifier.height(12.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    val fontSize = 24.sp
-                    Text("Height: $height", fontSize = fontSize)
-                    Text("Weight: $weight", fontSize = fontSize)
-                }
-            }
-        }
-    }
+fun DetailScreen(id: Int) {
+//    with(pokemon) {
+//        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+//            PokemonImage(
+//                url = imageUrl,
+//                contentDescription = "pokemon image",
+//                modifier = Modifier
+//                    .widthIn(0.dp, 400.dp)
+//                    .fillMaxWidth()
+//            )
+//            Column(
+//                modifier = Modifier
+//                    .verticalScroll(rememberScrollState())
+//                    .fillMaxWidth()
+//                    .padding(24.dp)
+//            ) {
+//                Column(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    Text(text = "№$id", style = idStyle)
+//                    AutoResizedText(text = name, style = pokemonNameStyle)
+//                }
+//                Spacer(modifier = Modifier.height(8.dp))
+//                Row(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    horizontalArrangement = Arrangement.SpaceAround
+//                ) {
+//                    types.forEach { type ->
+//                        PokemonType(type)
+//                    }
+//                }
+//                Spacer(modifier = Modifier.height(12.dp))
+//                AbilityList(
+//                    modifier = Modifier
+//                        .fillMaxWidth(),
+//                    abilities = abilities
+//                )
+//                Spacer(modifier = Modifier.height(8.dp))
+//                Column(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .clip(RoundedCornerShape(16.dp))
+//                        .border(4.dp, statsBorder, shape = RoundedCornerShape(16.dp))
+//                        .padding(20.dp),
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    val statSize = 26.sp
+//                    with(stats) {
+//                        Row(
+//                            modifier = Modifier
+//                                .fillMaxWidth(),
+//                            horizontalArrangement = Arrangement.SpaceAround
+//                        ) {
+//
+//                            Column {
+//                                Text("HP: $hp", fontSize = statSize)
+//                                Text("Attack: $attack", fontSize = statSize)
+//                                Text("Defense: $defense", fontSize = statSize)
+//                            }
+//                            Spacer(modifier = Modifier.width(20.dp))
+//                            Column {
+//                                Text("Sp. Atk: $specialAttack", fontSize = statSize)
+//                                Text("Sp. Def: $specialDefense", fontSize = statSize)
+//                                Text("Speed: $speed", fontSize = statSize)
+//                            }
+//
+//                        }
+//                        Spacer(modifier = Modifier.height(12.dp))
+//                        Text("Total: $total", fontSize = statSize)
+//                    }
+//                }
+//                Spacer(modifier = Modifier.height(12.dp))
+//                Row(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    horizontalArrangement = Arrangement.SpaceAround
+//                ) {
+//                    val fontSize = 24.sp
+//                    Text("Height: $height", fontSize = fontSize)
+//                    Text("Weight: $weight", fontSize = fontSize)
+//                }
+//            }
+//        }
+//    }
 }
 
 @Composable

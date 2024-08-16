@@ -13,7 +13,6 @@ class PokemonsPagingSource(
 ) : PagingSource<Int, DPokemon>() {
 
     private val pageSize = 20
-    private val limit = 20
     private val defaultOffset = 0
 
     override fun getRefreshKey(state: PagingState<Int, DPokemon>): Int? {
@@ -25,7 +24,7 @@ class PokemonsPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, DPokemon> {
         try {
             val offset = params.key ?: defaultOffset
-            val response = pokemonService.pokemons(offset, limit)
+            val response = pokemonService.pokemons(offset, pageSize)
 
             if (response.isSuccessful) {
                 val pokemons: List<DPokemon> = response.body()!!.results

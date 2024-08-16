@@ -2,10 +2,12 @@ package com.hgshkt.pokedex.data.mapper
 
 import com.hgshkt.domain.model.Ability
 import com.hgshkt.domain.model.Pokemon
+import com.hgshkt.domain.model.SimplePokemon
 import com.hgshkt.domain.model.Stats
 import com.hgshkt.domain.model.Type
 import com.hgshkt.pokedex.data.model.UiPokemon
 import com.hgshkt.pokedex.data.model.UiPokemonAbility
+import com.hgshkt.pokedex.data.model.UiSimplePokemon
 import com.hgshkt.pokedex.data.model.UiStats
 import com.hgshkt.pokedex.data.model.UiType
 
@@ -15,6 +17,18 @@ fun Pokemon.toUi(): UiPokemon {
         name = name,
         imageUrl = imageUrl,
         abilities = abilities.map { it.toUi() },
+        types = types.map { it.toUi() },
+        stats = stats.toUi(),
+        weight = weight,
+        height = height
+    )
+}
+
+fun SimplePokemon.toUi(): UiSimplePokemon {
+    return UiSimplePokemon(
+        id = id,
+        name = name,
+        imageUrl = imageUrl,
         types = types.map { it.toUi() },
         stats = stats.toUi(),
         weight = weight,

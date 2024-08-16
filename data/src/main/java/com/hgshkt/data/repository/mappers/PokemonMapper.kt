@@ -10,6 +10,7 @@ import com.hgshkt.domain.data.model.DType
 import com.hgshkt.domain.data.model.DType.*
 import com.hgshkt.domain.model.Ability
 import com.hgshkt.domain.model.Pokemon
+import com.hgshkt.domain.model.SimplePokemon
 import com.hgshkt.domain.model.Type
 
 fun FinalPokemonDTO.toDPokemon(): DPokemon {
@@ -64,6 +65,31 @@ fun PokemonEntity.toPokemon(abilities: List<Ability>): Pokemon {
         name = name,
         imageUrl = imageUrl,
         abilities = abilities,
+        types = types,
+        stats = stats,
+        weight = weight,
+        height = height
+    )
+}
+
+fun PokemonEntity.toSimplePokemon(): SimplePokemon {
+    val types = mutableListOf<Type>()
+    type1name?.let { types.add(typeByName(it)) }
+    type2name?.let { types.add(typeByName(it)) }
+
+    val stats = com.hgshkt.domain.model.Stats(
+        hp = hp,
+        attack = attack,
+        defense = defense,
+        specialAttack = specialAttack,
+        specialDefense = specialDefense,
+        speed = speed
+    )
+
+    return SimplePokemon(
+        id = id,
+        name = name,
+        imageUrl = imageUrl,
         types = types,
         stats = stats,
         weight = weight,

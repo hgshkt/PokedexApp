@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hgshkt.pokedex.data.model.UiPokemon
+import com.hgshkt.pokedex.data.model.UiSimplePokemon
 import com.hgshkt.pokedex.ui.custom.image.PokemonImage
 import com.hgshkt.pokedex.ui.custom.text.AutoResizedText
 import com.hgshkt.pokedex.ui.theme.pokemonCardColors
@@ -22,7 +23,7 @@ import com.hgshkt.pokedex.ui.theme.pokemonNameStyle
 
 @Composable
 fun PokemonCard(
-    pokemon: UiPokemon?,
+    pokemon: UiSimplePokemon?,
     modifier: Modifier = Modifier,
     onItemClick: () -> Unit
 ) {
