@@ -49,4 +49,8 @@ class PokemonLocalStorageImpl(
     override suspend fun getAbility(abilityId: Int): AbilityEntity? {
         return abilityDao.get(abilityId)
     }
+
+    override fun getPokemon(id: Int): PokemonEntity? {
+        return pokemonDao.get(id).first()
+    }
 }

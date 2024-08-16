@@ -25,4 +25,9 @@ class AbilityRemoteStorageImpl(
 
         return null
     }
+
+    override suspend fun getAbility(url: String): ResponseAbility? {
+        val abilityId = url.split('/').last { it.isNotEmpty() }
+        return getAbility(abilityId)
+    }
 }

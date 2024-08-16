@@ -13,4 +13,5 @@ interface PokemonLocalStorage {
     suspend fun getAbilityRefsForPokemon(id: Int): List<PokemonAbilityCrossRef>
     suspend fun saveAbility(abilityEntity: AbilityEntity)
     suspend fun getAbility(abilityId: Int): AbilityEntity?
+    fun getPokemon(id: Int): PokemonEntity?
 }

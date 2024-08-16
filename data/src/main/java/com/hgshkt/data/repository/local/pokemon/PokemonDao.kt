@@ -15,4 +15,7 @@ interface PokemonDao {
 
     @Query("DELETE FROM pokemons")
     suspend fun deleteAll()
+
+    @Query("SELECT * FROM pokemons WHERE id=:id")
+    fun get(id: Int): List<PokemonEntity?>
 }

@@ -8,11 +8,15 @@ import androidx.paging.map
 import com.hgshkt.data.repository.local.PokemonLocalStorage
 import com.hgshkt.data.repository.local.PokemonDatabase
 import com.hgshkt.data.repository.mappers.toAbility
+import com.hgshkt.data.repository.mappers.toDPokemon
 import com.hgshkt.data.repository.mappers.toEntity
 import com.hgshkt.data.repository.mappers.toPokemon
 import com.hgshkt.data.repository.mappers.toSimplePokemon
+import com.hgshkt.data.repository.remote.PokemonRemoteStorage
 import com.hgshkt.data.repository.remote.ability.AbilityRemoteStorage
 import com.hgshkt.domain.data.PokemonRepository
+import com.hgshkt.domain.data.PokemonResponse
+import com.hgshkt.domain.data.mapper.toPokemon
 import com.hgshkt.domain.model.Ability
 import com.hgshkt.domain.model.Pokemon
 import com.hgshkt.domain.model.SimplePokemon
@@ -24,7 +28,8 @@ class PokemonRepositoryImpl(
     private val remoteMediator: PokemonRemoteMediator,
     private val pokemonDatabase: PokemonDatabase,
     private val abilityRemoteStorage: AbilityRemoteStorage,
-    private val pokemonLocalStorage: PokemonLocalStorage
+    private val pokemonLocalStorage: PokemonLocalStorage,
+    private val pokemonRemoteStorage: PokemonRemoteStorage
 ) : PokemonRepository {
 
     override suspend fun getPokemons(): Flow<PagingData<SimplePokemon>> {
@@ -40,5 +45,35 @@ class PokemonRepositoryImpl(
                     pokemonEntity.toSimplePokemon()
                 }
             }
+    }
+
+    override suspend fun getPokemon(id: Int): PokemonResponse<Pokemon> {
+        // try loading from local storage
+        with(pokemonLocalStorage) {
+            getPokemon(id)?.let {
+                val abilities = getAbilityRefsForPokemon(id).mapNotNull { ability ->
+                        getAbility(ability.abilityId)?.toAbility()
+                    }
+
+                return PokemonResponse.Success(it.toPokemon(abilities))
+            }
+        }
+
+        // in other case load from remote storage
+        val response = pokemonRemoteStorage.getPokemon(id)
+        if(response.isSuccessful) {
+            val body = response.body()!!
+            val abilities = body.abilities.map {
+                // load ability from api
+                abilityRemoteStorage.getAbility(it.ability?.url!!).also { ability ->
+                    // save ability to local db
+                    pokemonLocalStorage.saveAbility(ability!!.toAbility().toEntity())
+                }
+            }
+            val pokemon = body.toDPokemon().toPokemon(abilities.map { it!!.toAbility() })
+            return PokemonResponse.Success(pokemon)
+        } else {
+            return PokemonResponse.Error(response.message())
+        }
     }
 }

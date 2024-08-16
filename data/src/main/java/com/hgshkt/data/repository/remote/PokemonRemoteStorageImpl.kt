@@ -5,6 +5,7 @@ import com.hgshkt.data.repository.remote.pokemon.network.PokemonApiService
 import com.hgshkt.data.repository.remote.pokemon.network.model.PokemonFromResponseDTO
 import com.hgshkt.data.repository.remote.pokemon.network.model.finalPokemon.FinalPokemonDTO
 import retrofit2.HttpException
+import retrofit2.Response
 
 class PokemonRemoteStorageImpl(
     private val pokemonApiService: PokemonApiService
@@ -24,6 +25,10 @@ class PokemonRemoteStorageImpl(
         } else
             RSResponse.Error(HttpException(response))
 
+    }
+
+    override suspend fun getPokemon(id: Int): Response<FinalPokemonDTO> {
+        return pokemonApiService.pokemon(id)
     }
 
     private suspend fun loadFinalPokemon(

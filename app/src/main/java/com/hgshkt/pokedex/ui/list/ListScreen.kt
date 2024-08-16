@@ -25,6 +25,8 @@ import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import com.hgshkt.pokedex.R
 import com.hgshkt.pokedex.data.model.UiSimplePokemon
+import com.hgshkt.pokedex.ui.custom.ErrorBox
+import com.hgshkt.pokedex.ui.custom.LoadingBox
 import com.hgshkt.pokedex.ui.listDetail.PokemonSaver
 
 @Composable
@@ -67,33 +69,3 @@ fun ListScreen(
     }
 }
 
-@Composable
-fun ErrorBox() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(text = "Something went wrong...", fontSize = 25.sp)
-            Image(
-                painter = painterResource(R.drawable.error_image),
-                modifier = Modifier.size(100.dp),
-                contentDescription = "sad pikachu"
-            )
-        }
-    }
-}
-
-@Composable
-private fun LoadingBox() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator()
-    }
-}

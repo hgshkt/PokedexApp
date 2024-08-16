@@ -20,6 +20,7 @@ import com.hgshkt.data.repository.remote.ability.AbilityRemoteStorageImpl
 import com.hgshkt.data.repository.remote.ability.network.AbilityApiService
 import com.hgshkt.data.repository.remote.pokemon.network.PokemonApiService
 import com.hgshkt.domain.data.PokemonRepository
+import com.hgshkt.domain.useCases.LoadPokemonByIdUseCase
 import com.hgshkt.domain.useCases.LoadPokemonsUseCase
 import com.hgshkt.pokedex.ui.list.ListUseCases
 import dagger.Binds
@@ -54,6 +55,14 @@ class AppModule {
 
     @Provides
     @Singleton
+    fun provideLoadPokemonUseCase(
+        pokemonRepository: PokemonRepository
+    ): LoadPokemonByIdUseCase {
+        return LoadPokemonByIdUseCase(pokemonRepository)
+    }
+
+    @Provides
+    @Singleton
     fun provideLoadPokemonsUseCase(
         pokemonRepository: PokemonRepository
     ): LoadPokemonsUseCase {
@@ -66,13 +75,15 @@ class AppModule {
         pokemonRemoteMediator: PokemonRemoteMediator,
         pokemonDatabase: PokemonDatabase,
         abilityRemoteStorage: AbilityRemoteStorage,
-        pokemonLocalStorage: PokemonLocalStorage
+        pokemonLocalStorage: PokemonLocalStorage,
+        pokemonRemoteStorage: PokemonRemoteStorage
     ): PokemonRepositoryImpl {
         return PokemonRepositoryImpl(
             remoteMediator = pokemonRemoteMediator,
             pokemonDatabase = pokemonDatabase,
             abilityRemoteStorage = abilityRemoteStorage,
-            pokemonLocalStorage = pokemonLocalStorage
+            pokemonLocalStorage = pokemonLocalStorage,
+            pokemonRemoteStorage = pokemonRemoteStorage
         )
     }
 

@@ -4,4 +4,5 @@ import com.hgshkt.data.repository.remote.ability.network.model.ability.ResponseA
 
 interface AbilityRemoteStorage {
     suspend fun getAbility(id: Int): ResponseAbility?
+    suspend fun getAbility(url: String): ResponseAbility?
 }
