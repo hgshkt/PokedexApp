@@ -22,7 +22,7 @@ fun PokemonImage(
     SubcomposeAsyncImage(
         modifier = modifier,
         model = url,
-        colorFilter = ColorFilter.tint(Color.Gray),
+//        colorFilter = ColorFilter.tint(Color.Gray),
         contentDescription = contentDescription,
         loading = {
             Box(
