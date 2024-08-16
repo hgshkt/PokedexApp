@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.hgshkt.data.repository.PokemonRemoteMediator
 import com.hgshkt.data.repository.PokemonRepositoryImpl
-import com.hgshkt.data.repository.PokemonsPagingSource
+//import com.hgshkt.data.repository.PokemonsPagingSource
 import com.hgshkt.data.repository.local.PokemonDatabase
 import com.hgshkt.data.repository.local.PokemonLocalStorage
 import com.hgshkt.data.repository.local.PokemonLocalStorageImpl
@@ -18,9 +18,7 @@ import com.hgshkt.data.repository.remote.PokemonRemoteStorageImpl
 import com.hgshkt.data.repository.remote.ability.AbilityRemoteStorage
 import com.hgshkt.data.repository.remote.ability.AbilityRemoteStorageImpl
 import com.hgshkt.data.repository.remote.ability.network.AbilityApiService
-import com.hgshkt.data.repository.remote.pokemon.PokemonRemoteRepositoryImpl
 import com.hgshkt.data.repository.remote.pokemon.network.PokemonApiService
-import com.hgshkt.domain.data.PokemonRemoteRepository
 import com.hgshkt.domain.data.PokemonRepository
 import com.hgshkt.domain.useCases.LoadPokemonsUseCase
 import com.hgshkt.pokedex.ui.list.ListUseCases
@@ -60,14 +58,6 @@ class AppModule {
         pokemonRepository: PokemonRepository
     ): LoadPokemonsUseCase {
         return LoadPokemonsUseCase(pokemonRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun providePokemonRemoteRepositoryImpl(
-        pokemonsPagingSource: PokemonsPagingSource
-    ): PokemonRemoteRepositoryImpl {
-        return PokemonRemoteRepositoryImpl(pokemonsPagingSource)
     }
 
     @Provides
@@ -124,14 +114,6 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun providePokemonsPagingSource(
-        pokemonApiService: PokemonApiService
-    ): PokemonsPagingSource {
-        return PokemonsPagingSource(pokemonApiService)
-    }
-
-    @Provides
-    @Singleton
     fun provideRetrofitClient(
         networkInterceptor: NetworkInterceptor
     ): RetrofitClient {
@@ -174,11 +156,6 @@ class AppModule {
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class Binder {
-    @Binds
-    abstract fun bindPokemonRemoteRepository(
-        pokemonRemoteRepositoryImpl: PokemonRemoteRepositoryImpl
-    ): PokemonRemoteRepository
-
     @Binds
     abstract fun bindAbilityRemoteRepository(
         abilityRemoteRepositoryImpl: AbilityRemoteStorageImpl

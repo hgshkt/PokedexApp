@@ -34,21 +34,19 @@ fun ListScreen(
 ) {
     val pokemons: LazyPagingItems<UiSimplePokemon> =
         viewModel.pokemonsState.collectAsLazyPagingItems()
-    
-    if (
-        pokemons.itemCount == 0
-    ) {
-        LoadingBox()
-    } 
-    
-    else if (
-        pokemons.loadState.append is LoadState.Error
-        || pokemons.loadState.refresh is LoadState.Error
-        || pokemons.loadState.prepend is LoadState.Error
-    ) {
-        ErrorBox()
-    } 
-    
+
+    if(pokemons.itemCount == 0) {
+        if (
+            pokemons.loadState.append is LoadState.Error
+            || pokemons.loadState.refresh is LoadState.Error
+            || pokemons.loadState.prepend is LoadState.Error
+        ) {
+            ErrorBox()
+        } else {
+            LoadingBox()
+        }
+    }
+
     else {
         LazyVerticalGrid(
             modifier = Modifier.wrapContentWidth(),
