@@ -46,43 +46,11 @@ private val pokemonNameStyle = TextStyle(fontSize = 40.sp, fontWeight = FontWeig
 private val abilityBackground = Color(0xFFD3F0FF)
 private val statsBorder = Color(0xFFD3F0FF)
 
-@Preview
-@Composable
-fun DetailScreenPreview() {
-    val pokemon = UiPokemon(
-        id = 1,
-        name = "Name",
-        imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png",
-        abilities = listOf(
-            UiPokemonAbility(id = 1, name = "First Ability", effect = "First ability do something"),
-            UiPokemonAbility(
-                id = 1,
-                name = "Second Ability",
-                effect = "Second ability do something"
-            ),
-        ),
-        types = listOf(UiType.POISON, UiType.DARK),
-        stats = UiStats(
-            hp = 13,
-            attack = 45,
-            defense = 100,
-            specialAttack = 99,
-            specialDefense = 75,
-            speed = 26
-        ),
-        weight = 10,
-        height = 90
-    )
-//    DetailScreen(pokemon)
-}
-
 @Composable
 fun DetailScreen(
     id: Int,
     viewModel: DetailViewModel = hiltViewModel()
 ) {
-
-
     when (val state = viewModel.state.collectAsState().value) {
         is DetailViewModel.DetailViewModelState.Loading ->
             LoadingBox()
@@ -131,39 +99,7 @@ fun DetailScreen(
                         abilities = abilities
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(16.dp))
-                            .border(4.dp, statsBorder, shape = RoundedCornerShape(16.dp))
-                            .padding(20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        val statSize = 26.sp
-                        with(stats) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceAround
-                            ) {
-
-                                Column {
-                                    Text("HP: $hp", fontSize = statSize)
-                                    Text("Attack: $attack", fontSize = statSize)
-                                    Text("Defense: $defense", fontSize = statSize)
-                                }
-                                Spacer(modifier = Modifier.width(20.dp))
-                                Column {
-                                    Text("Sp. Atk: $specialAttack", fontSize = statSize)
-                                    Text("Sp. Def: $specialDefense", fontSize = statSize)
-                                    Text("Speed: $speed", fontSize = statSize)
-                                }
-
-                            }
-                            Spacer(modifier = Modifier.height(12.dp))
-                            Text("Total: $total", fontSize = statSize)
-                        }
-                    }
+                    StatsLayer(stats)
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -201,6 +137,49 @@ fun PokemonType(type: UiType) {
 }
 
 @Composable
+fun Border(content: @Composable () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .border(4.dp, statsBorder, shape = RoundedCornerShape(16.dp))
+            .padding(20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        content()
+    }
+}
+
+@Composable
+fun StatsLayer(stats: UiStats, modifier: Modifier = Modifier) {
+    Border {
+        val statSize = 26.sp
+        with(stats) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+
+                Column {
+                    Text("HP: $hp", fontSize = statSize)
+                    Text("Attack: $attack", fontSize = statSize)
+                    Text("Defense: $defense", fontSize = statSize)
+                }
+                Spacer(modifier = Modifier.width(20.dp))
+                Column {
+                    Text("Sp. Atk: $specialAttack", fontSize = statSize)
+                    Text("Sp. Def: $specialDefense", fontSize = statSize)
+                    Text("Speed: $speed", fontSize = statSize)
+                }
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Text("Total: $total", fontSize = statSize)
+        }
+    }
+}
+
+@Composable
 fun AbilityList(modifier: Modifier, abilities: List<UiPokemonAbility>) {
     Column(
         modifier = modifier,
@@ -214,7 +193,7 @@ fun AbilityList(modifier: Modifier, abilities: List<UiPokemonAbility>) {
                         .fillMaxWidth()
                         .padding(vertical = 4.dp)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(abilityBackground)
+                        .border(3.dp, abilityBackground, RoundedCornerShape(5))
                         .padding(8.dp),
                 ) {
                     Text(ability.name, fontSize = 26.sp, fontWeight = FontWeight.Bold)
