@@ -4,14 +4,33 @@ import com.hgshkt.data.repository.local.pokemon.PokemonEntity
 import com.hgshkt.data.repository.remote.pokemon.network.model.finalPokemon.FinalPokemonDTO
 import com.hgshkt.data.repository.remote.pokemon.network.model.finalPokemon.Stats
 import com.hgshkt.data.repository.remote.pokemon.network.model.finalPokemon.Types
+import com.hgshkt.data.util.formatName
 import com.hgshkt.domain.data.model.DPokemon
 import com.hgshkt.domain.data.model.DStats
 import com.hgshkt.domain.data.model.DType
-import com.hgshkt.domain.data.model.DType.*
+import com.hgshkt.domain.data.model.DType.BUG
+import com.hgshkt.domain.data.model.DType.DARK
+import com.hgshkt.domain.data.model.DType.DRAGON
+import com.hgshkt.domain.data.model.DType.ELECTRIC
+import com.hgshkt.domain.data.model.DType.FAIRY
+import com.hgshkt.domain.data.model.DType.FIGHTING
+import com.hgshkt.domain.data.model.DType.FIRE
+import com.hgshkt.domain.data.model.DType.FLYING
+import com.hgshkt.domain.data.model.DType.GHOST
+import com.hgshkt.domain.data.model.DType.GRASS
+import com.hgshkt.domain.data.model.DType.GROUND
+import com.hgshkt.domain.data.model.DType.ICE
+import com.hgshkt.domain.data.model.DType.NORMAL
+import com.hgshkt.domain.data.model.DType.PHYSIC
+import com.hgshkt.domain.data.model.DType.POISON
+import com.hgshkt.domain.data.model.DType.ROCK
+import com.hgshkt.domain.data.model.DType.STEEL
+import com.hgshkt.domain.data.model.DType.WATER
 import com.hgshkt.domain.model.Ability
 import com.hgshkt.domain.model.Pokemon
 import com.hgshkt.domain.model.SimplePokemon
 import com.hgshkt.domain.model.Type
+import java.util.Locale
 
 fun FinalPokemonDTO.toDPokemon(): DPokemon {
     return DPokemon(
@@ -28,10 +47,14 @@ fun FinalPokemonDTO.toDPokemon(): DPokemon {
     )
 }
 
-fun FinalPokemonDTO.toEntity(): PokemonEntity {
+fun FinalPokemonDTO.toEntity(format: Boolean = true): PokemonEntity {
     return PokemonEntity(
         id = id ?: -1,
-        name = name ?: "null name",
+        name = if (format)
+            name?.formatName()
+        else {
+            name
+        } ?: "null name",
         imageUrl = sprites?.other?.officialArtwork?.frontDefault ?: "null imageUrl",
         type1name = types.getOrNull(0)?.type?.name,
         type2name = types.getOrNull(1)?.type?.name,
@@ -88,7 +111,7 @@ fun PokemonEntity.toSimplePokemon(): SimplePokemon {
 
     return SimplePokemon(
         id = id,
-        name = name,
+        name = name.capitalize(Locale.ROOT).replace('-', ' '),
         imageUrl = imageUrl,
         types = types,
         stats = stats,
@@ -127,7 +150,7 @@ private fun <T> List<T>.getOrNull(index: Int): T? {
 }
 
 /**
-    Map Stats from Pokemon json model to Dstats
+Map Stats from Pokemon json model to Dstats
  */
 fun ArrayList<Stats>.toDStats(): DStats {
     return DStats(

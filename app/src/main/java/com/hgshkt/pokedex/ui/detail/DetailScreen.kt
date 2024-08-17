@@ -55,7 +55,11 @@ fun DetailScreenPreview() {
         imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png",
         abilities = listOf(
             UiPokemonAbility(id = 1, name = "First Ability", effect = "First ability do something"),
-            UiPokemonAbility(id = 1, name = "Second Ability", effect = "Second ability do something"),
+            UiPokemonAbility(
+                id = 1,
+                name = "Second Ability",
+                effect = "Second ability do something"
+            ),
         ),
         types = listOf(UiType.POISON, UiType.DARK),
         stats = UiStats(
@@ -79,15 +83,18 @@ fun DetailScreen(
 ) {
 
 
-    when(val state = viewModel.state.collectAsState().value) {
+    when (val state = viewModel.state.collectAsState().value) {
         is DetailViewModel.DetailViewModelState.Loading ->
             LoadingBox()
 
         is DetailViewModel.DetailViewModelState.Error ->
             ErrorBox(state.message)
 
-        is DetailViewModel.DetailViewModelState.Success -> with(state.pokemon){
-            Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        is DetailViewModel.DetailViewModelState.Success -> with(state.pokemon) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 PokemonImage(
                     url = imageUrl,
                     contentDescription = "pokemon image",
@@ -200,18 +207,22 @@ fun AbilityList(modifier: Modifier, abilities: List<UiPokemonAbility>) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = "Abilities:", fontSize = 26.sp)
-        abilities.forEach { ability ->
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(abilityBackground)
-                    .padding(8.dp),
-            ) {
-                Text(ability.name, fontSize = 26.sp, fontWeight = FontWeight.Bold)
-                Text(ability.effect, fontSize = 22.sp)
+        if (abilities.isNotEmpty()) {
+            abilities.forEach { ability ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(abilityBackground)
+                        .padding(8.dp),
+                ) {
+                    Text(ability.name, fontSize = 26.sp, fontWeight = FontWeight.Bold)
+                    Text(ability.effect, fontSize = 22.sp)
+                }
             }
+        } else {
+            Text("Abilities are missing.", fontSize = 20.sp)
         }
     }
 }

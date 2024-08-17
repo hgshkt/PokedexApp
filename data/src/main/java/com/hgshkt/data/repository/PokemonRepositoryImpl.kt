@@ -5,10 +5,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.hgshkt.data.repository.local.PokemonLocalStorage
 import com.hgshkt.data.repository.local.PokemonDatabase
-import com.hgshkt.data.repository.local.ability.AbilityEntity
-import com.hgshkt.data.repository.local.ability.ref.PokemonAbilityCrossRef
+import com.hgshkt.data.repository.local.PokemonLocalStorage
 import com.hgshkt.data.repository.mappers.toAbility
 import com.hgshkt.data.repository.mappers.toDPokemon
 import com.hgshkt.data.repository.mappers.toEntity
@@ -53,11 +51,8 @@ class PokemonRepositoryImpl(
         // try loading from local storage
         with(pokemonLocalStorage) {
             getPokemon(id)?.let {
-                val abilities = getAbilityRefsForPokemon(id).map { ref ->
-                    val ability = getAbility(ref.abilityId) ?:
-                        abilityRemoteStorage.getAbility(ref.abilityId)!!.toAbility().toEntity()
-
-                    ability.toAbility()
+                val abilities = getAbilityRefsForPokemon(id).mapNotNull { ref ->
+                    loadAbilityById(ref.abilityId)
                 }
 
                 return PokemonResponse.Success(it.toPokemon(abilities))
@@ -79,6 +74,23 @@ class PokemonRepositoryImpl(
             return PokemonResponse.Success(pokemon)
         } else {
             return PokemonResponse.Error(response.message())
+        }
+    }
+
+    private suspend fun loadAbilityById(abilityId: Int): Ability? {
+        val localAbility = pokemonLocalStorage.getAbility(abilityId)
+
+        if (localAbility == null) {
+            val remoteAbility = abilityRemoteStorage.getAbility(abilityId)?.toAbility()?.toEntity()
+
+            remoteAbility?.let { remoteAbilityNotNull ->
+                pokemonLocalStorage.saveAbility(remoteAbilityNotNull)
+                return remoteAbility.toAbility()
+            }
+            return null
+        }
+        else {
+            return localAbility.toAbility()
         }
     }
 }

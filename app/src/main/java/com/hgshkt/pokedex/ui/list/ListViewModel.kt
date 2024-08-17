@@ -6,7 +6,6 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.hgshkt.pokedex.data.mapper.toUi
-import com.hgshkt.pokedex.data.model.UiPokemon
 import com.hgshkt.pokedex.data.model.UiSimplePokemon
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

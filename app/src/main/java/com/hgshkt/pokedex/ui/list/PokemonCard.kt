@@ -45,7 +45,7 @@ fun PokemonCard(
                 ) {
                     PokemonImage(modifier = Modifier.fillMaxSize(), url = pokemon.imageUrl)
                     Text("№${pokemon.id}")
-                    AutoResizedText(pokemon.name.uppercase(), style = pokemonNameStyle)
+                    AutoResizedText(pokemon.name, style = pokemonNameStyle)
                 }
             }
         }
