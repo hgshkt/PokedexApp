@@ -34,15 +34,15 @@ class PokemonRemoteMediator(
                 }
             }
 
-            val rsresponse = pokemonRemoteStorage.getPokemons(offset, 20)
+            val response = pokemonRemoteStorage.getPokemons(offset, 20)
 
-            when (rsresponse) {
+            when (response) {
                 is PokemonRemoteStorage.RSResponse.PokemonSuccess -> {
-                    return handleSuccessfulResponse(rsresponse.pokemons, loadType)
+                    return handleSuccessfulResponse(response.pokemons, loadType)
                 }
 
                 is PokemonRemoteStorage.RSResponse.Error -> {
-                    MediatorResult.Error(rsresponse.httpException)
+                    MediatorResult.Error(response.httpException)
                 }
             }
         } catch (e: IOException) {

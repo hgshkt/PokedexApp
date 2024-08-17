@@ -7,6 +7,8 @@ import androidx.paging.PagingData
 import androidx.paging.map
 import com.hgshkt.data.repository.local.PokemonLocalStorage
 import com.hgshkt.data.repository.local.PokemonDatabase
+import com.hgshkt.data.repository.local.ability.AbilityEntity
+import com.hgshkt.data.repository.local.ability.ref.PokemonAbilityCrossRef
 import com.hgshkt.data.repository.mappers.toAbility
 import com.hgshkt.data.repository.mappers.toDPokemon
 import com.hgshkt.data.repository.mappers.toEntity
@@ -51,9 +53,12 @@ class PokemonRepositoryImpl(
         // try loading from local storage
         with(pokemonLocalStorage) {
             getPokemon(id)?.let {
-                val abilities = getAbilityRefsForPokemon(id).mapNotNull { ability ->
-                        getAbility(ability.abilityId)?.toAbility()
-                    }
+                val abilities = getAbilityRefsForPokemon(id).map { ref ->
+                    val ability = getAbility(ref.abilityId) ?:
+                        abilityRemoteStorage.getAbility(ref.abilityId)!!.toAbility().toEntity()
+
+                    ability.toAbility()
+                }
 
                 return PokemonResponse.Success(it.toPokemon(abilities))
             }
@@ -61,7 +66,7 @@ class PokemonRepositoryImpl(
 
         // in other case load from remote storage
         val response = pokemonRemoteStorage.getPokemon(id)
-        if(response.isSuccessful) {
+        if (response.isSuccessful) {
             val body = response.body()!!
             val abilities = body.abilities.map {
                 // load ability from api
