@@ -14,8 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.hgshkt.pokedex.data.model.UiPokemon
-import com.hgshkt.pokedex.data.model.UiSimplePokemon
+import com.hgshkt.pokedex.ui.data.model.UiPokemon
+import com.hgshkt.pokedex.ui.data.model.UiSimplePokemon
 import com.hgshkt.pokedex.ui.custom.image.PokemonImage
 import com.hgshkt.pokedex.ui.custom.text.AutoResizedText
 import com.hgshkt.pokedex.ui.theme.pokemonCardColors

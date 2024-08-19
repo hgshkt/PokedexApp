@@ -1,4 +1,4 @@
-package com.hgshkt.pokedex.di
+package com.hgshkt.pokedex.app.di
 
 import android.content.Context
 import androidx.room.Room
@@ -21,7 +21,7 @@ import com.hgshkt.data.repository.remote.ability.network.AbilityApiService
 import com.hgshkt.data.repository.remote.pokemon.network.PokemonApiService
 import com.hgshkt.domain.data.PokemonRepository
 import com.hgshkt.domain.useCases.LoadPokemonByIdUseCase
-import com.hgshkt.domain.useCases.LoadPokemonsUseCase
+import com.hgshkt.domain.useCases.PagedLoadPokemonsUseCase
 import com.hgshkt.pokedex.ui.list.ListUseCases
 import dagger.Binds
 import dagger.Module
@@ -48,9 +48,9 @@ class AppModule {
     @Provides
     @Singleton
     fun provideListUseCases(
-        loadPokemonsUseCase: LoadPokemonsUseCase
+        pagedLoadPokemonsUseCase: PagedLoadPokemonsUseCase
     ): ListUseCases {
-        return ListUseCases(loadPokemonsUseCase)
+        return ListUseCases(pagedLoadPokemonsUseCase)
     }
 
     @Provides
@@ -65,8 +65,8 @@ class AppModule {
     @Singleton
     fun provideLoadPokemonsUseCase(
         pokemonRepository: PokemonRepository
-    ): LoadPokemonsUseCase {
-        return LoadPokemonsUseCase(pokemonRepository)
+    ): PagedLoadPokemonsUseCase {
+        return PagedLoadPokemonsUseCase(pokemonRepository)
     }
 
     @Provides

@@ -2,10 +2,10 @@ package com.hgshkt.pokedex.ui.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hgshkt.domain.data.PokemonResponse
+import com.hgshkt.domain.data.Result
 import com.hgshkt.domain.useCases.LoadPokemonByIdUseCase
-import com.hgshkt.pokedex.data.mapper.toUi
-import com.hgshkt.pokedex.data.model.UiPokemon
+import com.hgshkt.pokedex.ui.data.mapper.toUi
+import com.hgshkt.pokedex.ui.data.model.UiPokemon
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,10 +25,10 @@ class DetailViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _state.emit(
                 when (val res = loadPokemonByIdUseCase.execute(id)) {
-                    is PokemonResponse.Success ->
+                    is com.hgshkt.domain.data.PokemonResponse.Result.Success ->
                         DetailViewModelState.Success(res.value.toUi())
 
-                    is PokemonResponse.Error ->
+                    is com.hgshkt.domain.data.PokemonResponse.Result.Error ->
                         DetailViewModelState.Error(res.msg)
                 }
             )

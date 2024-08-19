@@ -1,4 +1,4 @@
-package com.hgshkt.pokedex.di
+package com.hgshkt.pokedex.app.di
 
 import com.hgshkt.data.repository.local.pokemon.PokemonDao
 import com.hgshkt.data.repository.local.PokemonDatabase

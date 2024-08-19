@@ -1,4 +1,4 @@
-package com.hgshkt.pokedex.data.model
+package com.hgshkt.pokedex.ui.data.model
 
 import android.os.Parcelable
 import androidx.compose.ui.graphics.Color

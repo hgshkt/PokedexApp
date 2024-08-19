@@ -1,4 +1,4 @@
-package com.hgshkt.pokedex
+package com.hgshkt.pokedex.app
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

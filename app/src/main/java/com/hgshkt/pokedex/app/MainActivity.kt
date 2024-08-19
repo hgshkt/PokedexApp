@@ -1,4 +1,4 @@
-package com.hgshkt.pokedex
+package com.hgshkt.pokedex.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

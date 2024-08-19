@@ -31,10 +31,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hgshkt.domain.model.Ability
-import com.hgshkt.pokedex.data.model.UiPokemon
-import com.hgshkt.pokedex.data.model.UiPokemonAbility
-import com.hgshkt.pokedex.data.model.UiStats
-import com.hgshkt.pokedex.data.model.UiType
+import com.hgshkt.pokedex.ui.data.model.UiPokemon
+import com.hgshkt.pokedex.ui.data.model.UiPokemonAbility
+import com.hgshkt.pokedex.ui.data.model.UiStats
+import com.hgshkt.pokedex.ui.data.model.UiType
 import com.hgshkt.pokedex.ui.custom.ErrorBox
 import com.hgshkt.pokedex.ui.custom.LoadingBox
 import com.hgshkt.pokedex.ui.custom.image.PokemonImage

@@ -1,15 +1,15 @@
-package com.hgshkt.pokedex.data.mapper
+package com.hgshkt.pokedex.ui.data.mapper
 
 import com.hgshkt.domain.model.Ability
 import com.hgshkt.domain.model.Pokemon
 import com.hgshkt.domain.model.SimplePokemon
 import com.hgshkt.domain.model.Stats
 import com.hgshkt.domain.model.Type
-import com.hgshkt.pokedex.data.model.UiPokemon
-import com.hgshkt.pokedex.data.model.UiPokemonAbility
-import com.hgshkt.pokedex.data.model.UiSimplePokemon
-import com.hgshkt.pokedex.data.model.UiStats
-import com.hgshkt.pokedex.data.model.UiType
+import com.hgshkt.pokedex.ui.data.model.UiPokemon
+import com.hgshkt.pokedex.ui.data.model.UiPokemonAbility
+import com.hgshkt.pokedex.ui.data.model.UiSimplePokemon
+import com.hgshkt.pokedex.ui.data.model.UiStats
+import com.hgshkt.pokedex.ui.data.model.UiType
 
 fun Pokemon.toUi(): UiPokemon {
     return UiPokemon(

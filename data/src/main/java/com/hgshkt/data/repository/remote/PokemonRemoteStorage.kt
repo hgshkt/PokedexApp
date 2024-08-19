@@ -1,7 +1,6 @@
 package com.hgshkt.data.repository.remote
 
 import com.hgshkt.data.repository.remote.pokemon.network.model.finalPokemon.FinalPokemonDTO
-import com.hgshkt.domain.data.PokemonResponse
 import retrofit2.HttpException
 import retrofit2.Response
 

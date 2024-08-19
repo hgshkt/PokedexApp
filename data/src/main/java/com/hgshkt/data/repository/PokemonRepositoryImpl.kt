@@ -15,7 +15,7 @@ import com.hgshkt.data.repository.mappers.toSimplePokemon
 import com.hgshkt.data.repository.remote.PokemonRemoteStorage
 import com.hgshkt.data.repository.remote.ability.AbilityRemoteStorage
 import com.hgshkt.domain.data.PokemonRepository
-import com.hgshkt.domain.data.PokemonResponse
+import com.hgshkt.domain.data.Result
 import com.hgshkt.domain.data.mapper.toPokemon
 import com.hgshkt.domain.model.Ability
 import com.hgshkt.domain.model.Pokemon
@@ -47,7 +47,7 @@ class PokemonRepositoryImpl(
             }
     }
 
-    override suspend fun getPokemon(id: Int): PokemonResponse<Pokemon> {
+    override suspend fun getPokemon(id: Int): Result<Pokemon> {
         // try loading from local storage
         with(pokemonLocalStorage) {
             getPokemon(id)?.let {
@@ -55,7 +55,7 @@ class PokemonRepositoryImpl(
                     loadAbilityById(ref.abilityId)
                 }
 
-                return PokemonResponse.Success(it.toPokemon(abilities))
+                return Result.Success(it.toPokemon(abilities))
             }
         }
 
@@ -71,9 +71,9 @@ class PokemonRepositoryImpl(
                 }
             }
             val pokemon = body.toDPokemon().toPokemon(abilities.map { it!!.toAbility() })
-            return PokemonResponse.Success(pokemon)
+            return Result.Success(pokemon)
         } else {
-            return PokemonResponse.Error(response.message())
+            return Result.Error(response.message())
         }
     }
 

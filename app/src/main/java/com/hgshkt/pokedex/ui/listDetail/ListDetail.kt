@@ -14,8 +14,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.hgshkt.domain.model.Pokemon
-import com.hgshkt.pokedex.data.model.UiPokemon
-import com.hgshkt.pokedex.data.model.UiSimplePokemon
+import com.hgshkt.pokedex.ui.data.model.UiPokemon
+import com.hgshkt.pokedex.ui.data.model.UiSimplePokemon
 import com.hgshkt.pokedex.ui.list.ListScreen
 import com.hgshkt.pokedex.ui.detail.DetailScreen
 
