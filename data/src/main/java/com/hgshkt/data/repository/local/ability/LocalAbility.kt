@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "abilities")
-data class AbilityEntity(
+data class LocalAbility(
     @PrimaryKey
     var id: Int,
     var name: String,

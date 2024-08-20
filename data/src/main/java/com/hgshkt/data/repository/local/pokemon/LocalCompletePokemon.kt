@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "pokemons")
-data class PokemonEntity(
+data class LocalCompletePokemon(
     @PrimaryKey var id: Int,
     var name: String,
     var imageUrl: String,

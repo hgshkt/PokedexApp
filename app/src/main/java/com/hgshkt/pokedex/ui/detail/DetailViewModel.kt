@@ -25,10 +25,10 @@ class DetailViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _state.emit(
                 when (val res = loadPokemonByIdUseCase.execute(id)) {
-                    is com.hgshkt.domain.data.PokemonResponse.Result.Success ->
+                    is Result.Success ->
                         DetailViewModelState.Success(res.value.toUi())
 
-                    is com.hgshkt.domain.data.PokemonResponse.Result.Error ->
+                    is Result.Error ->
                         DetailViewModelState.Error(res.msg)
                 }
             )

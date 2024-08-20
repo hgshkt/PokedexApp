@@ -1,17 +1,33 @@
 package com.hgshkt.data.repository.local
 
 import androidx.paging.PagingSource
-import com.hgshkt.data.repository.local.ability.AbilityEntity
+import com.hgshkt.data.repository.local.ability.LocalAbility
 import com.hgshkt.data.repository.local.ability.ref.PokemonAbilityCrossRef
-import com.hgshkt.data.repository.local.pokemon.PokemonEntity
-import com.hgshkt.domain.model.Ability
+import com.hgshkt.data.repository.local.basePokemon.LocalBasePokemon
+import com.hgshkt.data.repository.local.pokemon.LocalCompletePokemon
 
 interface PokemonLocalStorage {
-    fun pokemonsAsPagingSource(): PagingSource<Int, PokemonEntity>
-    suspend fun updatePokemonEntities(pokemonEntities: List<PokemonEntity>, refresh: Boolean)
-    suspend fun saveAbilityRef(pokemonId: Int, abilityId: Int)
+
+    // base pokemon
+    fun getBasePokemon(id: Int): LocalBasePokemon?
+    fun getBasePokemons(): List<LocalBasePokemon>?
+
+    fun saveBasePokemon(pokemon: LocalBasePokemon)
+    suspend fun saveBasePokemons(pokemons: List<LocalBasePokemon>)
+
+    // complete pokemon
+    fun pokemonsAsPagingSource(): PagingSource<Int, LocalCompletePokemon>
+    fun getPokemon(id: Int): LocalCompletePokemon?
+
+    suspend fun updateCompletePokemons(pokemonEntities: List<LocalCompletePokemon>, refresh: Boolean)
+    fun savePokemon(pokemon: LocalCompletePokemon)
+
+    // ability refs
     suspend fun getAbilityRefsForPokemon(id: Int): List<PokemonAbilityCrossRef>
-    suspend fun saveAbility(abilityEntity: AbilityEntity)
-    suspend fun getAbility(abilityId: Int): AbilityEntity?
-    fun getPokemon(id: Int): PokemonEntity?
+    suspend fun saveAbilityRef(pokemonId: Int, abilityId: Int)
+
+    // ability
+    suspend fun getAbility(abilityId: Int): LocalAbility?
+    suspend fun saveAbility(localAbility: LocalAbility)
+
 }

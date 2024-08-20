@@ -8,8 +8,8 @@ import androidx.room.Query
 @Dao
 interface AbilityDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(ability: AbilityEntity)
+    suspend fun insert(ability: LocalAbility)
 
     @Query("SELECT * FROM abilities WHERE id = :id")
-    suspend fun get(id: Int): AbilityEntity
+    suspend fun get(id: Int): LocalAbility
 }

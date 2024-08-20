@@ -1,10 +1,13 @@
 package com.hgshkt.data.repository.mappers
 
-import com.hgshkt.data.repository.local.pokemon.PokemonEntity
-import com.hgshkt.data.repository.remote.pokemon.network.model.finalPokemon.FinalPokemonDTO
+import com.hgshkt.data.repository.local.basePokemon.LocalBasePokemon
+import com.hgshkt.data.repository.local.pokemon.LocalCompletePokemon
+import com.hgshkt.data.repository.remote.pokemon.network.model.RemoteBasePokemon
+import com.hgshkt.data.repository.remote.pokemon.network.model.finalPokemon.RemoteCompletePokemon
 import com.hgshkt.data.repository.remote.pokemon.network.model.finalPokemon.Stats
 import com.hgshkt.data.repository.remote.pokemon.network.model.finalPokemon.Types
 import com.hgshkt.data.util.formatName
+import com.hgshkt.data.util.lastParamFromUrl
 import com.hgshkt.domain.data.model.DPokemon
 import com.hgshkt.domain.data.model.DStats
 import com.hgshkt.domain.data.model.DType
@@ -32,7 +35,7 @@ import com.hgshkt.domain.model.SimplePokemon
 import com.hgshkt.domain.model.Type
 import java.util.Locale
 
-fun FinalPokemonDTO.toDPokemon(): DPokemon {
+fun RemoteCompletePokemon.toDPokemon(): DPokemon {
     return DPokemon(
         id = id ?: -1,
         name = name ?: "null name",
@@ -47,8 +50,8 @@ fun FinalPokemonDTO.toDPokemon(): DPokemon {
     )
 }
 
-fun FinalPokemonDTO.toEntity(format: Boolean = true): PokemonEntity {
-    return PokemonEntity(
+fun RemoteCompletePokemon.toLocal(format: Boolean = true): LocalCompletePokemon {
+    return LocalCompletePokemon(
         id = id ?: -1,
         name = if (format)
             name?.formatName()
@@ -69,7 +72,7 @@ fun FinalPokemonDTO.toEntity(format: Boolean = true): PokemonEntity {
     )
 }
 
-fun PokemonEntity.toPokemon(abilities: List<Ability>): Pokemon {
+fun LocalCompletePokemon.toPokemon(abilities: List<Ability>): Pokemon {
     val types = mutableListOf<Type>()
     type1name?.let { types.add(typeByName(it)) }
     type2name?.let { types.add(typeByName(it)) }
@@ -95,7 +98,7 @@ fun PokemonEntity.toPokemon(abilities: List<Ability>): Pokemon {
     )
 }
 
-fun PokemonEntity.toSimplePokemon(): SimplePokemon {
+fun LocalCompletePokemon.toSimplePokemon(): SimplePokemon {
     val types = mutableListOf<Type>()
     type1name?.let { types.add(typeByName(it)) }
     type2name?.let { types.add(typeByName(it)) }
@@ -117,6 +120,14 @@ fun PokemonEntity.toSimplePokemon(): SimplePokemon {
         stats = stats,
         weight = weight,
         height = height
+    )
+}
+
+fun RemoteBasePokemon.toLocal(): LocalBasePokemon {
+    return LocalBasePokemon(
+        id = url!!.lastParamFromUrl().toInt(),
+        name = name!!,
+        url = url!!
     )
 }
 

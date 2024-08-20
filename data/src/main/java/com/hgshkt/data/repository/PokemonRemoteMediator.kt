@@ -5,10 +5,10 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.hgshkt.data.repository.local.PokemonLocalStorage
-import com.hgshkt.data.repository.local.pokemon.PokemonEntity
-import com.hgshkt.data.repository.mappers.toEntity
+import com.hgshkt.data.repository.local.pokemon.LocalCompletePokemon
+import com.hgshkt.data.repository.mappers.toLocal
 import com.hgshkt.data.repository.remote.PokemonRemoteStorage
-import com.hgshkt.data.repository.remote.pokemon.network.model.finalPokemon.FinalPokemonDTO
+import com.hgshkt.data.repository.remote.pokemon.network.model.finalPokemon.RemoteCompletePokemon
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -16,10 +16,10 @@ import java.io.IOException
 class PokemonRemoteMediator(
     private val pokemonRemoteStorage: PokemonRemoteStorage,
     private val pokemonLocalStorage: PokemonLocalStorage
-) : RemoteMediator<Int, PokemonEntity>() {
+) : RemoteMediator<Int, LocalCompletePokemon>() {
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<Int, PokemonEntity>
+        state: PagingState<Int, LocalCompletePokemon>
     ): MediatorResult {
         return try {
             val offset = when (loadType) {
@@ -53,16 +53,16 @@ class PokemonRemoteMediator(
     }
 
     private suspend fun handleSuccessfulResponse(
-        pokemons: List<FinalPokemonDTO>, loadType: LoadType
+        pokemons: List<RemoteCompletePokemon>, loadType: LoadType
     ): MediatorResult.Success {
 
-        val pokemonEntities = pokemons.map { it.toEntity() }
+        val pokemonEntities = pokemons.map { it.toLocal() }
 
         pokemons.forEach {
             saveAbilityRefsToLocal(it)
         }
 
-        pokemonLocalStorage.updatePokemonEntities(
+        pokemonLocalStorage.updateCompletePokemons(
             pokemonEntities = pokemonEntities,
             refresh = loadType == LoadType.REFRESH
         )
@@ -72,10 +72,10 @@ class PokemonRemoteMediator(
         )
     }
 
-    private suspend fun saveAbilityRefsToLocal(finalPokemonDTO: FinalPokemonDTO) {
-        finalPokemonDTO.abilities.forEach {
+    private suspend fun saveAbilityRefsToLocal(remoteCompletePokemon: RemoteCompletePokemon) {
+        remoteCompletePokemon.abilities.forEach {
             val abilityId = it.ability?.url?.split('/')?.last { it.isNotEmpty() }!!
-            pokemonLocalStorage.saveAbilityRef(finalPokemonDTO.id!!, abilityId.toInt())
+            pokemonLocalStorage.saveAbilityRef(remoteCompletePokemon.id!!, abilityId.toInt())
         }
     }
 }

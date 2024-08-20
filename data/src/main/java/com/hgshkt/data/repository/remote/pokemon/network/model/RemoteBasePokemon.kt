@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 /**
  * PokemonFromResponseDTO contains only name and url to complete pokemon model
  */
-data class PokemonFromResponseDTO(
+data class RemoteBasePokemon(
     @SerializedName("name") var name: String? = null,
     @SerializedName("url") var url: String? = null
 )

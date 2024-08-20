@@ -7,3 +7,7 @@ fun String.formatName(
 ): String {
     return capitalize(locale).replace('-', ' ')
 }
+
+fun String.lastParamFromUrl(): String {
+    return split('/').last { it.isNotEmpty() }
+}

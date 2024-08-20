@@ -2,7 +2,7 @@ package com.hgshkt.data.repository.remote.pokemon.network.model.finalPokemon
 
 import com.google.gson.annotations.SerializedName
 
-data class FinalPokemonDTO(
+data class RemoteCompletePokemon(
     @SerializedName("abilities") var abilities: ArrayList<Abilities> = arrayListOf(),
     @SerializedName("base_experience") var baseExperience: Int? = null,
     @SerializedName("cries") var cries: Cries? = Cries(),

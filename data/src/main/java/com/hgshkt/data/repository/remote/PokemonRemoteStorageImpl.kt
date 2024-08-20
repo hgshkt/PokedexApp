@@ -2,14 +2,20 @@ package com.hgshkt.data.repository.remote
 
 import com.hgshkt.data.repository.remote.PokemonRemoteStorage.RSResponse
 import com.hgshkt.data.repository.remote.pokemon.network.PokemonApiService
-import com.hgshkt.data.repository.remote.pokemon.network.model.PokemonFromResponseDTO
-import com.hgshkt.data.repository.remote.pokemon.network.model.finalPokemon.FinalPokemonDTO
+import com.hgshkt.data.repository.remote.pokemon.network.model.RemoteBasePokemon
+import com.hgshkt.data.repository.remote.pokemon.network.model.RemotePokemonListResponse
+import com.hgshkt.data.repository.remote.pokemon.network.model.finalPokemon.RemoteCompletePokemon
+import com.hgshkt.data.util.lastParamFromUrl
 import retrofit2.HttpException
 import retrofit2.Response
 
 class PokemonRemoteStorageImpl(
     private val pokemonApiService: PokemonApiService
 ) : PokemonRemoteStorage {
+
+    private val baseOffset= 0
+    private val allPokemonsLimit = 100000
+
     override suspend fun getPokemons(offset: Int, limit: Int): RSResponse {
         val response = pokemonApiService.pokemons(
             offset = offset,
@@ -27,14 +33,21 @@ class PokemonRemoteStorageImpl(
 
     }
 
-    override suspend fun getPokemon(id: Int): Response<FinalPokemonDTO> {
+    override suspend fun getPokemon(id: Int): Response<RemoteCompletePokemon> {
         return pokemonApiService.pokemon(id)
     }
 
+    override suspend fun getBasePokemons(): Response<RemotePokemonListResponse> {
+        return pokemonApiService.pokemons(
+            offset = baseOffset,
+            limit = allPokemonsLimit
+        )
+    }
+
     private suspend fun loadFinalPokemon(
-        pokemonFromResponseDTO: PokemonFromResponseDTO
-    ): FinalPokemonDTO? {
-        val id = pokemonFromResponseDTO.url?.split('/')?.last { it.isNotEmpty() }!!
+        remoteBasePokemon: RemoteBasePokemon
+    ): RemoteCompletePokemon? {
+        val id = remoteBasePokemon.url!!.lastParamFromUrl()
         val response = pokemonApiService.pokemon(id)
 
         if (response.isSuccessful) {

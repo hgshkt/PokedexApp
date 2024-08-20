@@ -9,7 +9,7 @@ import com.hgshkt.data.repository.local.PokemonDatabase
 import com.hgshkt.data.repository.local.PokemonLocalStorage
 import com.hgshkt.data.repository.mappers.toAbility
 import com.hgshkt.data.repository.mappers.toDPokemon
-import com.hgshkt.data.repository.mappers.toEntity
+import com.hgshkt.data.repository.mappers.toLocal
 import com.hgshkt.data.repository.mappers.toPokemon
 import com.hgshkt.data.repository.mappers.toSimplePokemon
 import com.hgshkt.data.repository.remote.PokemonRemoteStorage
@@ -67,7 +67,7 @@ class PokemonRepositoryImpl(
                 // load ability from api
                 abilityRemoteStorage.getAbility(it.ability?.url!!).also { ability ->
                     // save ability to local db
-                    pokemonLocalStorage.saveAbility(ability!!.toAbility().toEntity())
+                    pokemonLocalStorage.saveAbility(ability!!.toAbility().toLocal())
                 }
             }
             val pokemon = body.toDPokemon().toPokemon(abilities.map { it!!.toAbility() })
@@ -77,19 +77,70 @@ class PokemonRepositoryImpl(
         }
     }
 
+    /**
+     * Returns ids of pokemons that need complete downloaded
+     */
+    override suspend fun needToLoad(): Result<List<Int>> {
+        // try to fetch base pokemons from local storage
+        pokemonLocalStorage.getBasePokemons()?.let { pokemons ->
+            // return if success
+            return Result.Success(
+                pokemons
+                    // filter downloaded pokemons
+                    .filter { pokemon ->
+                        !pokemon.loaded
+                    }
+                    // return ids
+                    .map { pokemon ->
+                        pokemon.id
+                    }
+            )
+        }
+        // if local loading failed, try to load from remote
+        val response = pokemonRemoteStorage.getBasePokemons()
+        if (response.isSuccessful) {
+
+            val localPokemons = response.body()!!.results.map { remotePokemon ->
+                remotePokemon.toLocal()
+            }
+            pokemonLocalStorage.saveBasePokemons(localPokemons)
+
+            return Result.Success(
+                localPokemons.map { it.id }
+            )
+        }
+
+        // in other case return error result
+        else {
+            return Result.Error(response.message())
+        }
+    }
+
+    override suspend fun downloadPokemonsByIdList(idList: List<Int>) {
+        idList.forEach { id ->
+            val response = pokemonRemoteStorage.getPokemon(id)
+            if (response.isSuccessful) {
+                pokemonLocalStorage.savePokemon(response.body()!!.toLocal())
+
+                pokemonLocalStorage.getBasePokemon(id)?.let {
+                    pokemonLocalStorage.saveBasePokemon(it.apply { loaded = false })
+                }
+            }
+        }
+    }
+
     private suspend fun loadAbilityById(abilityId: Int): Ability? {
         val localAbility = pokemonLocalStorage.getAbility(abilityId)
 
         if (localAbility == null) {
-            val remoteAbility = abilityRemoteStorage.getAbility(abilityId)?.toAbility()?.toEntity()
+            val remoteAbility = abilityRemoteStorage.getAbility(abilityId)?.toAbility()?.toLocal()
 
             remoteAbility?.let { remoteAbilityNotNull ->
                 pokemonLocalStorage.saveAbility(remoteAbilityNotNull)
                 return remoteAbility.toAbility()
             }
             return null
-        }
-        else {
+        } else {
             return localAbility.toAbility()
         }
     }
