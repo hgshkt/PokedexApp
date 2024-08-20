@@ -4,8 +4,10 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
-import com.hgshkt.data.repository.local.PokemonLocalStorage
+import com.hgshkt.data.repository.local.pokemon.PokemonLocalStorage
 import com.hgshkt.data.repository.local.pokemon.LocalCompletePokemon
+import com.hgshkt.data.repository.local.pokemonAbilityCrossRef.PokemonAbilityCrossRef
+import com.hgshkt.data.repository.local.pokemonAbilityCrossRef.PokemonAbilityCrossRefLocalStorage
 import com.hgshkt.data.repository.mappers.toLocal
 import com.hgshkt.data.repository.remote.PokemonRemoteStorage
 import com.hgshkt.data.repository.remote.pokemon.network.model.finalPokemon.RemoteCompletePokemon
@@ -15,7 +17,8 @@ import java.io.IOException
 @OptIn(ExperimentalPagingApi::class)
 class PokemonRemoteMediator(
     private val pokemonRemoteStorage: PokemonRemoteStorage,
-    private val pokemonLocalStorage: PokemonLocalStorage
+    private val pokemonLocalStorage: PokemonLocalStorage,
+    private val pokemonAbilityCrossRefLocalStorage: PokemonAbilityCrossRefLocalStorage,
 ) : RemoteMediator<Int, LocalCompletePokemon>() {
     override suspend fun load(
         loadType: LoadType,
@@ -75,7 +78,7 @@ class PokemonRemoteMediator(
     private suspend fun saveAbilityRefsToLocal(remoteCompletePokemon: RemoteCompletePokemon) {
         remoteCompletePokemon.abilities.forEach {
             val abilityId = it.ability?.url?.split('/')?.last { it.isNotEmpty() }!!
-            pokemonLocalStorage.saveAbilityRef(remoteCompletePokemon.id!!, abilityId.toInt())
+            pokemonAbilityCrossRefLocalStorage.saveAbilityRef(remoteCompletePokemon.id!!, abilityId.toInt())
         }
     }
 }

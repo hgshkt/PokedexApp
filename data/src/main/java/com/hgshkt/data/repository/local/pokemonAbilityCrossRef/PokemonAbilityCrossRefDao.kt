@@ -1,4 +1,4 @@
-package com.hgshkt.data.repository.local.ability.ref
+package com.hgshkt.data.repository.local.pokemonAbilityCrossRef
 
 import androidx.room.Dao
 import androidx.room.Insert

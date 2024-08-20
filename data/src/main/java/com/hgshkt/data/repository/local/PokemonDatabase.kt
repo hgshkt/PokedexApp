@@ -4,8 +4,8 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.hgshkt.data.repository.local.ability.AbilityDao
 import com.hgshkt.data.repository.local.ability.LocalAbility
-import com.hgshkt.data.repository.local.ability.ref.PokemonAbilityCrossRef
-import com.hgshkt.data.repository.local.ability.ref.PokemonAbilityCrossRefDao
+import com.hgshkt.data.repository.local.pokemonAbilityCrossRef.PokemonAbilityCrossRef
+import com.hgshkt.data.repository.local.pokemonAbilityCrossRef.PokemonAbilityCrossRefDao
 import com.hgshkt.data.repository.local.basePokemon.BasePokemonDao
 import com.hgshkt.data.repository.local.basePokemon.LocalBasePokemon
 import com.hgshkt.data.repository.local.pokemon.PokemonDao

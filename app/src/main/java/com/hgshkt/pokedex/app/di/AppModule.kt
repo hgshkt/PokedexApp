@@ -4,13 +4,23 @@ import android.content.Context
 import androidx.room.Room
 import com.hgshkt.data.repository.PokemonRemoteMediator
 import com.hgshkt.data.repository.PokemonRepositoryImpl
+import com.hgshkt.data.repository.PokemonRepositoryLocalStorages
+import com.hgshkt.data.repository.PokemonRepositoryRemoteStorages
+import com.hgshkt.data.repository.PokemonRepositoryStorages
 import com.hgshkt.data.repository.local.PokemonDatabase
-import com.hgshkt.data.repository.local.PokemonLocalStorage
-import com.hgshkt.data.repository.local.PokemonLocalStorageImpl
+import com.hgshkt.data.repository.local.pokemon.PokemonLocalStorage
+import com.hgshkt.data.repository.local.pokemon.PokemonLocalStorageImpl
 import com.hgshkt.data.repository.local.ability.AbilityDao
-import com.hgshkt.data.repository.local.ability.ref.PokemonAbilityCrossRefDao
+import com.hgshkt.data.repository.local.ability.AbilityLocalStorage
+import com.hgshkt.data.repository.local.ability.AbilityLocalStorageImpl
+import com.hgshkt.data.repository.local.pokemonAbilityCrossRef.PokemonAbilityCrossRefDao
 import com.hgshkt.data.repository.local.basePokemon.BasePokemonDao
+import com.hgshkt.data.repository.local.basePokemon.BasePokemonLocalStorage
+import com.hgshkt.data.repository.local.basePokemon.BasePokemonLocalStorageImpl
 import com.hgshkt.data.repository.local.pokemon.PokemonDao
+import com.hgshkt.data.repository.local.pokemonAbilityCrossRef.PokemonAbilityCrossRef
+import com.hgshkt.data.repository.local.pokemonAbilityCrossRef.PokemonAbilityCrossRefLocalStorage
+import com.hgshkt.data.repository.local.pokemonAbilityCrossRef.PokemonAbilityCrossRefLocalStorageImpl
 import com.hgshkt.data.repository.network.NetworkInterceptor
 import com.hgshkt.data.repository.network.RetrofitClient
 import com.hgshkt.data.repository.remote.PokemonRemoteStorage
@@ -42,9 +52,14 @@ class AppModule {
     @Singleton
     fun providePokemonRemoteMediator(
         pokemonRemoteStorage: PokemonRemoteStorage,
-        pokemonLocalStorage: PokemonLocalStorage
+        pokemonLocalStorage: PokemonLocalStorage,
+        pokemonAbilityCrossRefLocalStorage: PokemonAbilityCrossRefLocalStorage
     ): PokemonRemoteMediator {
-        return PokemonRemoteMediator(pokemonRemoteStorage, pokemonLocalStorage)
+        return PokemonRemoteMediator(
+            pokemonRemoteStorage = pokemonRemoteStorage,
+            pokemonLocalStorage = pokemonLocalStorage,
+            pokemonAbilityCrossRefLocalStorage = pokemonAbilityCrossRefLocalStorage
+        )
     }
 
     @Provides
@@ -57,7 +72,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideLoadPokemonUseCase(
+    fun provideLoadPokemonByIdUseCase(
         pokemonRepository: PokemonRepository
     ): LoadPokemonByIdUseCase {
         return LoadPokemonByIdUseCase(pokemonRepository)
@@ -84,16 +99,12 @@ class AppModule {
     fun providePokemonRepositoryImpl(
         pokemonRemoteMediator: PokemonRemoteMediator,
         pokemonDatabase: PokemonDatabase,
-        abilityRemoteStorage: AbilityRemoteStorage,
-        pokemonLocalStorage: PokemonLocalStorage,
-        pokemonRemoteStorage: PokemonRemoteStorage
+        pokemonRepositoryStorages: PokemonRepositoryStorages
     ): PokemonRepositoryImpl {
         return PokemonRepositoryImpl(
             remoteMediator = pokemonRemoteMediator,
             pokemonDatabase = pokemonDatabase,
-            abilityRemoteStorage = abilityRemoteStorage,
-            pokemonLocalStorage = pokemonLocalStorage,
-            pokemonRemoteStorage = pokemonRemoteStorage
+            storages = pokemonRepositoryStorages
         )
     }
 
@@ -109,13 +120,6 @@ class AppModule {
         ).build()
     }
 
-    @Provides
-    @Singleton
-    fun provideAbilityRemoteRepositoryImpl(
-        abilityApiService: AbilityApiService
-    ): AbilityRemoteStorageImpl {
-        return AbilityRemoteStorageImpl(abilityApiService)
-    }
 
     @Provides
     @Singleton
@@ -160,18 +164,52 @@ class AppModule {
     @Provides
     @Singleton
     fun providePokemonsLocalStorageImpl(
-        basePokemonDao: BasePokemonDao,
         pokemonDao: PokemonDao,
-        abilityDao: AbilityDao,
-        pokemonAbilityCrossRefDao: PokemonAbilityCrossRefDao,
         pokemonDatabase: PokemonDatabase
     ): PokemonLocalStorageImpl {
         return PokemonLocalStorageImpl(
-            basePokemonDao = basePokemonDao,
             pokemonDao = pokemonDao,
-            abilityDao = abilityDao,
-            pokemonAbilityCrossRefDao = pokemonAbilityCrossRefDao,
             pokemonDatabase = pokemonDatabase
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideAbilityLocalStorageImpl(
+        abilityDao: AbilityDao
+    ): AbilityLocalStorageImpl {
+        return AbilityLocalStorageImpl(
+            abilityDao = abilityDao
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideAbilityRemoteStorageImpl(
+        abilityApiService: AbilityApiService
+    ): AbilityRemoteStorageImpl {
+        return AbilityRemoteStorageImpl(
+            abilityApiService = abilityApiService
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideBasePokemonStorageImpl(
+        basePokemonDao: BasePokemonDao
+    ): BasePokemonLocalStorageImpl {
+        return BasePokemonLocalStorageImpl(
+            basePokemonDao = basePokemonDao
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providePokemonAbilityCrossRefImpl(
+        pokemonAbilityCrossRefDao: PokemonAbilityCrossRefDao,
+    ): PokemonAbilityCrossRefLocalStorageImpl {
+        return PokemonAbilityCrossRefLocalStorageImpl(
+            pokemonAbilityCrossRefDao = pokemonAbilityCrossRefDao
         )
     }
 
@@ -179,6 +217,46 @@ class AppModule {
     @Singleton
     fun provideNetworkManager(@ApplicationContext context: Context): NetworkManager {
         return NetworkManager(context)
+    }
+
+    @Provides
+    @Singleton
+    fun providePokemonRepositoryStorages(
+        local: PokemonRepositoryLocalStorages,
+        remote: PokemonRepositoryRemoteStorages
+    ): PokemonRepositoryStorages {
+        return PokemonRepositoryStorages(
+            local = local,
+            remote = remote
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providePokemonRepositoryLocalStorages(
+        pokemonLocalStorage: PokemonLocalStorage,
+        basePokemonLocalStorage: BasePokemonLocalStorage,
+        pokemonAbilityCrossRefLocalStorage: PokemonAbilityCrossRefLocalStorage,
+        abilityLocalStorage: AbilityLocalStorage,
+    ): PokemonRepositoryLocalStorages {
+        return PokemonRepositoryLocalStorages(
+            basePokemon = basePokemonLocalStorage,
+            pokemon = pokemonLocalStorage,
+            ability = abilityLocalStorage,
+            pokemonAbilityCrossRef = pokemonAbilityCrossRefLocalStorage
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providePokemonRepositoryRemoteStorages(
+        abilityRemoteStorage: AbilityRemoteStorage,
+        pokemonRemoteStorage: PokemonRemoteStorage
+    ): PokemonRepositoryRemoteStorages {
+        return PokemonRepositoryRemoteStorages(
+            pokemon = pokemonRemoteStorage,
+            ability = abilityRemoteStorage
+        )
     }
 }
 
@@ -199,6 +277,21 @@ abstract class Binder {
     abstract fun bindPokemonLocalStorage(
         pokemonLocalStorageImpl: PokemonLocalStorageImpl
     ): PokemonLocalStorage
+
+    @Binds
+    abstract fun bindBasePokemonLocalStorage(
+        basePokemonLocalStorageImpl: BasePokemonLocalStorageImpl
+    ): BasePokemonLocalStorage
+
+    @Binds
+    abstract fun bindAbilityLocalStorage(
+        abilityLocalStorageImpl: AbilityLocalStorageImpl
+    ): AbilityLocalStorage
+
+    @Binds
+    abstract fun bindPokemonAbilityCrossRefLocalStorage(
+        pokemonAbilityCrossRefLocalStorageImpl: PokemonAbilityCrossRefLocalStorageImpl
+    ): PokemonAbilityCrossRefLocalStorage
 
     @Binds
     abstract fun bindPokemonRemoteStorage(

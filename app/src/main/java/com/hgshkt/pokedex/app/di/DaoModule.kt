@@ -3,7 +3,7 @@ package com.hgshkt.pokedex.app.di
 import com.hgshkt.data.repository.local.pokemon.PokemonDao
 import com.hgshkt.data.repository.local.PokemonDatabase
 import com.hgshkt.data.repository.local.ability.AbilityDao
-import com.hgshkt.data.repository.local.ability.ref.PokemonAbilityCrossRefDao
+import com.hgshkt.data.repository.local.pokemonAbilityCrossRef.PokemonAbilityCrossRefDao
 import com.hgshkt.data.repository.local.basePokemon.BasePokemonDao
 import dagger.Module
 import dagger.Provides

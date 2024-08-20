@@ -6,7 +6,11 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.hgshkt.data.repository.local.PokemonDatabase
-import com.hgshkt.data.repository.local.PokemonLocalStorage
+import com.hgshkt.data.repository.local.ability.AbilityLocalStorage
+import com.hgshkt.data.repository.local.basePokemon.BasePokemonLocalStorage
+import com.hgshkt.data.repository.local.pokemon.PokemonLocalStorage
+import com.hgshkt.data.repository.local.pokemonAbilityCrossRef.PokemonAbilityCrossRefLocalStorage
+import com.hgshkt.data.repository.local.pokemonAbilityCrossRef.PokemonAbilityCrossRefLocalStorageImpl
 import com.hgshkt.data.repository.mappers.toAbility
 import com.hgshkt.data.repository.mappers.toDPokemon
 import com.hgshkt.data.repository.mappers.toLocal
@@ -27,9 +31,7 @@ import kotlinx.coroutines.flow.map
 class PokemonRepositoryImpl(
     private val remoteMediator: PokemonRemoteMediator,
     private val pokemonDatabase: PokemonDatabase,
-    private val abilityRemoteStorage: AbilityRemoteStorage,
-    private val pokemonLocalStorage: PokemonLocalStorage,
-    private val pokemonRemoteStorage: PokemonRemoteStorage
+    private val storages: PokemonRepositoryStorages
 ) : PokemonRepository {
 
     override suspend fun getPokemons(): Flow<PagingData<SimplePokemon>> {
@@ -49,25 +51,24 @@ class PokemonRepositoryImpl(
 
     override suspend fun getPokemon(id: Int): Result<Pokemon> {
         // try loading from local storage
-        with(pokemonLocalStorage) {
-            getPokemon(id)?.let {
-                val abilities = getAbilityRefsForPokemon(id).mapNotNull { ref ->
+        storages.local.pokemon.getPokemon(id)?.let {
+            val abilities = storages.local.pokemonAbilityCrossRef.getAbilityRefsForPokemon(id)
+                .mapNotNull { ref ->
                     loadAbilityById(ref.abilityId)
                 }
-
-                return Result.Success(it.toPokemon(abilities))
-            }
+            return Result.Success(it.toPokemon(abilities))
         }
 
+
         // in other case load from remote storage
-        val response = pokemonRemoteStorage.getPokemon(id)
+        val response = storages.remote.pokemon.getPokemon(id)
         if (response.isSuccessful) {
             val body = response.body()!!
             val abilities = body.abilities.map {
                 // load ability from api
-                abilityRemoteStorage.getAbility(it.ability?.url!!).also { ability ->
+                storages.remote.ability.getAbility(it.ability?.url!!).also { ability ->
                     // save ability to local db
-                    pokemonLocalStorage.saveAbility(ability!!.toAbility().toLocal())
+                    storages.local.ability.saveAbility(ability!!.toAbility().toLocal())
                 }
             }
             val pokemon = body.toDPokemon().toPokemon(abilities.map { it!!.toAbility() })
@@ -82,7 +83,7 @@ class PokemonRepositoryImpl(
      */
     override suspend fun needToLoad(): Result<List<Int>> {
         // try to fetch base pokemons from local storage
-        pokemonLocalStorage.getBasePokemons()?.let { pokemons ->
+        storages.local.basePokemon.getBasePokemons()?.let { pokemons ->
             // return if success
             return Result.Success(
                 pokemons
@@ -97,13 +98,13 @@ class PokemonRepositoryImpl(
             )
         }
         // if local loading failed, try to load from remote
-        val response = pokemonRemoteStorage.getBasePokemons()
+        val response = storages.remote.pokemon.getBasePokemons()
         if (response.isSuccessful) {
 
             val localPokemons = response.body()!!.results.map { remotePokemon ->
                 remotePokemon.toLocal()
             }
-            pokemonLocalStorage.saveBasePokemons(localPokemons)
+            storages.local.basePokemon.saveBasePokemons(localPokemons)
 
             return Result.Success(
                 localPokemons.map { it.id }
@@ -118,25 +119,25 @@ class PokemonRepositoryImpl(
 
     override suspend fun downloadPokemonsByIdList(idList: List<Int>) {
         idList.forEach { id ->
-            val response = pokemonRemoteStorage.getPokemon(id)
+            val response = storages.remote.pokemon.getPokemon(id)
             if (response.isSuccessful) {
-                pokemonLocalStorage.savePokemon(response.body()!!.toLocal())
+                storages.local.pokemon.savePokemon(response.body()!!.toLocal())
 
-                pokemonLocalStorage.getBasePokemon(id)?.let {
-                    pokemonLocalStorage.saveBasePokemon(it.apply { loaded = false })
+                storages.local.basePokemon.getBasePokemon(id)?.let {
+                    storages.local.basePokemon.saveBasePokemon(it.apply { loaded = false })
                 }
             }
         }
     }
 
     private suspend fun loadAbilityById(abilityId: Int): Ability? {
-        val localAbility = pokemonLocalStorage.getAbility(abilityId)
+        val localAbility = storages.local.ability.getAbility(abilityId)
 
         if (localAbility == null) {
-            val remoteAbility = abilityRemoteStorage.getAbility(abilityId)?.toAbility()?.toLocal()
+            val remoteAbility = storages.remote.ability.getAbility(abilityId)?.toAbility()?.toLocal()
 
             remoteAbility?.let { remoteAbilityNotNull ->
-                pokemonLocalStorage.saveAbility(remoteAbilityNotNull)
+                storages.local.ability.saveAbility(remoteAbilityNotNull)
                 return remoteAbility.toAbility()
             }
             return null
