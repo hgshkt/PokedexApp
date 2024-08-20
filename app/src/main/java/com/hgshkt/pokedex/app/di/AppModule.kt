@@ -4,12 +4,12 @@ import android.content.Context
 import androidx.room.Room
 import com.hgshkt.data.repository.PokemonRemoteMediator
 import com.hgshkt.data.repository.PokemonRepositoryImpl
-//import com.hgshkt.data.repository.PokemonsPagingSource
 import com.hgshkt.data.repository.local.PokemonDatabase
 import com.hgshkt.data.repository.local.PokemonLocalStorage
 import com.hgshkt.data.repository.local.PokemonLocalStorageImpl
 import com.hgshkt.data.repository.local.ability.AbilityDao
 import com.hgshkt.data.repository.local.ability.ref.PokemonAbilityCrossRefDao
+import com.hgshkt.data.repository.local.basePokemon.BasePokemonDao
 import com.hgshkt.data.repository.local.pokemon.PokemonDao
 import com.hgshkt.data.repository.network.NetworkInterceptor
 import com.hgshkt.data.repository.network.RetrofitClient
@@ -21,7 +21,9 @@ import com.hgshkt.data.repository.remote.ability.network.AbilityApiService
 import com.hgshkt.data.repository.remote.pokemon.network.PokemonApiService
 import com.hgshkt.domain.data.PokemonRepository
 import com.hgshkt.domain.useCases.LoadPokemonByIdUseCase
+import com.hgshkt.domain.useCases.LoadPokemonsUseCase
 import com.hgshkt.domain.useCases.PagedLoadPokemonsUseCase
+import com.hgshkt.pokedex.app.NetworkManager
 import com.hgshkt.pokedex.ui.list.ListUseCases
 import dagger.Binds
 import dagger.Module
@@ -63,10 +65,18 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideLoadPokemonsUseCase(
+    fun providePagedLoadPokemonsUseCase(
         pokemonRepository: PokemonRepository
     ): PagedLoadPokemonsUseCase {
         return PagedLoadPokemonsUseCase(pokemonRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLoadPokemonsUseCase(
+        pokemonRepository: PokemonRepository
+    ): LoadPokemonsUseCase {
+        return LoadPokemonsUseCase(pokemonRepository)
     }
 
     @Provides
@@ -150,17 +160,25 @@ class AppModule {
     @Provides
     @Singleton
     fun providePokemonsLocalStorageImpl(
+        basePokemonDao: BasePokemonDao,
         pokemonDao: PokemonDao,
         abilityDao: AbilityDao,
         pokemonAbilityCrossRefDao: PokemonAbilityCrossRefDao,
         pokemonDatabase: PokemonDatabase
     ): PokemonLocalStorageImpl {
         return PokemonLocalStorageImpl(
+            basePokemonDao = basePokemonDao,
             pokemonDao = pokemonDao,
             abilityDao = abilityDao,
             pokemonAbilityCrossRefDao = pokemonAbilityCrossRefDao,
             pokemonDatabase = pokemonDatabase
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideNetworkManager(@ApplicationContext context: Context): NetworkManager {
+        return NetworkManager(context)
     }
 }
 

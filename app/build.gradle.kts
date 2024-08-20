@@ -107,6 +107,9 @@ dependencies {
 
     // Coil
     implementation("io.coil-kt:coil-compose:2.6.0")
+
+    // Worker
+    implementation("androidx.work:work-runtime-ktx:2.9.1")
 }
 
 kapt {

@@ -4,6 +4,7 @@ import com.hgshkt.data.repository.local.pokemon.PokemonDao
 import com.hgshkt.data.repository.local.PokemonDatabase
 import com.hgshkt.data.repository.local.ability.AbilityDao
 import com.hgshkt.data.repository.local.ability.ref.PokemonAbilityCrossRefDao
+import com.hgshkt.data.repository.local.basePokemon.BasePokemonDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,6 +14,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class DaoModule {
+    @Provides
+    @Singleton
+    fun provideBasePokemonDao(pokemonDatabase: PokemonDatabase): BasePokemonDao {
+        return pokemonDatabase.basePokemonDao
+    }
+
     @Provides
     @Singleton
     fun providePokemonDao(pokemonDatabase: PokemonDatabase): PokemonDao {
