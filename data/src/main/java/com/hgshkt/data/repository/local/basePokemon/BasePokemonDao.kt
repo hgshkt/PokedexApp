@@ -11,11 +11,11 @@ interface BasePokemonDao {
     suspend fun save(pokemons: List<LocalBasePokemon>)
 
     @Query("SELECT * FROM base_pokemons WHERE id=:id")
-    fun get(id: Int): LocalBasePokemon?
+    fun get(id: Int): LocalBasePokemon
 
     @Query("SELECT * FROM base_pokemons")
-    fun getAll(): List<LocalBasePokemon>?
+    fun getAll(): List<LocalBasePokemon>
 
-    @Insert
+    @Upsert
     fun save(pokemon: LocalBasePokemon)
 }

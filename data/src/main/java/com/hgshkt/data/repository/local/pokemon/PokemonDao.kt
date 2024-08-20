@@ -2,7 +2,6 @@ package com.hgshkt.data.repository.local.pokemon
 
 import androidx.paging.PagingSource
 import androidx.room.Dao
-import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Upsert
 
@@ -20,6 +19,6 @@ interface PokemonDao {
     @Query("SELECT * FROM pokemons WHERE id=:id")
     fun get(id: Int): List<LocalCompletePokemon?>
 
-    @Insert
+    @Upsert
     fun save(pokemon: LocalCompletePokemon)
 }

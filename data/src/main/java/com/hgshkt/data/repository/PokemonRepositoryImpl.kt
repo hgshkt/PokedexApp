@@ -8,6 +8,7 @@ import androidx.paging.map
 import com.hgshkt.data.repository.local.PokemonDatabase
 import com.hgshkt.data.repository.local.ability.AbilityLocalStorage
 import com.hgshkt.data.repository.local.basePokemon.BasePokemonLocalStorage
+import com.hgshkt.data.repository.local.basePokemon.LocalBasePokemon
 import com.hgshkt.data.repository.local.pokemon.PokemonLocalStorage
 import com.hgshkt.data.repository.local.pokemonAbilityCrossRef.PokemonAbilityCrossRefLocalStorage
 import com.hgshkt.data.repository.local.pokemonAbilityCrossRef.PokemonAbilityCrossRefLocalStorageImpl
@@ -37,7 +38,6 @@ class PokemonRepositoryImpl(
     override suspend fun getPokemons(): Flow<PagingData<SimplePokemon>> {
         return Pager(
             config = PagingConfig(pageSize = 20),
-            remoteMediator = remoteMediator,
             pagingSourceFactory = {
                 pokemonDatabase.pokemonDao.pagingSource()
             }
@@ -83,7 +83,8 @@ class PokemonRepositoryImpl(
      */
     override suspend fun needToLoad(): Result<List<Int>> {
         // try to fetch base pokemons from local storage
-        storages.local.basePokemon.getBasePokemons()?.let { pokemons ->
+        val pokemons = storages.local.basePokemon.getBasePokemons()
+        if(pokemons.isNotEmpty()) {
             // return if success
             return Result.Success(
                 pokemons
@@ -123,8 +124,8 @@ class PokemonRepositoryImpl(
             if (response.isSuccessful) {
                 storages.local.pokemon.savePokemon(response.body()!!.toLocal())
 
-                storages.local.basePokemon.getBasePokemon(id)?.let {
-                    storages.local.basePokemon.saveBasePokemon(it.apply { loaded = false })
+                storages.local.basePokemon.getBasePokemon(id).let {
+                    storages.local.basePokemon.saveBasePokemon(it.apply { loaded = true })
                 }
             }
         }

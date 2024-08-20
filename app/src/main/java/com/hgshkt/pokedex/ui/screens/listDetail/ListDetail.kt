@@ -1,4 +1,4 @@
-package com.hgshkt.pokedex.ui.listDetail
+package com.hgshkt.pokedex.ui.screens.listDetail
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
@@ -16,8 +16,8 @@ import androidx.compose.ui.Modifier
 import com.hgshkt.domain.model.Pokemon
 import com.hgshkt.pokedex.ui.data.model.UiPokemon
 import com.hgshkt.pokedex.ui.data.model.UiSimplePokemon
-import com.hgshkt.pokedex.ui.list.ListScreen
-import com.hgshkt.pokedex.ui.detail.DetailScreen
+import com.hgshkt.pokedex.ui.screens.list.ListScreen
+import com.hgshkt.pokedex.ui.screens.detail.DetailScreen
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable

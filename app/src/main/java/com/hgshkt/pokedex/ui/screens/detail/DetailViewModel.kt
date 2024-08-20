@@ -1,4 +1,4 @@
-package com.hgshkt.pokedex.ui.detail
+package com.hgshkt.pokedex.ui.screens.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -6,7 +6,7 @@ import dagger.hilt.android.HiltAndroidApp
 @HiltAndroidApp
 class PokemonApplication: Application() {
 
-    private lateinit var  networkManager: NetworkManager
+    private lateinit var networkManager: NetworkManager
 
     override fun onCreate() {
         super.onCreate()

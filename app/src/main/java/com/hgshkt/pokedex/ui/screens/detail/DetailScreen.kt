@@ -1,4 +1,4 @@
-package com.hgshkt.pokedex.ui.detail
+package com.hgshkt.pokedex.ui.screens.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

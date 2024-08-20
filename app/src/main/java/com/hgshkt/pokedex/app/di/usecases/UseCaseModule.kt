@@ -4,7 +4,7 @@ import com.hgshkt.domain.data.PokemonRepository
 import com.hgshkt.domain.useCases.LoadPokemonByIdUseCase
 import com.hgshkt.domain.useCases.LoadPokemonsUseCase
 import com.hgshkt.domain.useCases.PagedLoadPokemonsUseCase
-import com.hgshkt.pokedex.ui.list.ListUseCases
+import com.hgshkt.pokedex.ui.screens.list.ListUseCases
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

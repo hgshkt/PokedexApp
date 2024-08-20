@@ -9,7 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.ui.Modifier
-import com.hgshkt.pokedex.ui.listDetail.MainScreen
+import com.hgshkt.pokedex.ui.screens.listDetail.MainScreen
 import com.hgshkt.pokedex.ui.theme.PokedexTheme
 import dagger.hilt.android.AndroidEntryPoint
 

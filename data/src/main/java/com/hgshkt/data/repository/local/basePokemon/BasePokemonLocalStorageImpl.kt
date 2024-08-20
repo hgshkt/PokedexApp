@@ -3,11 +3,11 @@ package com.hgshkt.data.repository.local.basePokemon
 class BasePokemonLocalStorageImpl(
     private val basePokemonDao: BasePokemonDao
 ): BasePokemonLocalStorage {
-    override fun getBasePokemon(id: Int): LocalBasePokemon? {
+    override fun getBasePokemon(id: Int): LocalBasePokemon {
         return basePokemonDao.get(id)
     }
 
-    override fun getBasePokemons(): List<LocalBasePokemon>? {
+    override fun getBasePokemons(): List<LocalBasePokemon> {
         return basePokemonDao.getAll()
     }
 

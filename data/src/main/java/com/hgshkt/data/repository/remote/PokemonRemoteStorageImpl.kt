@@ -13,8 +13,8 @@ class PokemonRemoteStorageImpl(
     private val pokemonApiService: PokemonApiService
 ) : PokemonRemoteStorage {
 
-    private val baseOffset= 0
-    private val allPokemonsLimit = 100000
+    private val baseOffset = 0
+    private val allPokemonsLimit = 10000
 
     override suspend fun getPokemons(offset: Int, limit: Int): RSResponse {
         val response = pokemonApiService.pokemons(

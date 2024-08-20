@@ -1,4 +1,4 @@
-package com.hgshkt.pokedex.ui.list
+package com.hgshkt.pokedex.ui.screens.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,7 +22,7 @@ class ListViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            useCases.pagedLoadPokemonsUseCase.execute()
+            useCases.pagedLoad.execute()
                 .cachedIn(viewModelScope)
                 .collect { pagingData ->
                     _pokemonsState.value = pagingData.map { pokemon ->

@@ -1,4 +1,4 @@
-package com.hgshkt.pokedex.ui.list
+package com.hgshkt.pokedex.ui.screens.list
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +27,7 @@ import com.hgshkt.pokedex.R
 import com.hgshkt.pokedex.ui.data.model.UiSimplePokemon
 import com.hgshkt.pokedex.ui.custom.ErrorBox
 import com.hgshkt.pokedex.ui.custom.LoadingBox
-import com.hgshkt.pokedex.ui.listDetail.PokemonSaver
+import com.hgshkt.pokedex.ui.screens.listDetail.PokemonSaver
 
 @Composable
 fun ListScreen(
