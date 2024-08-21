@@ -26,19 +26,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.hgshkt.domain.model.Ability
-import com.hgshkt.pokedex.ui.data.model.UiPokemon
-import com.hgshkt.pokedex.ui.data.model.UiPokemonAbility
-import com.hgshkt.pokedex.ui.data.model.UiStats
-import com.hgshkt.pokedex.ui.data.model.UiType
 import com.hgshkt.pokedex.ui.custom.ErrorBox
 import com.hgshkt.pokedex.ui.custom.LoadingBox
 import com.hgshkt.pokedex.ui.custom.image.PokemonImage
 import com.hgshkt.pokedex.ui.custom.text.AutoResizedText
+import com.hgshkt.pokedex.ui.data.model.UiPokemonAbility
+import com.hgshkt.pokedex.ui.data.model.UiStats
+import com.hgshkt.pokedex.ui.data.model.UiType
 
 private val idStyle = TextStyle(fontSize = 20.sp)
 private val pokemonNameStyle = TextStyle(fontSize = 40.sp, fontWeight = FontWeight.Bold)
@@ -120,7 +117,7 @@ fun DetailScreen(
 }
 
 @Composable
-fun PokemonType(type: UiType) {
+private fun PokemonType(type: UiType) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
@@ -151,7 +148,7 @@ fun Border(content: @Composable () -> Unit) {
 }
 
 @Composable
-fun StatsLayer(stats: UiStats, modifier: Modifier = Modifier) {
+fun StatsLayer(stats: UiStats) {
     Border {
         val statSize = 26.sp
         with(stats) {
