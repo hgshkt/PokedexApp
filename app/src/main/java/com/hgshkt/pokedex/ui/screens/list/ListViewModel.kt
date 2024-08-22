@@ -31,9 +31,11 @@ class ListViewModel @Inject constructor(
             useCases.pagedLoad.execute()
                 .cachedIn(viewModelScope)
                 .collect { pagingData ->
+                    _state.value = State.Paged
                     _pokemonsState.value = pagingData.map { pokemon ->
                         pokemon.toUi()
                     }
+
                 }
         }
     }
@@ -51,5 +53,6 @@ class ListViewModel @Inject constructor(
         data object Loading : State()
         data class Error(val message: String) : State()
         data class Loaded(val pokemons: List<UiSimplePokemon>) : State()
+        data object Paged : State()
     }
 }

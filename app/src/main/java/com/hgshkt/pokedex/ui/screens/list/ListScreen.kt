@@ -29,6 +29,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,7 +44,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
@@ -86,33 +86,50 @@ fun ListScreen(
     viewModel: ListViewModel = hiltViewModel(),
     onItemClick: (PokemonSaver) -> Unit
 ) {
-    val pokemons: LazyPagingItems<UiSimplePokemon> =
-        viewModel.pokemonsState.collectAsLazyPagingItems()
+    val state by viewModel.state.collectAsState()
 
-    if (pokemons.itemCount == 0) {
-        if (
-            pokemons.loadState.append is LoadState.Error
-            || pokemons.loadState.refresh is LoadState.Error
-            || pokemons.loadState.prepend is LoadState.Error
-        ) {
-            ErrorBox()
-        } else {
+    when (state) {
+        is ListViewModel.State.Loading -> {
             LoadingBox()
         }
-    } else {
-        CompleteListScreen(
-            modifier = Modifier.wrapContentWidth(),
-            pokemons = pokemons,
-            onItemClick = onItemClick
-        )
+
+        is ListViewModel.State.Error -> {
+            ErrorBox((state as ListViewModel.State.Error).message)
+        }
+
+        is ListViewModel.State.Loaded -> {
+            CompleteListScreen(
+                modifier = Modifier.wrapContentWidth(),
+                pokemons = (state as ListViewModel.State.Loaded).pokemons,
+                onItemClick = onItemClick,
+                filterButtonClick = {
+                    // viewModel.startFilter()
+                }
+            )
+        }
+
+        is ListViewModel.State.Paged -> {
+            val pokemons: LazyPagingItems<UiSimplePokemon> =
+                viewModel.pokemonsState.collectAsLazyPagingItems()
+
+            CompletePagedListScreen(
+                modifier = Modifier.wrapContentWidth(),
+                pokemons = pokemons,
+                onItemClick = onItemClick,
+                filterButtonClick = {
+                    // viewModel.startFilter()
+                }
+            )
+        }
     }
 }
 
 @Composable
 fun CompleteListScreen(
-    modifier: Modifier = Modifier,
-    pokemons: LazyPagingItems<UiSimplePokemon>,
-    onItemClick: (PokemonSaver) -> Unit
+    modifier: Modifier,
+    pokemons: List<UiSimplePokemon>,
+    onItemClick: (PokemonSaver) -> Unit,
+    filterButtonClick: () -> Unit
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     Column(modifier) {
@@ -131,13 +148,67 @@ fun CompleteListScreen(
                         isExpanded = !isExpanded
                     },
                     onSearchButtonClick = { text ->
-                        // viewModel.search(text)
+                        filterButtonClick()
                     }
                 )
             },
             expanded = isExpanded
         )
         CompleteList(
+            pokemons = pokemons
+        ) { saver ->
+            onItemClick(saver)
+        }
+    }
+}
+
+@Composable
+fun CompleteList(
+    pokemons: List<UiSimplePokemon>,
+    onItemClick: (PokemonSaver) -> Unit
+) {
+    LazyVerticalGrid(columns = GridCells.Fixed(2)) {
+        items(pokemons) { pokemon ->
+            PokemonCard(
+                pokemon = pokemon,
+            ) {
+                onItemClick(PokemonSaver(pokemon))
+            }
+        }
+    }
+}
+
+@Composable
+fun CompletePagedListScreen(
+    modifier: Modifier = Modifier,
+    pokemons: LazyPagingItems<UiSimplePokemon>,
+    onItemClick: (PokemonSaver) -> Unit,
+    filterButtonClick: () -> Unit
+) {
+    var isExpanded by remember { mutableStateOf(false) }
+    Column(modifier) {
+        ExpandedView(
+            hiddenPart = {
+                FilterMenu()
+            },
+            visiblePart = {
+                FilterButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp),
+                    placeholder = { Text("Enter Pokemon name") },
+                    isExpanded = isExpanded,
+                    onClick = {
+                        isExpanded = !isExpanded
+                    },
+                    onSearchButtonClick = { text ->
+                        filterButtonClick()
+                    }
+                )
+            },
+            expanded = isExpanded
+        )
+        CompletePagedList(
             pokemons = pokemons
         ) { saver ->
             onItemClick(saver)
@@ -172,7 +243,7 @@ fun FilterMenu() {
                 onStartValueChange = {
                     weightStartValue = it
                 },
-                endValue= weightEndValue,
+                endValue = weightEndValue,
                 onEndValueChange = {
                     weightEndValue = it
                 }
@@ -184,7 +255,7 @@ fun FilterMenu() {
                 onStartValueChange = {
                     heightStartValue = it
                 },
-                endValue= heightEndValue,
+                endValue = heightEndValue,
                 onEndValueChange = {
                     heightEndValue = it
                 }
@@ -341,7 +412,7 @@ fun FilterButton(
 }
 
 @Composable
-private fun CompleteList(
+private fun CompletePagedList(
     modifier: Modifier = Modifier,
     pokemons: LazyPagingItems<UiSimplePokemon>,
     onItemClick: (PokemonSaver) -> Unit

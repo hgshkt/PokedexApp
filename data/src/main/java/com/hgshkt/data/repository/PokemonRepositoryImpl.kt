@@ -6,19 +6,11 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.hgshkt.data.repository.local.PokemonDatabase
-import com.hgshkt.data.repository.local.ability.AbilityLocalStorage
-import com.hgshkt.data.repository.local.basePokemon.BasePokemonLocalStorage
-import com.hgshkt.data.repository.local.basePokemon.LocalBasePokemon
-import com.hgshkt.data.repository.local.pokemon.PokemonLocalStorage
-import com.hgshkt.data.repository.local.pokemonAbilityCrossRef.PokemonAbilityCrossRefLocalStorage
-import com.hgshkt.data.repository.local.pokemonAbilityCrossRef.PokemonAbilityCrossRefLocalStorageImpl
 import com.hgshkt.data.repository.mappers.toAbility
 import com.hgshkt.data.repository.mappers.toDPokemon
 import com.hgshkt.data.repository.mappers.toLocal
 import com.hgshkt.data.repository.mappers.toPokemon
 import com.hgshkt.data.repository.mappers.toSimplePokemon
-import com.hgshkt.data.repository.remote.PokemonRemoteStorage
-import com.hgshkt.data.repository.remote.ability.AbilityRemoteStorage
 import com.hgshkt.domain.data.PokemonRepository
 import com.hgshkt.domain.data.Result
 import com.hgshkt.domain.data.mapper.toPokemon
@@ -28,7 +20,6 @@ import com.hgshkt.domain.model.SimplePokemon
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-@OptIn(ExperimentalPagingApi::class)
 class PokemonRepositoryImpl(
     private val pokemonDatabase: PokemonDatabase,
     private val storages: PokemonRepositoryStorages

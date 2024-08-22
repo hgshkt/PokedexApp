@@ -33,6 +33,10 @@ class PokemonLocalStorageImpl(
         pokemonDao.save(pokemon)
     }
 
+    override fun getAll(): List<LocalCompletePokemon> {
+        return pokemonDao.getAll()
+    }
+
 
     override fun getPokemon(id: Int): LocalCompletePokemon? {
         return pokemonDao.get(id).first()

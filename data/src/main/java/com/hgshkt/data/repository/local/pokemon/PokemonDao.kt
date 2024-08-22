@@ -21,4 +21,7 @@ interface PokemonDao {
 
     @Upsert
     fun save(pokemon: LocalCompletePokemon)
+
+    @Query("SELECT * FROM pokemons")
+    fun getAll(): List<LocalCompletePokemon>
 }
