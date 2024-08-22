@@ -26,12 +26,10 @@ class RepositoryImplModule {
     @Provides
     @Singleton
     fun providePokemonRepositoryImpl(
-        pokemonRemoteMediator: PokemonRemoteMediator,
         pokemonDatabase: PokemonDatabase,
         pokemonRepositoryStorages: PokemonRepositoryStorages
     ): PokemonRepositoryImpl {
         return PokemonRepositoryImpl(
-            remoteMediator = pokemonRemoteMediator,
             pokemonDatabase = pokemonDatabase,
             storages = pokemonRepositoryStorages
         )
