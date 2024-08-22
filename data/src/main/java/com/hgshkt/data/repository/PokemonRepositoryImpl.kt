@@ -30,7 +30,6 @@ import kotlinx.coroutines.flow.map
 
 @OptIn(ExperimentalPagingApi::class)
 class PokemonRepositoryImpl(
-    private val remoteMediator: PokemonRemoteMediator,
     private val pokemonDatabase: PokemonDatabase,
     private val storages: PokemonRepositoryStorages
 ) : PokemonRepository {
@@ -78,13 +77,24 @@ class PokemonRepositoryImpl(
         }
     }
 
+    override suspend fun downloadBasePokemons() {
+        val response = storages.remote.pokemon.getBasePokemons()
+        if (response.isSuccessful) {
+
+            val localPokemons = response.body()!!.results.map { remotePokemon ->
+                remotePokemon.toLocal()
+            }
+            storages.local.basePokemon.saveBasePokemons(localPokemons)
+        }
+    }
+
     /**
      * Returns ids of pokemons that need complete downloaded
      */
-    override suspend fun needToLoad(): Result<List<Int>> {
+    override fun needToLoad(): Result<List<Int>> {
         // try to fetch base pokemons from local storage
         val pokemons = storages.local.basePokemon.getBasePokemons()
-        if(pokemons.isNotEmpty()) {
+        if (pokemons.isNotEmpty()) {
             // return if success
             return Result.Success(
                 pokemons
@@ -98,25 +108,13 @@ class PokemonRepositoryImpl(
                     }
             )
         }
-        // if local loading failed, try to load from remote
-        val response = storages.remote.pokemon.getBasePokemons()
-        if (response.isSuccessful) {
-
-            val localPokemons = response.body()!!.results.map { remotePokemon ->
-                remotePokemon.toLocal()
-            }
-            storages.local.basePokemon.saveBasePokemons(localPokemons)
-
-            return Result.Success(
-                localPokemons.map { it.id }
-            )
-        }
 
         // in other case return error result
         else {
-            return Result.Error(response.message())
+            return Result.Error("local pokemon storage is empty")
         }
     }
+
 
     override suspend fun downloadPokemonsByIdList(idList: List<Int>) {
         idList.forEach { id ->
@@ -131,11 +129,16 @@ class PokemonRepositoryImpl(
         }
     }
 
+    override fun getAllPokemons(): List<SimplePokemon> {
+        return storages.local.pokemon.getAll().map { it.toSimplePokemon() }
+    }
+
     private suspend fun loadAbilityById(abilityId: Int): Ability? {
         val localAbility = storages.local.ability.getAbility(abilityId)
 
         if (localAbility == null) {
-            val remoteAbility = storages.remote.ability.getAbility(abilityId)?.toAbility()?.toLocal()
+            val remoteAbility =
+                storages.remote.ability.getAbility(abilityId)?.toAbility()?.toLocal()
 
             remoteAbility?.let { remoteAbilityNotNull ->
                 storages.local.ability.saveAbility(remoteAbilityNotNull)

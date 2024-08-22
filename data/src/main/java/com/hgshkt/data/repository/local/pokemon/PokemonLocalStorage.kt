@@ -9,4 +9,5 @@ interface PokemonLocalStorage {
     fun getPokemon(id: Int): LocalCompletePokemon?
     suspend fun updateCompletePokemons(pokemonEntities: List<LocalCompletePokemon>, refresh: Boolean)
     fun savePokemon(pokemon: LocalCompletePokemon)
+    fun getAll(): List<LocalCompletePokemon>
 }
