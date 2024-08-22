@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
+import com.hgshkt.domain.data.Result
+import com.hgshkt.domain.useCases.PokemonFilter
 import com.hgshkt.pokedex.ui.data.mapper.toUi
 import com.hgshkt.pokedex.ui.data.model.UiSimplePokemon
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,8 +19,12 @@ class ListViewModel @Inject constructor(
     private val useCases: ListUseCases
 ) : ViewModel() {
 
-    private val _pokemonsState: MutableStateFlow<PagingData<UiSimplePokemon>> = MutableStateFlow(value = PagingData.empty())
+    private val _pokemonsState: MutableStateFlow<PagingData<UiSimplePokemon>> =
+        MutableStateFlow(value = PagingData.empty())
     val pokemonsState: MutableStateFlow<PagingData<UiSimplePokemon>> get() = _pokemonsState
+
+    private val _state: MutableStateFlow<State> = MutableStateFlow(State.Loading)
+    val state: MutableStateFlow<State> get() = _state
 
     init {
         viewModelScope.launch {
@@ -30,5 +36,20 @@ class ListViewModel @Inject constructor(
                     }
                 }
         }
+    }
+
+    fun startFilter(settings: PokemonFilter.Settings) {
+        _state.value = State.Loading
+        val result = useCases.filter.execute(settings)
+        _state.value = when (result) {
+            is Result.Success -> State.Loaded(result.value.map { it.toUi() })
+            is Result.Error -> State.Error(result.msg)
+        }
+    }
+
+    sealed class State {
+        data object Loading : State()
+        data class Error(val message: String) : State()
+        data class Loaded(val pokemons: List<UiSimplePokemon>) : State()
     }
 }
