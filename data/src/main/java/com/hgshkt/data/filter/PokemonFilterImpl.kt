@@ -1,6 +1,7 @@
 package com.hgshkt.data.filter
 
 import com.hgshkt.domain.model.SimplePokemon
+import com.hgshkt.domain.model.Type
 import com.hgshkt.domain.useCases.PokemonFilter
 
 class PokemonFilterImpl : PokemonFilter {
@@ -12,6 +13,23 @@ class PokemonFilterImpl : PokemonFilter {
             return pokemons
                 .weightInRange(weightRange)
                 .heightInRange(heightRange)
+                .type(types)
+                .nameContains(text)
+        }
+    }
+
+
+    private fun List<SimplePokemon>.nameContains(text: String): List<SimplePokemon> {
+        return filter { it.name.contains(text) }
+    }
+
+    private fun List<SimplePokemon>.type(types: List<Type>): List<SimplePokemon> {
+        return filter { pokemon ->
+            pokemon.types.all { pokemonType ->
+                types.any { neededType ->
+                    neededType == pokemonType
+                }
+            }
         }
     }
 
