@@ -57,28 +57,7 @@ import com.hgshkt.pokedex.ui.screens.listDetail.PokemonSaver
 @Preview
 @Composable
 fun ExpandedViewPreview(modifier: Modifier = Modifier) {
-    var isExpanded by remember { mutableStateOf(false) }
-    ExpandedView(
-        hiddenPart = {
-            FilterMenu()
-        },
-        visiblePart = {
-            FilterButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp),
-                placeholder = { Text("Enter Pokemon name") },
-                isExpanded = isExpanded,
-                onClick = {
-                    isExpanded = !isExpanded
-                },
-                onSearchButtonClick = { text ->
-                    // viewModel.search(text)
-                }
-            )
-        },
-        expanded = isExpanded
-    )
+    FilterMenu()
 }
 
 @Composable
