@@ -52,7 +52,7 @@ fun UiType.toDomain(): Type {
         UiType.POISON -> Type.POISON
         UiType.GROUND -> Type.GROUND
         UiType.FLYING -> Type.FLYING
-        UiType.PHYSIC -> Type.PHYSIC
+        UiType.PHYSIC -> Type.PSYCHIC
         UiType.BUG -> Type.BUG
         UiType.ROCK -> Type.ROCK
         UiType.GHOST -> Type.GHOST
@@ -75,7 +75,7 @@ fun Type.toUi(): UiType {
         Type.POISON -> UiType.POISON
         Type.GROUND -> UiType.GROUND
         Type.FLYING -> UiType.FLYING
-        Type.PHYSIC -> UiType.PHYSIC
+        Type.PSYCHIC -> UiType.PHYSIC
         Type.BUG -> UiType.BUG
         Type.ROCK -> UiType.ROCK
         Type.GHOST -> UiType.GHOST

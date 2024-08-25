@@ -11,7 +11,7 @@ enum class Type {
     POISON,
     GROUND,
     FLYING,
-    PHYSIC,
+    PSYCHIC,
     BUG,
     ROCK,
     GHOST,

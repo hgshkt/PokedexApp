@@ -33,7 +33,7 @@ fun DType.toType(): Type {
         DType.POISON -> Type.POISON
         DType.GROUND -> Type.GROUND
         DType.FLYING -> Type.FLYING
-        DType.PHYSIC -> Type.PHYSIC
+        DType.PHYSIC -> Type.PSYCHIC
         DType.BUG -> Type.BUG
         DType.ROCK -> Type.ROCK
         DType.GHOST -> Type.GHOST

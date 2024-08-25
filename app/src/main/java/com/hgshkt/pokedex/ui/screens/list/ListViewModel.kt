@@ -11,6 +11,7 @@ import com.hgshkt.pokedex.ui.data.mapper.toUi
 import com.hgshkt.pokedex.ui.data.model.UiSimplePokemon
 import com.hgshkt.pokedex.ui.data.model.UiType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -147,10 +148,12 @@ class ListViewModel @Inject constructor(
 
     fun startFilter() {
         _state.value = State.Loading
-        val result = useCases.filter.execute(_filterMenuState.value.toDomainSettings())
-        _state.value = when (result) {
-            is Result.Success -> State.Loaded(result.value.map { it.toUi() })
-            is Result.Error -> State.Error(result.msg)
+        viewModelScope.launch(Dispatchers.Default) {
+            val result = useCases.filter.execute(_filterMenuState.value.toDomainSettings())
+            _state.value = when (result) {
+                is Result.Success -> State.Loaded(result.value.map { it.toUi() })
+                is Result.Error -> State.Error(result.msg)
+            }
         }
     }
 

@@ -143,7 +143,7 @@ private fun typeByName(name: String): Type {
         "poison" -> Type.POISON
         "ground" -> Type.GROUND
         "flying" -> Type.FLYING
-        "physic" -> Type.PHYSIC
+        "physic" -> Type.PSYCHIC
         "bug" -> Type.BUG
         "rock" -> Type.ROCK
         "ghost" -> Type.GHOST
