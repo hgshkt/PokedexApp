@@ -1,17 +1,16 @@
 package com.hgshkt.pokedex.app.di.usecases
 
-import com.hgshkt.domain.data.FilterPokemonsUseCase
+import com.hgshkt.domain.useCases.FilterPokemonsUseCase
 import com.hgshkt.domain.data.PokemonRepository
 import com.hgshkt.domain.useCases.LoadPokemonByIdUseCase
 import com.hgshkt.domain.useCases.LoadPokemonsUseCase
 import com.hgshkt.domain.useCases.PagedLoadPokemonsUseCase
-import com.hgshkt.domain.useCases.PokemonFilter
+import com.hgshkt.domain.data.PokemonFilter
 import com.hgshkt.pokedex.ui.screens.list.ListUseCases
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import java.util.logging.Filter
 import javax.inject.Singleton
 
 @Module

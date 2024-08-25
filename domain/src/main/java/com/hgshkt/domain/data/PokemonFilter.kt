@@ -1,4 +1,4 @@
-package com.hgshkt.domain.useCases
+package com.hgshkt.domain.data
 
 import com.hgshkt.domain.model.SimplePokemon
 import com.hgshkt.domain.model.Type

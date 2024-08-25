@@ -2,7 +2,7 @@ package com.hgshkt.data.filter
 
 import com.hgshkt.domain.model.SimplePokemon
 import com.hgshkt.domain.model.Type
-import com.hgshkt.domain.useCases.PokemonFilter
+import com.hgshkt.domain.data.PokemonFilter
 
 class PokemonFilterImpl : PokemonFilter {
     override fun filter(

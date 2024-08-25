@@ -1,9 +1,9 @@
-package com.hgshkt.domain.data
+package com.hgshkt.domain.useCases
 
+import com.hgshkt.domain.data.PokemonFilter
+import com.hgshkt.domain.data.PokemonRepository
+import com.hgshkt.domain.data.Result
 import com.hgshkt.domain.model.SimplePokemon
-import com.hgshkt.domain.useCases.PokemonFilter
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 class FilterPokemonsUseCase(
     private val filter: PokemonFilter,
@@ -11,7 +11,7 @@ class FilterPokemonsUseCase(
 ) {
     fun execute(
         settings: PokemonFilter.Settings
-    ): Result<List<SimplePokemon>>  {
+    ): Result<List<SimplePokemon>> {
 
         val result = repository.needToLoad()
         if (result is Result.Success && result.value.isEmpty()) {

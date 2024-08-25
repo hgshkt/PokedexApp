@@ -7,10 +7,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -31,12 +34,10 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -51,13 +52,12 @@ import androidx.paging.compose.itemKey
 import com.hgshkt.pokedex.ui.custom.ErrorBox
 import com.hgshkt.pokedex.ui.custom.LoadingBox
 import com.hgshkt.pokedex.ui.data.model.UiSimplePokemon
-import com.hgshkt.pokedex.ui.data.model.UiType
 import com.hgshkt.pokedex.ui.screens.listDetail.PokemonSaver
 
 @Preview
 @Composable
 fun ExpandedViewPreview(modifier: Modifier = Modifier) {
-    FilterMenu()
+
 }
 
 @Composable
@@ -65,24 +65,47 @@ fun ListScreen(
     viewModel: ListViewModel = hiltViewModel(),
     onItemClick: (PokemonSaver) -> Unit
 ) {
-    val state by viewModel.state.collectAsState()
+    val screenState by viewModel.state.collectAsState()
+    val filterMenuState by viewModel.filterMenuState.collectAsState()
 
-    when (state) {
+    when (screenState) {
         is ListViewModel.State.Loading -> {
             LoadingBox()
         }
 
         is ListViewModel.State.Error -> {
-            ErrorBox((state as ListViewModel.State.Error).message)
+            ErrorBox((screenState as ListViewModel.State.Error).message)
         }
 
         is ListViewModel.State.Loaded -> {
             CompleteListScreen(
                 modifier = Modifier.wrapContentWidth(),
-                pokemons = (state as ListViewModel.State.Loaded).pokemons,
-                onItemClick = onItemClick,
+                pokemons = (screenState as ListViewModel.State.Loaded).pokemons,
+                onPokemonCardClick = onItemClick,
                 filterButtonClick = {
-                    // viewModel.startFilter()
+                    viewModel.startFilter()
+                },
+                filterMenuState = filterMenuState,
+                onOpenButtonClick = {
+                    viewModel.openFilterMenu()
+                },
+                onTextValueChange = { text ->
+                    viewModel.updateFilterText(text)
+                },
+                weightStartValueChange = { value ->
+                    viewModel.updateFilterWeightStart(value.toInt())
+                },
+                weightEndValueChange = { value ->
+                    viewModel.updateFilterWeightEnd(value.toInt())
+                },
+                heightStartValueChange = { value ->
+                    viewModel.updateFilterHeightStart(value.toInt())
+                },
+                heightEndValueChange = { value ->
+                    viewModel.updateFilterHeightEnd(value.toInt())
+                },
+                onTypeClick = { type ->
+                    viewModel.updateFilterPokemonType(type)
                 }
             )
         }
@@ -95,8 +118,30 @@ fun ListScreen(
                 modifier = Modifier.wrapContentWidth(),
                 pokemons = pokemons,
                 onItemClick = onItemClick,
-                filterButtonClick = {
-                    // viewModel.startFilter()
+                onSearchButtonClick = {
+                    viewModel.startFilter()
+                },
+                onTextValueChange = { text ->
+                    viewModel.updateFilterText(text)
+                },
+                menuState = filterMenuState,
+                weightStartValueChange = { value ->
+                    viewModel.updateFilterWeightStart(value.toInt())
+                },
+                weightEndValueChange = { value ->
+                    viewModel.updateFilterWeightEnd(value.toInt())
+                },
+                heightStartValueChange = { value ->
+                    viewModel.updateFilterHeightStart(value.toInt())
+                },
+                heightEndValueChange = { value ->
+                    viewModel.updateFilterHeightEnd(value.toInt())
+                },
+                onTypeClick = { type ->
+                    viewModel.updateFilterPokemonType(type)
+                },
+                onOpenButtonClick = {
+                    viewModel.openFilterMenu()
                 }
             )
         }
@@ -107,14 +152,29 @@ fun ListScreen(
 fun CompleteListScreen(
     modifier: Modifier,
     pokemons: List<UiSimplePokemon>,
-    onItemClick: (PokemonSaver) -> Unit,
-    filterButtonClick: () -> Unit
+    onPokemonCardClick: (PokemonSaver) -> Unit,
+    filterButtonClick: () -> Unit,
+    onOpenButtonClick: () -> Unit,
+    onTextValueChange: (String) -> Unit,
+    filterMenuState: FilterMenuState,
+    weightStartValueChange: (String) -> Unit,
+    weightEndValueChange: (String) -> Unit,
+    heightStartValueChange: (String) -> Unit,
+    heightEndValueChange: (String) -> Unit,
+    onTypeClick: (FilterMenuState.SelectedType) -> Unit
 ) {
-    var isExpanded by remember { mutableStateOf(false) }
+
     Column(modifier) {
         ExpandedView(
             hiddenPart = {
-                FilterMenu()
+                FilterMenu(
+                    menuState = filterMenuState,
+                    weightStartValueChange = weightStartValueChange,
+                    weightEndValueChange = weightEndValueChange,
+                    heightStartValueChange = heightStartValueChange,
+                    heightEndValueChange = heightEndValueChange,
+                    onTypeClick = onTypeClick
+                )
             },
             visiblePart = {
                 FilterButton(
@@ -122,21 +182,19 @@ fun CompleteListScreen(
                         .fillMaxWidth()
                         .padding(4.dp),
                     placeholder = { Text("Enter Pokemon name") },
-                    isExpanded = isExpanded,
-                    onClick = {
-                        isExpanded = !isExpanded
-                    },
-                    onSearchButtonClick = { text ->
-                        filterButtonClick()
-                    }
+                    isExpanded = filterMenuState.opened,
+                    onOpenButtonClick = onOpenButtonClick,
+                    onSearchButtonClick = filterButtonClick,
+                    onTextValueChange = onTextValueChange,
+                    text = filterMenuState.text
                 )
             },
-            expanded = isExpanded
+            expanded = filterMenuState.opened
         )
         CompleteList(
             pokemons = pokemons
         ) { saver ->
-            onItemClick(saver)
+            onPokemonCardClick(saver)
         }
     }
 }
@@ -144,14 +202,14 @@ fun CompleteListScreen(
 @Composable
 fun CompleteList(
     pokemons: List<UiSimplePokemon>,
-    onItemClick: (PokemonSaver) -> Unit
+    onPokemonCardClick: (PokemonSaver) -> Unit
 ) {
     LazyVerticalGrid(columns = GridCells.Fixed(2)) {
         items(pokemons) { pokemon ->
             PokemonCard(
                 pokemon = pokemon,
             ) {
-                onItemClick(PokemonSaver(pokemon))
+                onPokemonCardClick(PokemonSaver(pokemon))
             }
         }
     }
@@ -162,13 +220,27 @@ fun CompletePagedListScreen(
     modifier: Modifier = Modifier,
     pokemons: LazyPagingItems<UiSimplePokemon>,
     onItemClick: (PokemonSaver) -> Unit,
-    filterButtonClick: () -> Unit
+    onSearchButtonClick: () -> Unit,
+    onTextValueChange: (String) -> Unit,
+    menuState: FilterMenuState,
+    weightStartValueChange: (String) -> Unit,
+    weightEndValueChange: (String) -> Unit,
+    heightStartValueChange: (String) -> Unit,
+    heightEndValueChange: (String) -> Unit,
+    onTypeClick: (FilterMenuState.SelectedType) -> Unit,
+    onOpenButtonClick: () -> Unit,
 ) {
-    var isExpanded by remember { mutableStateOf(false) }
     Column(modifier) {
         ExpandedView(
             hiddenPart = {
-                FilterMenu()
+                FilterMenu(
+                    menuState = menuState,
+                    weightStartValueChange = weightStartValueChange,
+                    weightEndValueChange = weightEndValueChange,
+                    heightStartValueChange = heightStartValueChange,
+                    heightEndValueChange = heightEndValueChange,
+                    onTypeClick = onTypeClick
+                )
             },
             visiblePart = {
                 FilterButton(
@@ -176,16 +248,14 @@ fun CompletePagedListScreen(
                         .fillMaxWidth()
                         .padding(4.dp),
                     placeholder = { Text("Enter Pokemon name") },
-                    isExpanded = isExpanded,
-                    onClick = {
-                        isExpanded = !isExpanded
-                    },
-                    onSearchButtonClick = { text ->
-                        filterButtonClick()
-                    }
+                    isExpanded = menuState.opened,
+                    onOpenButtonClick = onOpenButtonClick,
+                    onSearchButtonClick = onSearchButtonClick,
+                    onTextValueChange = onTextValueChange,
+                    text = menuState.text
                 )
             },
-            expanded = isExpanded
+            expanded = menuState.opened
         )
         CompletePagedList(
             pokemons = pokemons
@@ -196,13 +266,14 @@ fun CompletePagedListScreen(
 }
 
 @Composable
-fun FilterMenu() {
-    var weightStartValue by remember { mutableStateOf("0") }
-    var weightEndValue by remember { mutableStateOf("10000") }
-    var heightStartValue by remember { mutableStateOf("0") }
-    var heightEndValue by remember { mutableStateOf("10000") }
-
-    val types = remember { UiType.entries }
+fun FilterMenu(
+    menuState: FilterMenuState,
+    weightStartValueChange: (String) -> Unit,
+    weightEndValueChange: (String) -> Unit,
+    heightStartValueChange: (String) -> Unit,
+    heightEndValueChange: (String) -> Unit,
+    onTypeClick: (FilterMenuState.SelectedType) -> Unit
+) {
 
     Column(
         modifier = Modifier
@@ -210,7 +281,9 @@ fun FilterMenu() {
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        TypesChoosingMenu(types)
+        TypesChoosingMenu(menuState.selectedTypes) {
+            onTypeClick(it)
+        }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
@@ -218,26 +291,18 @@ fun FilterMenu() {
             NamedIntRange(
                 modifier = Modifier.weight(1f),
                 text = "Weight:",
-                startValue = weightStartValue,
-                onStartValueChange = {
-                    weightStartValue = it
-                },
-                endValue = weightEndValue,
-                onEndValueChange = {
-                    weightEndValue = it
-                }
+                startValue = menuState.weightStart.toString(),
+                onStartValueChange = weightStartValueChange,
+                endValue = menuState.weightEnd.toString(),
+                onEndValueChange = weightEndValueChange
             )
             NamedIntRange(
                 modifier = Modifier.weight(1f),
                 text = "Height:",
-                startValue = heightStartValue,
-                onStartValueChange = {
-                    heightStartValue = it
-                },
-                endValue = heightEndValue,
-                onEndValueChange = {
-                    heightEndValue = it
-                }
+                startValue = menuState.heightStart.toString(),
+                onStartValueChange = heightStartValueChange,
+                endValue = menuState.heightEnd.toString(),
+                onEndValueChange = heightEndValueChange
             )
         }
 
@@ -246,8 +311,9 @@ fun FilterMenu() {
 
 @Composable
 fun TypesChoosingMenu(
-    types: List<UiType>,
+    types: List<FilterMenuState.SelectedType>,
     modifier: Modifier = Modifier,
+    click: (FilterMenuState.SelectedType) -> Unit
 ) {
     LazyVerticalGrid(
         modifier = modifier,
@@ -255,29 +321,43 @@ fun TypesChoosingMenu(
         contentPadding = PaddingValues(4.dp)
     ) {
         items(types) { type ->
-            PokemonType(
-                type = type
+            PokemonTypeSelectingButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable {
+                        click(type)
+                    },
+                settingsType = type
             )
         }
     }
 }
 
 @Composable
-private fun PokemonType(type: UiType) {
-    Column(
-        modifier = Modifier
-            .padding(4.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .background(type.backgroundColor)
-            .padding(horizontal = 22.dp, vertical = 12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = type.text,
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = type.textColor
-        )
+fun PokemonTypeSelectingButton(
+    settingsType: FilterMenuState.SelectedType,
+    modifier: Modifier = Modifier
+) {
+    Box(modifier) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    if (settingsType.selected) settingsType.type.backgroundColor
+                    else Color(0xFF929292)
+                )
+                .padding(horizontal = 22.dp, vertical = 12.dp)
+        ) {
+            Text(
+                text = settingsType.type.text,
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                color = settingsType.type.textColor
+            )
+        }
     }
 }
 
@@ -351,20 +431,19 @@ fun FilterButton(
     placeholder: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     isExpanded: Boolean,
-    onClick: () -> Unit,
-    onSearchButtonClick: (String) -> Unit
+    onOpenButtonClick: () -> Unit,
+    onSearchButtonClick: () -> Unit,
+    text: String,
+    onTextValueChange: (String) -> Unit
 ) {
     val icon = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown
-    var text by remember { mutableStateOf("") }
 
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.End
     ) {
         IconButton(
-            onClick = {
-                onClick()
-            }
+            onClick = onOpenButtonClick
         ) {
             Icon(
                 painter = rememberVectorPainter(image = icon),
@@ -374,13 +453,11 @@ fun FilterButton(
         TextField(
             value = text,
             placeholder = placeholder,
-            onValueChange = { text = it },
+            onValueChange = onTextValueChange,
             modifier = Modifier.weight(1f)
         )
         IconButton(
-            onClick = {
-                onSearchButtonClick(text)
-            }
+            onClick = onSearchButtonClick
         ) {
             Icon(
                 painter = rememberVectorPainter(image = Icons.Default.Search),
