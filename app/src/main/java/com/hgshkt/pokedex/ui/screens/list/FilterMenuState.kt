@@ -5,14 +5,18 @@ import com.hgshkt.pokedex.ui.data.model.UiType
 data class FilterMenuState(
     val selectedTypes: List<SelectedType>,
     val text: String = "",
-    val weightStart: Int = 0,
-    val weightEnd: Int = 10000,
-    val heightStart: Int = 0,
-    val heightEnd: Int = 10000,
+    val weightStart: String = "",
+    val weightEnd: String = "",
+    val heightStart: String = "",
+    val heightEnd: String = "",
     val opened: Boolean = false
 ) {
     companion object {
-        const val maxSelectedTypes = 2
+        const val MAX_SELECTED_TYPES = 2
+        const val WEIGHT_START_DEFAULT = 0
+        const val WEIGHT_END_DEFAULT = 10000
+        const val HEIGHT_START_DEFAULT = 0
+        const val HEIGHT_END_DEFAULT = 10000
     }
 
     data class SelectedType(

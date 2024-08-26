@@ -58,25 +58,25 @@ class ListViewModel @Inject constructor(
         }
     }
 
-    fun updateFilterWeightStart(weight: Int) {
+    fun updateFilterWeightStart(weight: String) {
         _filterMenuState.value = _filterMenuState.value.copy(
             weightStart = weight
         )
     }
 
-    fun updateFilterWeightEnd(weight: Int) {
+    fun updateFilterWeightEnd(weight: String) {
         _filterMenuState.value = _filterMenuState.value.copy(
             weightEnd = weight
         )
     }
 
-    fun updateFilterHeightStart(height: Int) {
+    fun updateFilterHeightStart(height: String) {
         _filterMenuState.value = _filterMenuState.value.copy(
             heightStart = height
         )
     }
 
-    fun updateFilterHeightEnd(height: Int) {
+    fun updateFilterHeightEnd(height: String) {
         _filterMenuState.value = _filterMenuState.value.copy(
             heightEnd = height
         )
@@ -128,7 +128,7 @@ class ListViewModel @Inject constructor(
                     }
 
                     // if count of selected types less than maximum
-                    else if (selectedCount != FilterMenuState.maxSelectedTypes) {
+                    else if (selectedCount != FilterMenuState.MAX_SELECTED_TYPES) {
                         _filterMenuState.update { value ->
                             value.copy(
                                 selectedTypes = selectedTypes.map {

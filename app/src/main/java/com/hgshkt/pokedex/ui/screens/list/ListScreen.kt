@@ -34,6 +34,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,6 +55,10 @@ import androidx.paging.compose.itemKey
 import com.hgshkt.pokedex.ui.custom.ErrorBox
 import com.hgshkt.pokedex.ui.custom.LoadingBox
 import com.hgshkt.pokedex.ui.data.model.UiSimplePokemon
+import com.hgshkt.pokedex.ui.screens.list.FilterMenuState.Companion.HEIGHT_END_DEFAULT
+import com.hgshkt.pokedex.ui.screens.list.FilterMenuState.Companion.HEIGHT_START_DEFAULT
+import com.hgshkt.pokedex.ui.screens.list.FilterMenuState.Companion.WEIGHT_END_DEFAULT
+import com.hgshkt.pokedex.ui.screens.list.FilterMenuState.Companion.WEIGHT_START_DEFAULT
 import com.hgshkt.pokedex.ui.screens.listDetail.PokemonSaver
 
 @Preview
@@ -93,16 +100,16 @@ fun ListScreen(
                     viewModel.updateFilterText(text)
                 },
                 weightStartValueChange = { value ->
-                    viewModel.updateFilterWeightStart(value.toInt())
+                    viewModel.updateFilterWeightStart(value)
                 },
                 weightEndValueChange = { value ->
-                    viewModel.updateFilterWeightEnd(value.toInt())
+                    viewModel.updateFilterWeightEnd(value)
                 },
                 heightStartValueChange = { value ->
-                    viewModel.updateFilterHeightStart(value.toInt())
+                    viewModel.updateFilterHeightStart(value)
                 },
                 heightEndValueChange = { value ->
-                    viewModel.updateFilterHeightEnd(value.toInt())
+                    viewModel.updateFilterHeightEnd(value)
                 },
                 onTypeClick = { type ->
                     viewModel.updateFilterPokemonType(type)
@@ -126,16 +133,16 @@ fun ListScreen(
                 },
                 menuState = filterMenuState,
                 weightStartValueChange = { value ->
-                    viewModel.updateFilterWeightStart(value.toInt())
+                    viewModel.updateFilterWeightStart(value)
                 },
                 weightEndValueChange = { value ->
-                    viewModel.updateFilterWeightEnd(value.toInt())
+                    viewModel.updateFilterWeightEnd(value)
                 },
                 heightStartValueChange = { value ->
-                    viewModel.updateFilterHeightStart(value.toInt())
+                    viewModel.updateFilterHeightStart(value)
                 },
                 heightEndValueChange = { value ->
-                    viewModel.updateFilterHeightEnd(value.toInt())
+                    viewModel.updateFilterHeightEnd(value)
                 },
                 onTypeClick = { type ->
                     viewModel.updateFilterPokemonType(type)
@@ -291,18 +298,22 @@ fun FilterMenu(
             NamedIntRange(
                 modifier = Modifier.weight(1f),
                 text = "Weight:",
-                startValue = menuState.weightStart.toString(),
+                startValue = menuState.weightStart,
                 onStartValueChange = weightStartValueChange,
-                endValue = menuState.weightEnd.toString(),
-                onEndValueChange = weightEndValueChange
+                endValue = menuState.weightEnd,
+                onEndValueChange = weightEndValueChange,
+                placeholderStart = WEIGHT_START_DEFAULT.toString(),
+                placeholderEnd = WEIGHT_END_DEFAULT.toString()
             )
             NamedIntRange(
                 modifier = Modifier.weight(1f),
                 text = "Height:",
-                startValue = menuState.heightStart.toString(),
+                startValue = menuState.heightStart,
                 onStartValueChange = heightStartValueChange,
-                endValue = menuState.heightEnd.toString(),
-                onEndValueChange = heightEndValueChange
+                endValue = menuState.heightEnd,
+                onEndValueChange = heightEndValueChange,
+                placeholderStart = HEIGHT_START_DEFAULT.toString(),
+                placeholderEnd = HEIGHT_END_DEFAULT.toString()
             )
         }
 
@@ -368,7 +379,9 @@ fun NamedIntRange(
     startValue: String = "0",
     endValue: String = "0",
     onStartValueChange: (String) -> Unit,
-    onEndValueChange: (String) -> Unit
+    onEndValueChange: (String) -> Unit,
+    placeholderStart: String,
+    placeholderEnd: String
 ) {
     Column(
         modifier = modifier,
@@ -382,7 +395,9 @@ fun NamedIntRange(
             startValue = startValue,
             endValue = endValue,
             onStartValueChange = onStartValueChange,
-            onEndValueChange = onEndValueChange
+            onEndValueChange = onEndValueChange,
+            placeholderStart = placeholderStart,
+            placeholderEnd = placeholderEnd
         )
     }
 }
@@ -393,20 +408,20 @@ fun IntRange(
     startValue: String = "0",
     endValue: String = "0",
     onStartValueChange: (String) -> Unit,
-    onEndValueChange: (String) -> Unit
+    onEndValueChange: (String) -> Unit,
+    placeholderStart: String,
+    placeholderEnd: String
 ) {
     Row(
         modifier,
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        TextField(
-            modifier = Modifier.weight(1f),
-            value = startValue,
-            onValueChange = {
-                onStartValueChange(it)
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        DigitTextField(
+            Modifier.weight(1f),
+            startValue,
+            onValueChange = onStartValueChange,
+            placeholder = placeholderStart
         )
         Text(
             text = "-",
@@ -415,15 +430,43 @@ fun IntRange(
                 .padding(horizontal = 4.dp),
             fontSize = 22.sp
         )
-        TextField(
-            modifier = Modifier.weight(1f),
-            value = endValue,
-            onValueChange = {
-                onEndValueChange(it)
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        DigitTextField(
+            Modifier.weight(1f),
+            endValue,
+            onValueChange = onEndValueChange,
+            placeholder = placeholderEnd
         )
     }
+}
+
+@Composable
+fun DigitTextField(
+    modifier: Modifier = Modifier,
+    value: String,
+    onValueChange: (String) -> Unit,
+    maxLength: Int = 5,
+    placeholder: String
+) {
+    var isError by remember { mutableStateOf(false) }
+    TextField(
+        modifier = modifier,
+        value = value,
+        onValueChange = {
+            if (it.last().isDigit()) {
+                if (it.length == maxLength + 1) {
+                    isError = true
+                } else {
+                    isError = false
+                    onValueChange(it)
+                }
+            }
+        },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        isError = isError,
+        placeholder = {
+            Text(text = placeholder, color = Color.Gray)
+        }
+    )
 }
 
 @Composable
