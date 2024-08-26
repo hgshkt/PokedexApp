@@ -211,7 +211,7 @@ fun CompleteList(
     pokemons: List<UiSimplePokemon>,
     onPokemonCardClick: (PokemonSaver) -> Unit
 ) {
-    LazyVerticalGrid(columns = GridCells.Fixed(2)) {
+    LazyVerticalGrid(columns = GridCells.Fixed(3)) {
         items(pokemons) { pokemon ->
             PokemonCard(
                 pokemon = pokemon,

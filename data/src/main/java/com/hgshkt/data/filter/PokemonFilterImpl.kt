@@ -20,7 +20,7 @@ class PokemonFilterImpl : PokemonFilter {
 
 
     private fun List<SimplePokemon>.nameContains(text: String): List<SimplePokemon> {
-        return filter { it.name.contains(text) }
+        return filter { it.name.contains(text, true) }
     }
 
     private fun List<SimplePokemon>.type(types: List<Type>): List<SimplePokemon> {
