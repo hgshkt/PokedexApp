@@ -85,123 +85,77 @@ fun ListScreen(
         }
 
         is ListViewModel.State.Loaded -> {
-            CompleteListScreen(
-                modifier = Modifier.wrapContentWidth(),
-                pokemons = (screenState as ListViewModel.State.Loaded).pokemons,
-                onPokemonCardClick = onItemClick,
-                filterButtonClick = {
-                    viewModel.startFilter()
-                },
-                filterMenuState = filterMenuState,
-                onOpenButtonClick = {
-                    viewModel.openFilterMenu()
-                },
-                onTextValueChange = { text ->
-                    viewModel.updateFilterText(text)
-                },
-                weightStartValueChange = { value ->
-                    viewModel.updateFilterWeightStart(value)
-                },
-                weightEndValueChange = { value ->
-                    viewModel.updateFilterWeightEnd(value)
-                },
-                heightStartValueChange = { value ->
-                    viewModel.updateFilterHeightStart(value)
-                },
-                heightEndValueChange = { value ->
-                    viewModel.updateFilterHeightEnd(value)
-                },
-                onTypeClick = { type ->
-                    viewModel.updateFilterPokemonType(type)
-                }
-            )
-        }
-
-        is ListViewModel.State.Paged -> {
-            val pokemons: LazyPagingItems<UiSimplePokemon> =
-                viewModel.pokemonsState.collectAsLazyPagingItems()
-
-            CompletePagedListScreen(
-                modifier = Modifier.wrapContentWidth(),
-                pokemons = pokemons,
-                onItemClick = onItemClick,
-                onSearchButtonClick = {
-                    viewModel.startFilter()
-                },
-                onTextValueChange = { text ->
-                    viewModel.updateFilterText(text)
-                },
-                menuState = filterMenuState,
-                weightStartValueChange = { value ->
-                    viewModel.updateFilterWeightStart(value)
-                },
-                weightEndValueChange = { value ->
-                    viewModel.updateFilterWeightEnd(value)
-                },
-                heightStartValueChange = { value ->
-                    viewModel.updateFilterHeightStart(value)
-                },
-                heightEndValueChange = { value ->
-                    viewModel.updateFilterHeightEnd(value)
-                },
-                onTypeClick = { type ->
-                    viewModel.updateFilterPokemonType(type)
-                },
-                onOpenButtonClick = {
-                    viewModel.openFilterMenu()
-                }
-            )
-        }
-    }
-}
-
-@Composable
-fun CompleteListScreen(
-    modifier: Modifier,
-    pokemons: List<UiSimplePokemon>,
-    onPokemonCardClick: (PokemonSaver) -> Unit,
-    filterButtonClick: () -> Unit,
-    onOpenButtonClick: () -> Unit,
-    onTextValueChange: (String) -> Unit,
-    filterMenuState: FilterMenuState,
-    weightStartValueChange: (String) -> Unit,
-    weightEndValueChange: (String) -> Unit,
-    heightStartValueChange: (String) -> Unit,
-    heightEndValueChange: (String) -> Unit,
-    onTypeClick: (FilterMenuState.SelectedType) -> Unit
-) {
-
-    Column(modifier) {
-        ExpandedView(
-            hiddenPart = {
-                FilterMenu(
-                    menuState = filterMenuState,
-                    weightStartValueChange = weightStartValueChange,
-                    weightEndValueChange = weightEndValueChange,
-                    heightStartValueChange = heightStartValueChange,
-                    heightEndValueChange = heightEndValueChange,
-                    onTypeClick = onTypeClick
+            Column {
+                ExpandedView(
+                    hiddenPart = {
+                        FilterMenu(
+                            menuState = filterMenuState,
+                            weightStartValueChange = { value ->
+                                viewModel.updateFilterWeightStart(value)
+                            },
+                            weightEndValueChange = { value ->
+                                viewModel.updateFilterWeightEnd(value)
+                            },
+                            heightStartValueChange = { value ->
+                                viewModel.updateFilterHeightStart(value)
+                            },
+                            heightEndValueChange = { value ->
+                                viewModel.updateFilterHeightEnd(value)
+                            },
+                            onTypeClick = { type ->
+                                viewModel.updateFilterPokemonType(type)
+                            }
+                        )
+                    },
+                    visiblePart = {
+                        FilterButton(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(4.dp),
+                            placeholder = { Text("Enter Pokemon name") },
+                            isExpanded = filterMenuState.opened,
+                            onOpenButtonClick = {
+                                viewModel.openFilterMenu()
+                            },
+                            onSearchButtonClick = {
+                                viewModel.startFilter()
+                            },
+                            onTextValueChange = { text ->
+                                viewModel.updateFilterText(text)
+                            },
+                            text = filterMenuState.text
+                        )
+                    },
+                    expanded = filterMenuState.opened
                 )
-            },
-            visiblePart = {
-                FilterButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp),
-                    placeholder = { Text("Enter Pokemon name") },
-                    isExpanded = filterMenuState.opened,
-                    onOpenButtonClick = onOpenButtonClick,
-                    onSearchButtonClick = filterButtonClick,
-                    onTextValueChange = onTextValueChange,
-                    text = filterMenuState.text
-                )
-            },
-            expanded = filterMenuState.opened
-        )
-        CompleteList(
-            pokemons = pokemons
-        ) { saver ->
-            onPokemonCardClick(saver)
+                when (screenState as ListViewModel.State.Loaded) {
+                    is ListViewModel.State.Loaded.Default -> {
+                        val pokemons =
+                            (screenState as ListViewModel.State.Loaded.Default).pokemons
+
+                        CompleteList(
+                            pokemons = pokemons
+                        ) { saver ->
+                            onItemClick(saver)
+                        }
+                    }
+
+                    is ListViewModel.State.Loaded.Paged -> {
+                        val pokemons: LazyPagingItems<UiSimplePokemon> =
+                            viewModel.pokemonsState.collectAsLazyPagingItems()
+
+                        CompletePagedList(
+                            pokemons = pokemons
+                        ) { saver ->
+                            onItemClick(saver)
+                        }
+                    }
+
+                    ListViewModel.State.Loaded.Loading -> {
+                        LoadingBox()
+                    }
+                }
+            }
         }
     }
 }
@@ -218,56 +172,6 @@ fun CompleteList(
             ) {
                 onPokemonCardClick(PokemonSaver(pokemon))
             }
-        }
-    }
-}
-
-@Composable
-fun CompletePagedListScreen(
-    modifier: Modifier = Modifier,
-    pokemons: LazyPagingItems<UiSimplePokemon>,
-    onItemClick: (PokemonSaver) -> Unit,
-    onSearchButtonClick: () -> Unit,
-    onTextValueChange: (String) -> Unit,
-    menuState: FilterMenuState,
-    weightStartValueChange: (String) -> Unit,
-    weightEndValueChange: (String) -> Unit,
-    heightStartValueChange: (String) -> Unit,
-    heightEndValueChange: (String) -> Unit,
-    onTypeClick: (FilterMenuState.SelectedType) -> Unit,
-    onOpenButtonClick: () -> Unit,
-) {
-    Column(modifier) {
-        ExpandedView(
-            hiddenPart = {
-                FilterMenu(
-                    menuState = menuState,
-                    weightStartValueChange = weightStartValueChange,
-                    weightEndValueChange = weightEndValueChange,
-                    heightStartValueChange = heightStartValueChange,
-                    heightEndValueChange = heightEndValueChange,
-                    onTypeClick = onTypeClick
-                )
-            },
-            visiblePart = {
-                FilterButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp),
-                    placeholder = { Text("Enter Pokemon name") },
-                    isExpanded = menuState.opened,
-                    onOpenButtonClick = onOpenButtonClick,
-                    onSearchButtonClick = onSearchButtonClick,
-                    onTextValueChange = onTextValueChange,
-                    text = menuState.text
-                )
-            },
-            expanded = menuState.opened
-        )
-        CompletePagedList(
-            pokemons = pokemons
-        ) { saver ->
-            onItemClick(saver)
         }
     }
 }

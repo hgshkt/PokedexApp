@@ -44,7 +44,7 @@ class ListViewModel @Inject constructor(
             useCases.pagedLoad.execute()
                 .cachedIn(viewModelScope)
                 .collect { pagingData ->
-                    _state.value = State.Paged
+                    _state.value = State.Loaded.Paged
                     _pokemonsState.value = pagingData.map { pokemon ->
                         pokemon.toUi()
                     }
@@ -147,11 +147,11 @@ class ListViewModel @Inject constructor(
     }
 
     fun startFilter() {
-        _state.value = State.Loading
+        _state.value = State.Loaded.Loading
         viewModelScope.launch(Dispatchers.Default) {
             val result = useCases.filter.execute(_filterMenuState.value.toDomainSettings())
             _state.value = when (result) {
-                is Result.Success -> State.Loaded(result.value.map { it.toUi() })
+                is Result.Success -> State.Loaded.Default(result.value.map { it.toUi() })
                 is Result.Error -> State.Error(result.msg)
             }
         }
@@ -166,7 +166,10 @@ class ListViewModel @Inject constructor(
     sealed class State {
         data object Loading : State()
         data class Error(val message: String) : State()
-        data class Loaded(val pokemons: List<UiSimplePokemon>) : State()
-        data object Paged : State()
+        sealed class Loaded : State() {
+            data object Paged : Loaded()
+            data object Loading : Loaded()
+            data class Default(val pokemons: List<UiSimplePokemon>) : Loaded()
+        }
     }
 }
