@@ -6,6 +6,7 @@ import com.hgshkt.domain.useCases.LoadPokemonByIdUseCase
 import com.hgshkt.domain.useCases.LoadPokemonsUseCase
 import com.hgshkt.domain.useCases.PagedLoadPokemonsUseCase
 import com.hgshkt.domain.data.PokemonFilter
+import com.hgshkt.domain.useCases.DownloadAbilitiesUseCase
 import com.hgshkt.pokedex.ui.screens.list.ListUseCases
 import dagger.Module
 import dagger.Provides
@@ -47,6 +48,14 @@ class UseCaseModule {
         pokemonRepository: PokemonRepository
     ): LoadPokemonsUseCase {
         return LoadPokemonsUseCase(pokemonRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDownloadAbilitiesUseCase(
+        pokemonRepository: PokemonRepository
+    ): DownloadAbilitiesUseCase {
+        return DownloadAbilitiesUseCase(pokemonRepository)
     }
 
     @Provides

@@ -3,6 +3,7 @@ package com.hgshkt.pokedex.app
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import com.hgshkt.domain.useCases.DownloadAbilitiesUseCase
 import com.hgshkt.domain.useCases.LoadPokemonsUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -15,12 +16,16 @@ import javax.inject.Inject
 class LoadService : Service() {
 
     @Inject
-    lateinit var loadUseCase: LoadPokemonsUseCase
+    lateinit var loadPokemonsUseCase: LoadPokemonsUseCase
+
+    @Inject
+    lateinit var loadAbilityUseCase: DownloadAbilitiesUseCase
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         CoroutineScope(Dispatchers.IO + SupervisorJob())
             .launch {
-                loadUseCase.execute()
+                loadPokemonsUseCase.execute()
+                loadAbilityUseCase.execute()
             }
         return START_NOT_STICKY
     }

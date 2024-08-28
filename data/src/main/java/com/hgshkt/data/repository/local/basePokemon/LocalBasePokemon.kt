@@ -9,5 +9,6 @@ data class LocalBasePokemon(
     var id: Int,
     var name: String,
     var url: String,
-    var loaded: Boolean = false
+    var loaded: Boolean = false,
+    var abilitiesLoaded: Boolean = false
 )

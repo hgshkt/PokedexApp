@@ -10,6 +10,7 @@ import com.hgshkt.data.repository.mappers.toDPokemon
 import com.hgshkt.data.repository.mappers.toLocal
 import com.hgshkt.data.repository.mappers.toPokemon
 import com.hgshkt.data.repository.mappers.toSimplePokemon
+import com.hgshkt.data.util.lastParamFromUrl
 import com.hgshkt.domain.data.PokemonRepository
 import com.hgshkt.domain.data.Result
 import com.hgshkt.domain.data.mapper.toPokemon
@@ -105,15 +106,66 @@ class PokemonRepositoryImpl(
         }
     }
 
+    override fun needToLoadInfo(): Result<List<Int>> {
+        // try to fetch base pokemons from local storage
+        val pokemons = storages.local.basePokemon.getBasePokemons()
+        if (pokemons.isNotEmpty()) {
+            // return if success
+            return Result.Success(
+                pokemons
+                    // filter downloaded pokemons
+                    .filter { pokemon ->
+                        !pokemon.abilitiesLoaded
+                    }
+                    // return ids
+                    .map { pokemon ->
+                        pokemon.id
+                    }
+            )
+        }
+
+        // in other case return error result
+        else {
+            return Result.Error("local pokemon storage is empty")
+        }
+    }
+
 
     override suspend fun downloadPokemonsByIdList(idList: List<Int>) {
         idList.forEach { id ->
             val response = storages.remote.pokemon.getPokemon(id)
             if (response.isSuccessful) {
-                storages.local.pokemon.savePokemon(response.body()!!.toLocal())
+                val pokemon = response.body()!!
+                storages.local.pokemon.savePokemon(pokemon.toLocal())
 
+                pokemon.abilities.forEach { ability ->
+                    storages.local.pokemonAbilityCrossRef.saveAbilityRef(
+                        pokemonId = id,
+                        abilityId = ability.ability!!.url!!
+                            // last url param is ability id
+                            .lastParamFromUrl().toInt()
+                    )
+                }
                 storages.local.basePokemon.getBasePokemon(id).let {
                     storages.local.basePokemon.saveBasePokemon(it.apply { loaded = true })
+                }
+            }
+        }
+    }
+
+    override suspend fun downloadPokemonAbilitiesByIdList(idList: List<Int>) {
+        idList.forEach { id ->
+            val crossRefs = storages.local.pokemonAbilityCrossRef.getAbilityRefsForPokemon(id)
+            crossRefs.forEach { ref ->
+                val remoteAbility = storages.remote.ability.getAbility(ref.abilityId)
+
+                storages.local.pokemonAbilityCrossRef
+                    .saveAbilityRef(ref.pokemonId, ref.abilityId)
+
+                storages.local.ability.saveAbility(remoteAbility!!.toAbility().toLocal())
+
+                storages.local.basePokemon.getBasePokemon(id).let {
+                    storages.local.basePokemon.saveBasePokemon(it.apply { abilitiesLoaded = true })
                 }
             }
         }

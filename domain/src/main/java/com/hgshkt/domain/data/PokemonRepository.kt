@@ -9,7 +9,9 @@ interface PokemonRepository {
     suspend fun getPokemons(): Flow<PagingData<SimplePokemon>>
     suspend fun getPokemon(id: Int): Result<Pokemon>
     fun needToLoad(): Result<List<Int>>
+    fun needToLoadInfo(): Result<List<Int>>
     suspend fun downloadBasePokemons()
     suspend fun downloadPokemonsByIdList(idList: List<Int>)
     fun getAllPokemons(): List<SimplePokemon>
+    suspend fun downloadPokemonAbilitiesByIdList(idList: List<Int>)
 }
