@@ -9,10 +9,11 @@ class LoadPokemonsUseCase(
     private val pokemonRepository: PokemonRepository
 ) {
     suspend fun execute() = withContext(Dispatchers.IO) {
-        val result: Result<List<Int>> = pokemonRepository.needToLoad()
+        var result: Result<List<Int>> = pokemonRepository.needToLoad()
         if (result is Result.Error) {
             pokemonRepository.downloadBasePokemons()
-        } else
+            result = pokemonRepository.needToLoad()
+        }
         pokemonRepository.downloadPokemonsByIdList(idList = (result as Result.Success).value)
     }
 }

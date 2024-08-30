@@ -157,15 +157,15 @@ class PokemonRepositoryImpl(
         idList.forEach { id ->
             val crossRefs = storages.local.pokemonAbilityCrossRef.getAbilityRefsForPokemon(id)
             crossRefs.forEach { ref ->
-                val remoteAbility = storages.remote.ability.getAbility(ref.abilityId)
+                storages.remote.ability.getAbility(ref.abilityId)?.let { remoteAbility ->
+                    storages.local.pokemonAbilityCrossRef
+                        .saveAbilityRef(ref.pokemonId, ref.abilityId)
 
-                storages.local.pokemonAbilityCrossRef
-                    .saveAbilityRef(ref.pokemonId, ref.abilityId)
+                    storages.local.ability.saveAbility(remoteAbility.toAbility().toLocal())
 
-                storages.local.ability.saveAbility(remoteAbility!!.toAbility().toLocal())
-
-                storages.local.basePokemon.getBasePokemon(id).let {
-                    storages.local.basePokemon.saveBasePokemon(it.apply { abilitiesLoaded = true })
+                    storages.local.basePokemon.getBasePokemon(id).let {
+                        storages.local.basePokemon.saveBasePokemon(it.apply { abilitiesLoaded = true })
+                    }
                 }
             }
         }
