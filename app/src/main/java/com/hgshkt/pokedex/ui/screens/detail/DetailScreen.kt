@@ -16,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -213,7 +214,7 @@ fun AbilityList(modifier: Modifier, abilities: List<UiPokemonAbility>) {
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(top = 8.dp)
+            modifier = Modifier.fillMaxSize().padding(top = 8.dp)
         ) {
             Text(text = "Abilities:", fontSize = 26.sp)
             if (abilities.isNotEmpty()) {
@@ -226,7 +227,7 @@ fun AbilityList(modifier: Modifier, abilities: List<UiPokemonAbility>) {
                     )
                 }
             } else {
-                Text("Abilities are missing.", fontSize = 20.sp)
+                CircularProgressIndicator(modifier = Modifier.padding(10.dp))
             }
         }
     }
