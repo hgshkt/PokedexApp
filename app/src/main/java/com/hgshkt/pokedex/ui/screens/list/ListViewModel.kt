@@ -33,21 +33,23 @@ class ListViewModel @Inject constructor(
     val filterMenuState: StateFlow<FilterMenuState> get() = _filterMenuState
 
     init {
+        getLocalPokemons()
+    }
+
+    private fun getLocalPokemons() {
         viewModelScope.launch {
             val flow = useCases.getLocalPokemons.execute()
 
             _state.value = State.Loaded(emptyList())
 
             flow.collect { list ->
-                    if (_state.value is State.Loaded)
-                        _state.value = State.Loaded(
-                            list.map { pokemon ->
-                                pokemon.toUi()
-                            }
-                        )
-                }
-
-
+                if (_state.value is State.Loaded)
+                    _state.value = State.Loaded(
+                        list.map { pokemon ->
+                            pokemon.toUi()
+                        }
+                    )
+            }
         }
     }
 
@@ -151,7 +153,9 @@ class ListViewModel @Inject constructor(
             val result = useCases.filter.execute(_filterMenuState.value.toDomainSettings())
             _state.value = when (result) {
                 is Result.Success -> State.Loaded(result.value.map { it.toUi() })
-                is Result.Error -> State.FilterError(result.msg)
+                is Result.Error -> State.FilterError(result.msg) {
+                    getLocalPokemons()
+                }
             }
         }
     }
@@ -166,6 +170,6 @@ class ListViewModel @Inject constructor(
         data object Loading : State()
         data class Loaded(val pokemons: List<UiSimplePokemon>) : State()
         data class LoadingError(val message: String) : State()
-        data class FilterError(val message: String) : State()
+        data class FilterError(val message: String, val handle: () -> Unit) : State()
     }
 }

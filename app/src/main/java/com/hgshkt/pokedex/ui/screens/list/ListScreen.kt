@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -28,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -132,7 +135,13 @@ fun ListScreen(
                     onItemClick(saver)
                 }
             } else if (screenState is ListViewModel.State.FilterError) {
-                ErrorBox((screenState as ListViewModel.State.FilterError).message)
+                val errorState = (screenState as ListViewModel.State.FilterError)
+                ErrorBox(errorState.message) {
+                    Spacer(modifier = Modifier.fillMaxHeight(0.1f))
+                    Button(onClick = { errorState.handle() }) {
+                        Text("Ok")
+                    }
+                }
             }
         }
     }
