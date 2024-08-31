@@ -49,6 +49,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -223,7 +224,7 @@ fun TypesChoosingMenu(
 ) {
     LazyVerticalGrid(
         modifier = modifier,
-        columns = GridCells.Fixed(2),
+        columns = GridCells.Fixed(3),
         contentPadding = PaddingValues(4.dp)
     ) {
         items(types) { type ->
@@ -244,7 +245,8 @@ fun TypesChoosingMenu(
 @Composable
 fun PokemonTypeSelectingButton(
     settingsType: FilterMenuState.SelectedType,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    fontSize: TextUnit = 14.sp
 ) {
     Box(modifier) {
         Box(
@@ -255,11 +257,11 @@ fun PokemonTypeSelectingButton(
                     if (settingsType.selected) settingsType.type.backgroundColor
                     else Color(0xFF929292)
                 )
-                .padding(horizontal = 22.dp, vertical = 12.dp)
+                .padding(vertical = 5.dp)
         ) {
             Text(
                 text = settingsType.type.text,
-                fontSize = 22.sp,
+                fontSize = fontSize,
                 fontWeight = FontWeight.Bold,
                 color = settingsType.type.textColor
             )
@@ -339,7 +341,6 @@ fun DigitTextField(
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
-    maxLength: Int = 5,
     placeholder: String
 ) {
     var isError by remember { mutableStateOf(false) }
@@ -347,20 +348,23 @@ fun DigitTextField(
         modifier = modifier,
         value = value,
         onValueChange = {
-            if (it.last().isDigit()) {
-                if (it.length == maxLength + 1) {
-                    isError = true
-                } else {
+            if (it.isNotEmpty()) {
+                if (it.last().isDigit()) {
                     isError = false
                     onValueChange(it)
+                } else {
+                    isError = true
                 }
+            } else {
+                isError = true
+                onValueChange(it)
             }
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        isError = isError,
         placeholder = {
             Text(text = placeholder, color = Color.Gray)
-        }
+        },
+        singleLine = true
     )
 }
 

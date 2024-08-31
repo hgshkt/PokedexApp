@@ -14,9 +14,9 @@ data class FilterMenuState(
     companion object {
         const val MAX_SELECTED_TYPES = 2
         const val WEIGHT_START_DEFAULT = 0
-        const val WEIGHT_END_DEFAULT = 10000
+        const val WEIGHT_END_DEFAULT = 9999
         const val HEIGHT_START_DEFAULT = 0
-        const val HEIGHT_END_DEFAULT = 10000
+        const val HEIGHT_END_DEFAULT = 9999
     }
 
     data class SelectedType(
