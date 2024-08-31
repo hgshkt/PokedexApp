@@ -2,13 +2,9 @@ package com.hgshkt.pokedex.app.di
 
 import android.content.Context
 import androidx.room.Room
-import com.hgshkt.data.repository.PokemonRemoteMediator
 import com.hgshkt.data.repository.local.PokemonDatabase
-import com.hgshkt.data.repository.local.pokemon.PokemonLocalStorage
-import com.hgshkt.data.repository.local.pokemonAbilityCrossRef.PokemonAbilityCrossRefLocalStorage
 import com.hgshkt.data.repository.network.NetworkInterceptor
 import com.hgshkt.data.repository.network.RetrofitClient
-import com.hgshkt.data.repository.remote.PokemonRemoteStorage
 import com.hgshkt.pokedex.app.NetworkManager
 import dagger.Module
 import dagger.Provides
@@ -21,20 +17,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class AppModule {
-
-    @Provides
-    @Singleton
-    fun providePokemonRemoteMediator(
-        pokemonRemoteStorage: PokemonRemoteStorage,
-        pokemonLocalStorage: PokemonLocalStorage,
-        pokemonAbilityCrossRefLocalStorage: PokemonAbilityCrossRefLocalStorage
-    ): PokemonRemoteMediator {
-        return PokemonRemoteMediator(
-            pokemonRemoteStorage = pokemonRemoteStorage,
-            pokemonLocalStorage = pokemonLocalStorage,
-            pokemonAbilityCrossRefLocalStorage = pokemonAbilityCrossRefLocalStorage
-        )
-    }
 
     @Provides
     @Singleton

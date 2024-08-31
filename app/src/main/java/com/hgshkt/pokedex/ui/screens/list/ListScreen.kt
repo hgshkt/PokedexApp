@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,10 +49,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemContentType
-import androidx.paging.compose.itemKey
 import com.hgshkt.pokedex.ui.custom.ErrorBox
 import com.hgshkt.pokedex.ui.custom.LoadingBox
 import com.hgshkt.pokedex.ui.data.model.UiSimplePokemon
@@ -70,7 +67,8 @@ fun ExpandedViewPreview(modifier: Modifier = Modifier) {
 @Composable
 fun ListScreen(
     viewModel: ListViewModel = hiltViewModel(),
-    onItemClick: (PokemonSaver) -> Unit
+    onItemClick: (PokemonSaver) -> Unit,
+    listState: LazyGridState
 ) {
     val screenState by viewModel.state.collectAsState()
     val filterMenuState by viewModel.filterMenuState.collectAsState()
@@ -134,17 +132,7 @@ fun ListScreen(
                             (screenState as ListViewModel.State.Loaded.Default).pokemons
 
                         CompleteList(
-                            pokemons = pokemons
-                        ) { saver ->
-                            onItemClick(saver)
-                        }
-                    }
-
-                    is ListViewModel.State.Loaded.Paged -> {
-                        val pokemons: LazyPagingItems<UiSimplePokemon> =
-                            viewModel.pokemonsState.collectAsLazyPagingItems()
-
-                        CompletePagedList(
+                            listState = listState,
                             pokemons = pokemons
                         ) { saver ->
                             onItemClick(saver)
@@ -163,9 +151,13 @@ fun ListScreen(
 @Composable
 fun CompleteList(
     pokemons: List<UiSimplePokemon>,
+    listState: LazyGridState,
     onPokemonCardClick: (PokemonSaver) -> Unit
 ) {
-    LazyVerticalGrid(columns = GridCells.Fixed(3)) {
+    LazyVerticalGrid(
+        state = listState,
+        columns = GridCells.Fixed(3)
+    ) {
         items(pokemons) { pokemon ->
             PokemonCard(
                 pokemon = pokemon,
@@ -410,30 +402,6 @@ fun FilterButton(
                 painter = rememberVectorPainter(image = Icons.Default.Search),
                 contentDescription = "Filter Button"
             )
-        }
-    }
-}
-
-@Composable
-private fun CompletePagedList(
-    modifier: Modifier = Modifier,
-    pokemons: LazyPagingItems<UiSimplePokemon>,
-    onItemClick: (PokemonSaver) -> Unit
-) {
-    LazyVerticalGrid(
-        modifier = modifier,
-        columns = GridCells.Fixed(3),
-        horizontalArrangement = Arrangement.SpaceAround,
-    ) {
-        items(
-            count = pokemons.itemCount,
-            key = pokemons.itemKey { it.id },
-            contentType = pokemons.itemContentType { "pokemons" }
-        ) { index ->
-            val pokemon = pokemons[index]
-            PokemonCard(
-                pokemon = pokemon,
-            ) { onItemClick(PokemonSaver(pokemon!!)) }
         }
     }
 }

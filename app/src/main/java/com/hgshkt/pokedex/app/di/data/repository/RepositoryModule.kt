@@ -1,6 +1,5 @@
 package com.hgshkt.pokedex.app.di.data.repository
 
-import com.hgshkt.data.repository.PokemonRemoteMediator
 import com.hgshkt.data.repository.PokemonRepositoryImpl
 import com.hgshkt.data.repository.PokemonRepositoryLocalStorages
 import com.hgshkt.data.repository.PokemonRepositoryRemoteStorages

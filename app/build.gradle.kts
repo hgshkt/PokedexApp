@@ -69,9 +69,11 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("androidx.compose.material3:material3-window-size-class-android:1.2.1")
-    implementation("androidx.compose.material3.adaptive:adaptive:1.0.0-alpha11")
-    implementation("androidx.compose.material3.adaptive:adaptive-layout:1.0.0-alpha11")
-    implementation("androidx.compose.material3.adaptive:adaptive-navigation:1.0.0-alpha11")
+
+    // Adaptive layout
+    implementation("androidx.compose.material3.adaptive:adaptive:1.0.0-rc01")
+    implementation("androidx.compose.material3.adaptive:adaptive-layout:1.0.0-rc01")
+    implementation("androidx.compose.material3.adaptive:adaptive-navigation:1.0.0-rc01")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -80,11 +82,6 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-
-    // Paging
-    val pagingVersion = "3.2.1"
-    implementation("androidx.paging:paging-runtime-ktx:$pagingVersion")
-    implementation("androidx.paging:paging-compose:$pagingVersion")
 
     // Hilt
     implementation("com.google.dagger:hilt-android:2.46.1")

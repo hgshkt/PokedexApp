@@ -1,9 +1,5 @@
 package com.hgshkt.data.repository
 
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.map
 import com.hgshkt.data.repository.local.PokemonDatabase
 import com.hgshkt.data.repository.mappers.toAbility
 import com.hgshkt.data.repository.mappers.toDPokemon
@@ -25,18 +21,10 @@ class PokemonRepositoryImpl(
     private val storages: PokemonRepositoryStorages
 ) : PokemonRepository {
 
-    override suspend fun getPokemons(): Flow<PagingData<SimplePokemon>> {
-        return Pager(
-            config = PagingConfig(pageSize = 20),
-            pagingSourceFactory = {
-                pokemonDatabase.pokemonDao.pagingSource()
-            }
-        ).flow
-            .map { pagingData ->
-                pagingData.map { pokemonEntity ->
-                    pokemonEntity.toSimplePokemon()
-                }
-            }
+    override suspend fun getLocalPokemonsFlow(): Flow<List<SimplePokemon>> {
+        return pokemonDatabase.pokemonDao.getAllAsFlow().map { list ->
+            list.map { pokemon -> pokemon.toSimplePokemon() }
+        }
     }
 
     override suspend fun getPokemon(id: Int): Result<Pokemon> {
@@ -164,7 +152,9 @@ class PokemonRepositoryImpl(
                     storages.local.ability.saveAbility(remoteAbility.toAbility().toLocal())
 
                     storages.local.basePokemon.getBasePokemon(id).let {
-                        storages.local.basePokemon.saveBasePokemon(it.apply { abilitiesLoaded = true })
+                        storages.local.basePokemon.saveBasePokemon(it.apply {
+                            abilitiesLoaded = true
+                        })
                     }
                 }
             }

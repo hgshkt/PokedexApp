@@ -2,9 +2,6 @@ package com.hgshkt.pokedex.ui.screens.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import androidx.paging.map
 import com.hgshkt.domain.data.Result
 import com.hgshkt.pokedex.ui.data.mapper.toDomainSettings
 import com.hgshkt.pokedex.ui.data.mapper.toUi
@@ -23,10 +20,6 @@ class ListViewModel @Inject constructor(
     private val useCases: ListUseCases
 ) : ViewModel() {
 
-    private val _pokemonsState: MutableStateFlow<PagingData<UiSimplePokemon>> =
-        MutableStateFlow(value = PagingData.empty())
-    val pokemonsState: StateFlow<PagingData<UiSimplePokemon>> get() = _pokemonsState
-
     private val _state: MutableStateFlow<State> = MutableStateFlow(State.Loading)
     val state: StateFlow<State> get() = _state
 
@@ -41,13 +34,13 @@ class ListViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            useCases.pagedLoad.execute()
-                .cachedIn(viewModelScope)
-                .collect { pagingData ->
-                    _state.value = State.Loaded.Paged
-                    _pokemonsState.value = pagingData.map { pokemon ->
-                        pokemon.toUi()
-                    }
+            useCases.getLocalPokemons.execute()
+                .collect { list ->
+                    _state.value = State.Loaded.Default(
+                        list.map { pokemon ->
+                            pokemon.toUi()
+                        }
+                    )
                 }
         }
     }
@@ -167,7 +160,6 @@ class ListViewModel @Inject constructor(
         data object Loading : State()
         data class Error(val message: String) : State()
         sealed class Loaded : State() {
-            data object Paged : Loaded()
             data object Loading : Loaded()
             data class Default(val pokemons: List<UiSimplePokemon>) : Loaded()
         }

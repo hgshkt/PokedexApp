@@ -4,6 +4,7 @@ import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PokemonDao {
@@ -12,6 +13,9 @@ interface PokemonDao {
 
     @Query("SELECT * FROM pokemons")
     fun pagingSource(): PagingSource<Int, LocalCompletePokemon>
+
+    @Query("SELECT * FROM pokemons")
+    fun getAllAsFlow(): Flow<List<LocalCompletePokemon>>
 
     @Query("DELETE FROM pokemons")
     suspend fun deleteAll()

@@ -13,6 +13,7 @@ class LoadPokemonsUseCase(
         if (result is Result.Error) {
             pokemonRepository.downloadBasePokemons()
             result = pokemonRepository.needToLoad()
+            if (result is Result.Error) return@withContext
         }
         pokemonRepository.downloadPokemonsByIdList(idList = (result as Result.Success).value)
     }
