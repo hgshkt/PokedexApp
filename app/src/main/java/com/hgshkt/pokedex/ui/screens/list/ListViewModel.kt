@@ -34,14 +34,20 @@ class ListViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            useCases.getLocalPokemons.execute()
-                .collect { list ->
-                    _state.value = State.Loaded.Default(
-                        list.map { pokemon ->
-                            pokemon.toUi()
-                        }
-                    )
+            val flow = useCases.getLocalPokemons.execute()
+
+            _state.value = State.Loaded(emptyList())
+
+            flow.collect { list ->
+                    if (_state.value is State.Loaded)
+                        _state.value = State.Loaded(
+                            list.map { pokemon ->
+                                pokemon.toUi()
+                            }
+                        )
                 }
+
+
         }
     }
 
@@ -140,12 +146,12 @@ class ListViewModel @Inject constructor(
     }
 
     fun startFilter() {
-        _state.value = State.Loaded.Loading
+        _state.value = State.Loading
         viewModelScope.launch(Dispatchers.Default) {
             val result = useCases.filter.execute(_filterMenuState.value.toDomainSettings())
             _state.value = when (result) {
-                is Result.Success -> State.Loaded.Default(result.value.map { it.toUi() })
-                is Result.Error -> State.Error(result.msg)
+                is Result.Success -> State.Loaded(result.value.map { it.toUi() })
+                is Result.Error -> State.FilterError(result.msg)
             }
         }
     }
@@ -158,10 +164,8 @@ class ListViewModel @Inject constructor(
 
     sealed class State {
         data object Loading : State()
-        data class Error(val message: String) : State()
-        sealed class Loaded : State() {
-            data object Loading : Loaded()
-            data class Default(val pokemons: List<UiSimplePokemon>) : Loaded()
-        }
+        data class Loaded(val pokemons: List<UiSimplePokemon>) : State()
+        data class LoadingError(val message: String) : State()
+        data class FilterError(val message: String) : State()
     }
 }

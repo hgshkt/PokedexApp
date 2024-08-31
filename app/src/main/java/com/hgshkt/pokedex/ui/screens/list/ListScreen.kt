@@ -73,76 +73,66 @@ fun ListScreen(
     val screenState by viewModel.state.collectAsState()
     val filterMenuState by viewModel.filterMenuState.collectAsState()
 
-    when (screenState) {
-        is ListViewModel.State.Loading -> {
-            LoadingBox()
-        }
-
-        is ListViewModel.State.Error -> {
-            ErrorBox((screenState as ListViewModel.State.Error).message)
-        }
-
-        is ListViewModel.State.Loaded -> {
-            Column {
-                ExpandedView(
-                    hiddenPart = {
-                        FilterMenu(
-                            menuState = filterMenuState,
-                            weightStartValueChange = { value ->
-                                viewModel.updateFilterWeightStart(value)
-                            },
-                            weightEndValueChange = { value ->
-                                viewModel.updateFilterWeightEnd(value)
-                            },
-                            heightStartValueChange = { value ->
-                                viewModel.updateFilterHeightStart(value)
-                            },
-                            heightEndValueChange = { value ->
-                                viewModel.updateFilterHeightEnd(value)
-                            },
-                            onTypeClick = { type ->
-                                viewModel.updateFilterPokemonType(type)
-                            }
-                        )
-                    },
-                    visiblePart = {
-                        FilterButton(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(4.dp),
-                            placeholder = { Text("Enter Pokemon name") },
-                            isExpanded = filterMenuState.opened,
-                            onOpenButtonClick = {
-                                viewModel.openFilterMenu()
-                            },
-                            onSearchButtonClick = {
-                                viewModel.startFilter()
-                            },
-                            onTextValueChange = { text ->
-                                viewModel.updateFilterText(text)
-                            },
-                            text = filterMenuState.text
-                        )
-                    },
-                    expanded = filterMenuState.opened
-                )
-                when (screenState as ListViewModel.State.Loaded) {
-                    is ListViewModel.State.Loaded.Default -> {
-                        val pokemons =
-                            (screenState as ListViewModel.State.Loaded.Default).pokemons
-
-                        CompleteList(
-                            listState = listState,
-                            pokemons = pokemons
-                        ) { saver ->
-                            onItemClick(saver)
+    if (screenState is ListViewModel.State.LoadingError) {
+        ErrorBox((screenState as ListViewModel.State.LoadingError).message)
+    } else {
+        Column {
+            ExpandedView(
+                hiddenPart = {
+                    FilterMenu(
+                        menuState = filterMenuState,
+                        weightStartValueChange = { value ->
+                            viewModel.updateFilterWeightStart(value)
+                        },
+                        weightEndValueChange = { value ->
+                            viewModel.updateFilterWeightEnd(value)
+                        },
+                        heightStartValueChange = { value ->
+                            viewModel.updateFilterHeightStart(value)
+                        },
+                        heightEndValueChange = { value ->
+                            viewModel.updateFilterHeightEnd(value)
+                        },
+                        onTypeClick = { type ->
+                            viewModel.updateFilterPokemonType(type)
                         }
-                    }
+                    )
+                },
+                visiblePart = {
+                    FilterButton(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp),
+                        placeholder = { Text("Enter Pokemon name") },
+                        isExpanded = filterMenuState.opened,
+                        onOpenButtonClick = {
+                            viewModel.openFilterMenu()
+                        },
+                        onSearchButtonClick = {
+                            viewModel.startFilter()
+                        },
+                        onTextValueChange = { text ->
+                            viewModel.updateFilterText(text)
+                        },
+                        text = filterMenuState.text
+                    )
+                },
+                expanded = filterMenuState.opened
+            )
+            if (screenState is ListViewModel.State.Loading) {
+                LoadingBox()
+            } else if (screenState is ListViewModel.State.Loaded) {
+                val pokemons =
+                    (screenState as ListViewModel.State.Loaded).pokemons
 
-                    ListViewModel.State.Loaded.Loading -> {
-                        LoadingBox()
-                    }
+                CompleteList(
+                    listState = listState,
+                    pokemons = pokemons
+                ) { saver ->
+                    onItemClick(saver)
                 }
+            } else if (screenState is ListViewModel.State.FilterError) {
+                ErrorBox((screenState as ListViewModel.State.FilterError).message)
             }
         }
     }
