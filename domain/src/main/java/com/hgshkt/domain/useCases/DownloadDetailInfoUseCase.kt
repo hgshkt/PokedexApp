@@ -3,7 +3,7 @@ package com.hgshkt.domain.useCases
 import com.hgshkt.domain.data.PokemonRepository
 import com.hgshkt.domain.data.Result
 
-class DownloadAbilitiesUseCase(
+class DownloadDetailInfoUseCase(
     private val repository: PokemonRepository
 ) {
     suspend fun execute() {
