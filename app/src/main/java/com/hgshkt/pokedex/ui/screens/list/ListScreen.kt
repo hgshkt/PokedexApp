@@ -56,10 +56,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.hgshkt.pokedex.ui.custom.ErrorBox
 import com.hgshkt.pokedex.ui.custom.LoadingBox
 import com.hgshkt.pokedex.ui.data.model.UiSimplePokemon
-import com.hgshkt.pokedex.ui.screens.list.FilterMenuState.Companion.HEIGHT_END_DEFAULT
-import com.hgshkt.pokedex.ui.screens.list.FilterMenuState.Companion.HEIGHT_START_DEFAULT
-import com.hgshkt.pokedex.ui.screens.list.FilterMenuState.Companion.WEIGHT_END_DEFAULT
-import com.hgshkt.pokedex.ui.screens.list.FilterMenuState.Companion.WEIGHT_START_DEFAULT
 import com.hgshkt.pokedex.ui.screens.listDetail.PokemonSaver
 
 @Preview
@@ -198,8 +194,8 @@ fun FilterMenu(
                 onStartValueChange = weightStartValueChange,
                 endValue = menuState.weightEnd,
                 onEndValueChange = weightEndValueChange,
-                placeholderStart = WEIGHT_START_DEFAULT.toString(),
-                placeholderEnd = WEIGHT_END_DEFAULT.toString()
+                placeholderStart = menuState.MIN_WEIGHT.toString(),
+                placeholderEnd = menuState.MAX_WEIGHT.toString()
             )
             NamedIntRange(
                 modifier = Modifier.weight(1f),
@@ -208,11 +204,10 @@ fun FilterMenu(
                 onStartValueChange = heightStartValueChange,
                 endValue = menuState.heightEnd,
                 onEndValueChange = heightEndValueChange,
-                placeholderStart = HEIGHT_START_DEFAULT.toString(),
-                placeholderEnd = HEIGHT_END_DEFAULT.toString()
+                placeholderStart = menuState.MIN_HEIGHT.toString(),
+                placeholderEnd = menuState.MAX_HEIGHT.toString()
             )
         }
-
     }
 }
 

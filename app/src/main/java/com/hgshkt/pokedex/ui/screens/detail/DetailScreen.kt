@@ -26,7 +26,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,6 +34,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.hgshkt.pokedex.BuildConfig
 import com.hgshkt.pokedex.ui.custom.ErrorBox
 import com.hgshkt.pokedex.ui.custom.LoadingBox
 import com.hgshkt.pokedex.ui.custom.image.PokemonImage
@@ -44,32 +44,38 @@ import com.hgshkt.pokedex.ui.data.model.UiPokemonAbility
 import com.hgshkt.pokedex.ui.data.model.UiStats
 import com.hgshkt.pokedex.ui.data.model.UiType
 
-private val idStyle = TextStyle(fontSize = 20.sp)
 private val pokemonNameStyle = TextStyle(fontSize = 40.sp, fontWeight = FontWeight.Bold)
-
-private val abilityBackground = Color(0xFFD3F0FF)
-private val statsBorder = Color(0xFFD3F0FF)
 
 @Preview
 @Composable
 fun DetailScreenPreview() {
-    val pokemon = UiPokemon(
-        123, "Pokemon Name",
-        "https://i.pinimg.com/550x/cb/33/49/cb3349b86ca661ca61ae9a36d88d70d4.jpg",
-        types = listOf(UiType.NORMAL, UiType.ICE),
-        stats = UiStats(
-            12, 54, 23, 61, 14, 63
-        ),
-        height = 100,
-        weight = 99,
-        abilities = listOf(
-            UiPokemonAbility(12, "MyAbility", "Effect details"),
-            UiPokemonAbility(14, "MyAb ility2", "Effect details qwredfa sfafadsfwqfda fadsfqwq"),
-            UiPokemonAbility(15, "MyAbi lity123", "Effect details qwerfdq qi bq ipqubfh qqdfuq ")
+    if (BuildConfig.DEBUG) {
+        val pokemon = UiPokemon(
+            123, "Pokemon Name",
+            "https://i.pinimg.com/550x/cb/33/49/cb3349b86ca661ca61ae9a36d88d70d4.jpg",
+            types = listOf(UiType.NORMAL, UiType.ICE),
+            stats = UiStats(
+                12, 54, 23, 61, 14, 63
+            ),
+            height = 100,
+            weight = 99,
+            abilities = listOf(
+                UiPokemonAbility(12, "MyAbility", "Effect details"),
+                UiPokemonAbility(
+                    14,
+                    "MyAb ility2",
+                    "Effect details qwredfa sfafadsfwqfda fadsfqwq"
+                ),
+                UiPokemonAbility(
+                    15,
+                    "MyAbi lity123",
+                    "Effect details qwerfdq qi bq ipqubfh qqdfuq "
+                )
+            )
         )
-    )
-    with(pokemon) {
+        with(pokemon) {
 
+        }
     }
 }
 
@@ -79,13 +85,13 @@ fun DetailScreen(
     viewModel: DetailViewModel = hiltViewModel()
 ) {
     when (val state = viewModel.state.collectAsState().value) {
-        is DetailViewModel.DetailViewModelState.Loading ->
+        is DetailViewModel.State.Loading ->
             LoadingBox()
 
-        is DetailViewModel.DetailViewModelState.Error ->
+        is DetailViewModel.State.Error ->
             ErrorBox(state.message)
 
-        is DetailViewModel.DetailViewModelState.Success -> with(state.pokemon) {
+        is DetailViewModel.State.Success -> with(state.pokemon) {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -104,7 +110,7 @@ fun DetailScreen(
                         .padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "№$id", style = idStyle)
+                    Text(text = "№$id", fontSize = 20.sp)
                     AutoResizedText(text = name, style = pokemonNameStyle)
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
@@ -180,7 +186,7 @@ fun StatsLayer(
     with(stats) {
         ElevatedCard(
             modifier,
-            colors  = CardDefaults.cardColors(
+            colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant,
             ),
             elevation = CardDefaults.cardElevation(
@@ -214,7 +220,9 @@ fun AbilityList(modifier: Modifier, abilities: List<UiPokemonAbility>) {
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize().padding(top = 8.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 8.dp)
         ) {
             Text(text = "Abilities:", fontSize = 26.sp)
             if (abilities.isNotEmpty()) {

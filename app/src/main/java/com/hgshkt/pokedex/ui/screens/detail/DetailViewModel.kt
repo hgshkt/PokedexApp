@@ -17,27 +17,27 @@ import javax.inject.Inject
 class DetailViewModel @Inject constructor(
     private val loadPokemonByIdUseCase: LoadPokemonByIdUseCase
 ) : ViewModel() {
-    private val _state = MutableStateFlow<DetailViewModelState>(DetailViewModelState.Loading)
-    val state: StateFlow<DetailViewModelState> get() = _state
-
+    private val _state = MutableStateFlow<State>(State.Loading)
+    val state: StateFlow<State> get() = _state
 
     fun loadPokemon(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
+            _state.emit(State.Loading)
             _state.emit(
                 when (val res = loadPokemonByIdUseCase.execute(id)) {
                     is Result.Success ->
-                        DetailViewModelState.Success(res.value.toUi())
+                        State.Success(res.value.toUi())
 
                     is Result.Error ->
-                        DetailViewModelState.Error(res.msg)
+                        State.Error(res.msg)
                 }
             )
         }
     }
 
-    sealed class DetailViewModelState {
-        data object Loading : DetailViewModelState()
-        data class Error(val message: String) : DetailViewModelState()
-        data class Success(val pokemon: UiPokemon) : DetailViewModelState()
+    sealed class State {
+        data object Loading : State()
+        data class Error(val message: String) : State()
+        data class Success(val pokemon: UiPokemon) : State()
     }
 }

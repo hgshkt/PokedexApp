@@ -1,5 +1,6 @@
 package com.hgshkt.pokedex.ui.screens.list
 
+import com.hgshkt.domain.data.PokemonFilter
 import com.hgshkt.pokedex.ui.data.model.UiType
 
 data class FilterMenuState(
@@ -11,13 +12,11 @@ data class FilterMenuState(
     val heightEnd: String = "",
     val opened: Boolean = false
 ) {
-    companion object {
-        const val MAX_SELECTED_TYPES = 2
-        const val WEIGHT_START_DEFAULT = 0
-        const val WEIGHT_END_DEFAULT = 9999
-        const val HEIGHT_START_DEFAULT = 0
-        const val HEIGHT_END_DEFAULT = 9999
-    }
+    val MAX_SELECTED_TYPES = PokemonFilter.MAX_SELECTED_TYPES
+    val MIN_WEIGHT = PokemonFilter.MIN_WEIGHT
+    val MAX_WEIGHT = PokemonFilter.MAX_WEIGHT
+    val MIN_HEIGHT = PokemonFilter.MIN_HEIGHT
+    val MAX_HEIGHT = PokemonFilter.MAX_HEIGHT
 
     data class SelectedType(
         val type: UiType,

@@ -40,29 +40,6 @@ fun Ability.toUi(): UiPokemonAbility {
     return UiPokemonAbility(id, name, effect)
 }
 
-fun UiType.toDomain(): Type {
-    return when(this) {
-        UiType.NORMAL -> Type.NORMAL
-        UiType.FIRE -> Type.FIRE
-        UiType.WATER -> Type.WATER
-        UiType.ELECTRIC -> Type.ELECTRIC
-        UiType.GRASS -> Type.GRASS
-        UiType.ICE -> Type.ICE
-        UiType.FIGHTING -> Type.FIGHTING
-        UiType.POISON -> Type.POISON
-        UiType.GROUND -> Type.GROUND
-        UiType.FLYING -> Type.FLYING
-        UiType.PHYSIC -> Type.PSYCHIC
-        UiType.BUG -> Type.BUG
-        UiType.ROCK -> Type.ROCK
-        UiType.GHOST -> Type.GHOST
-        UiType.DRAGON -> Type.DRAGON
-        UiType.DARK -> Type.DARK
-        UiType.STEEL -> Type.STEEL
-        UiType.FAIRY -> Type.FAIRY
-    }
-}
-
 fun Type.toUi(): UiType {
     return when(this) {
         Type.NORMAL -> UiType.NORMAL
@@ -83,6 +60,29 @@ fun Type.toUi(): UiType {
         Type.DARK -> UiType.DARK
         Type.STEEL -> UiType.STEEL
         Type.FAIRY -> UiType.FAIRY
+    }
+}
+
+fun UiType.toDomain(): Type {
+    return when(this) {
+        UiType.NORMAL -> Type.NORMAL
+        UiType.FIRE -> Type.FIRE
+        UiType.WATER -> Type.WATER
+        UiType.ELECTRIC -> Type.ELECTRIC
+        UiType.GRASS -> Type.GRASS
+        UiType.ICE -> Type.ICE
+        UiType.FIGHTING -> Type.FIGHTING
+        UiType.POISON -> Type.POISON
+        UiType.GROUND -> Type.GROUND
+        UiType.FLYING -> Type.FLYING
+        UiType.PHYSIC -> Type.PSYCHIC
+        UiType.BUG -> Type.BUG
+        UiType.ROCK -> Type.ROCK
+        UiType.GHOST -> Type.GHOST
+        UiType.DRAGON -> Type.DRAGON
+        UiType.DARK -> Type.DARK
+        UiType.STEEL -> Type.STEEL
+        UiType.FAIRY -> Type.FAIRY
     }
 }
 

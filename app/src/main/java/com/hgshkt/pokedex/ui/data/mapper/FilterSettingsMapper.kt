@@ -10,14 +10,14 @@ fun FilterMenuState.toDomainSettings(): PokemonFilter.Settings {
         weightRange = stringsToIntRange(
             weightStart,
             weightEnd,
-            FilterMenuState.WEIGHT_START_DEFAULT,
-            FilterMenuState.WEIGHT_END_DEFAULT
+            PokemonFilter.MIN_WEIGHT,
+            PokemonFilter.MAX_WEIGHT
         ),
         heightRange = stringsToIntRange(
             heightStart,
             heightEnd,
-            FilterMenuState.HEIGHT_START_DEFAULT,
-            FilterMenuState.HEIGHT_END_DEFAULT
+            PokemonFilter.MIN_HEIGHT,
+            PokemonFilter.MAX_HEIGHT
         ),
     )
 }

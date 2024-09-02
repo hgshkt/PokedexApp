@@ -16,7 +16,8 @@ fun AutoResizedText(
     text: String,
     modifier: Modifier = Modifier,
     style: TextStyle = MaterialTheme.typography.titleMedium,
-    color: Color = style.color
+    color: Color = style.color,
+    decrease: Double = 0.95
 ) {
     var resizedTextStyle by remember {
         mutableStateOf(style)
@@ -45,7 +46,7 @@ fun AutoResizedText(
                     )
                 }
                 resizedTextStyle = resizedTextStyle.copy(
-                    fontSize = resizedTextStyle.fontSize * 0.95
+                    fontSize = resizedTextStyle.fontSize * decrease
                 )
             } else {
                 shouldDraw = true

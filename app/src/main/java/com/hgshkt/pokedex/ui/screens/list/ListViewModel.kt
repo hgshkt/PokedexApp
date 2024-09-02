@@ -129,7 +129,7 @@ class ListViewModel @Inject constructor(
                     }
 
                     // if count of selected types less than maximum
-                    else if (selectedCount != FilterMenuState.MAX_SELECTED_TYPES) {
+                    else if (selectedCount != MAX_SELECTED_TYPES) {
                         _filterMenuState.update { value ->
                             value.copy(
                                 selectedTypes = selectedTypes.map {
