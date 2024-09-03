@@ -1,7 +1,7 @@
 package com.hgshkt.pokedex.app.di.usecases
 
 import com.hgshkt.domain.useCases.FilterPokemonsUseCase
-import com.hgshkt.domain.data.PokemonRepository
+import com.hgshkt.domain.data.LocalPokemonRepository
 import com.hgshkt.domain.useCases.LoadPokemonByIdUseCase
 import com.hgshkt.domain.useCases.LoadPokemonsUseCase
 import com.hgshkt.domain.useCases.GetLocalPokemonsUseCase
@@ -29,41 +29,41 @@ class UseCaseModule {
     @Provides
     @Singleton
     fun provideLoadPokemonByIdUseCase(
-        pokemonRepository: PokemonRepository
+        localPokemonRepository: LocalPokemonRepository
     ): LoadPokemonByIdUseCase {
-        return LoadPokemonByIdUseCase(pokemonRepository)
+        return LoadPokemonByIdUseCase(localPokemonRepository)
     }
 
     @Provides
     @Singleton
     fun provideGetLocalPokemonsUseCase(
-        pokemonRepository: PokemonRepository
+        localPokemonRepository: LocalPokemonRepository
     ): GetLocalPokemonsUseCase {
-        return GetLocalPokemonsUseCase(pokemonRepository)
+        return GetLocalPokemonsUseCase(localPokemonRepository)
     }
 
     @Provides
     @Singleton
     fun provideLoadPokemonsUseCase(
-        pokemonRepository: PokemonRepository
+        localPokemonRepository: LocalPokemonRepository
     ): LoadPokemonsUseCase {
-        return LoadPokemonsUseCase(pokemonRepository)
+        return LoadPokemonsUseCase(localPokemonRepository)
     }
 
     @Provides
     @Singleton
     fun provideDownloadDetailInfoUseCase(
-        pokemonRepository: PokemonRepository
+        localPokemonRepository: LocalPokemonRepository
     ): DownloadDetailInfoUseCase {
-        return DownloadDetailInfoUseCase(pokemonRepository)
+        return DownloadDetailInfoUseCase(localPokemonRepository)
     }
 
     @Provides
     @Singleton
     fun provideFilterPokemonsUseCase(
         pokemonFilter: PokemonFilter,
-        pokemonRepository: PokemonRepository
+        localPokemonRepository: LocalPokemonRepository
     ): FilterPokemonsUseCase {
-        return FilterPokemonsUseCase(pokemonFilter, pokemonRepository)
+        return FilterPokemonsUseCase(pokemonFilter, localPokemonRepository)
     }
 }

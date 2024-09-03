@@ -1,6 +1,6 @@
 package com.hgshkt.pokedex.app.di.data.repository
 
-import com.hgshkt.data.repository.PokemonRepositoryImpl
+import com.hgshkt.data.repository.LocalPokemonRepositoryImpl
 import com.hgshkt.data.repository.PokemonRepositoryLocalStorages
 import com.hgshkt.data.repository.PokemonRepositoryRemoteStorages
 import com.hgshkt.data.repository.PokemonRepositoryStorages
@@ -11,7 +11,7 @@ import com.hgshkt.data.repository.local.pokemon.PokemonLocalStorage
 import com.hgshkt.data.repository.local.pokemonAbilityCrossRef.PokemonAbilityCrossRefLocalStorage
 import com.hgshkt.data.repository.remote.PokemonRemoteStorage
 import com.hgshkt.data.repository.remote.ability.AbilityRemoteStorage
-import com.hgshkt.domain.data.PokemonRepository
+import com.hgshkt.domain.data.LocalPokemonRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -27,8 +27,8 @@ class RepositoryImplModule {
     fun providePokemonRepositoryImpl(
         pokemonDatabase: PokemonDatabase,
         pokemonRepositoryStorages: PokemonRepositoryStorages
-    ): PokemonRepositoryImpl {
-        return PokemonRepositoryImpl(
+    ): LocalPokemonRepositoryImpl {
+        return LocalPokemonRepositoryImpl(
             pokemonDatabase = pokemonDatabase,
             storages = pokemonRepositoryStorages
         )
@@ -80,6 +80,6 @@ class RepositoryImplModule {
 abstract class Binder {
     @Binds
     abstract fun bindPokemonRepository(
-        pokemonRepositoryImpl: PokemonRepositoryImpl
-    ): PokemonRepository
+        pokemonRepositoryImpl: LocalPokemonRepositoryImpl
+    ): LocalPokemonRepository
 }

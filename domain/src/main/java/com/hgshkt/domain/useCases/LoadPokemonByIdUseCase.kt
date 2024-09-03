@@ -1,13 +1,21 @@
 package com.hgshkt.domain.useCases
 
-import com.hgshkt.domain.data.PokemonRepository
+import com.hgshkt.domain.data.LocalPokemonRepository
+import com.hgshkt.domain.data.RemotePokemonRepository
 import com.hgshkt.domain.data.Result
 import com.hgshkt.domain.model.Pokemon
 
 class LoadPokemonByIdUseCase(
-    private val pokemonRepository: PokemonRepository
+    private val localPokemonRepository: LocalPokemonRepository,
+    private val remotePokemonRepository: RemotePokemonRepository
 ) {
     suspend fun execute(id: Int): Result<Pokemon> {
-        return pokemonRepository.getPokemon(id)
+        if (localPokemonRepository.isLoaded(id).not())
+            remotePokemonRepository.downloadPokemon(id)
+
+        if (localPokemonRepository.isInfoLoaded(id).not())
+            remotePokemonRepository.downloadInfo(id)
+
+        return localPokemonRepository.getPokemon(id)
     }
 }

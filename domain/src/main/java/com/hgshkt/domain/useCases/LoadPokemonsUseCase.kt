@@ -1,20 +1,27 @@
 package com.hgshkt.domain.useCases
 
-import com.hgshkt.domain.data.PokemonRepository
+import com.hgshkt.domain.data.LocalPokemonRepository
+import com.hgshkt.domain.data.RemotePokemonRepository
 import com.hgshkt.domain.data.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class LoadPokemonsUseCase(
-    private val pokemonRepository: PokemonRepository
+    private val localRepository: LocalPokemonRepository,
+    private val remoteRepository: RemotePokemonRepository
 ) {
     suspend fun execute() = withContext(Dispatchers.IO) {
-        var result: Result<List<Int>> = pokemonRepository.needToLoad()
+        var result: Result<List<Int>> = localRepository.needToLoad()
         if (result is Result.Error) {
-            pokemonRepository.downloadBasePokemons()
-            result = pokemonRepository.needToLoad()
+            remoteRepository.downloadBasePokemons()
+            result = localRepository.needToLoad()
             if (result is Result.Error) return@withContext
         }
-        pokemonRepository.downloadPokemonsByIdList(idList = (result as Result.Success).value)
+        result as Result.Success
+
+        result.value.forEach { id ->
+            remoteRepository.downloadPokemon(id)
+            localRepository.markAsLoaded(id)
+        }
     }
 }

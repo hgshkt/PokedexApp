@@ -1,17 +1,25 @@
 package com.hgshkt.domain.useCases
 
-import com.hgshkt.domain.data.PokemonRepository
+import com.hgshkt.domain.data.LocalPokemonRepository
+import com.hgshkt.domain.data.RemotePokemonRepository
 import com.hgshkt.domain.data.Result
 
 class DownloadDetailInfoUseCase(
-    private val repository: PokemonRepository
+    private val localRepository: LocalPokemonRepository,
+    private val remoteRepository: RemotePokemonRepository
 ) {
     suspend fun execute() {
-        val result = repository.needToLoadInfo()
+        var result = localRepository.needToLoadInfo()
         if (result is Result.Error) {
-            repository.downloadBasePokemons()
-        } else {
-            repository.downloadPokemonAbilitiesByIdList(idList = (result as Result.Success).value)
+            remoteRepository.downloadBasePokemons()
+            result = localRepository.needToLoad()
+            if (result is Result.Error) return
+        }
+        result as Result.Success
+
+        result.value.forEach { id ->
+            remoteRepository.downloadInfo(id)
+            localRepository.markAsInfoLoaded(id)
         }
     }
 }
