@@ -5,7 +5,11 @@ import com.hgshkt.pokedex.ui.screens.list.filter.FilterMenuState
 
 fun FilterMenuState.toDomainSettings(): PokemonFilter.Settings {
     return PokemonFilter.Settings(
-        types = selectedTypes.map { it.type.toDomain() },
+        types = if (selectedTypes.all { it.selected })
+            emptyList()
+        else selectedTypes
+            .filter { it.selected }
+            .map { it.type.toDomain() },
         text = text,
         weightRange = stringsToIntRange(
             weightStart,

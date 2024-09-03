@@ -1,6 +1,5 @@
 package com.hgshkt.data.repository
 
-import com.hgshkt.data.repository.local.PokemonDatabase
 import com.hgshkt.data.repository.mappers.toAbility
 import com.hgshkt.data.repository.mappers.toPokemon
 import com.hgshkt.data.repository.mappers.toSimplePokemon
@@ -12,12 +11,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class LocalPokemonRepositoryImpl(
-    private val pokemonDatabase: PokemonDatabase,
     private val storages: PokemonRepositoryStorages
 ) : LocalPokemonRepository {
 
     override suspend fun getPokemonsFlow(): Flow<List<SimplePokemon>> {
-        return pokemonDatabase.pokemonDao.getAllAsFlow().map { list ->
+        return storages.local.pokemon.getAllAsFlow().map { list ->
             list.map { pokemon -> pokemon.toSimplePokemon() }
         }
     }

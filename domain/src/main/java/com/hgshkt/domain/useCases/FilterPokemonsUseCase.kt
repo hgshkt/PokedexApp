@@ -15,8 +15,12 @@ class FilterPokemonsUseCase(
 
         val result = repository.needToLoad()
         if (result is Result.Success && result.value.isEmpty()) {
-            val pokemons = repository.getAllSimplePokemons()
-            return Result.Success(filter.filter(settings, pokemons))
+            val allPokemons = repository.getAllSimplePokemons()
+            val filterPokemons = filter.filter(settings, allPokemons)
+
+            if (filterPokemons.isEmpty()) return Result.Error("No Pokemon fits the condition")
+
+            return Result.Success(filterPokemons)
         }
         return Result.Error("Need to load all pokemons before filter them")
     }

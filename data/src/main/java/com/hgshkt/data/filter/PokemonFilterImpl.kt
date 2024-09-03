@@ -3,6 +3,7 @@ package com.hgshkt.data.filter
 import com.hgshkt.domain.model.SimplePokemon
 import com.hgshkt.domain.model.Type
 import com.hgshkt.domain.data.PokemonFilter
+import com.hgshkt.domain.model.Pokemon
 
 class PokemonFilterImpl : PokemonFilter {
     override fun filter(
@@ -10,6 +11,9 @@ class PokemonFilterImpl : PokemonFilter {
         pokemons: List<SimplePokemon>
     ): List<SimplePokemon> {
         with(settings) {
+//            // if input settings is default not need to filter
+//            if (settings == PokemonFilter.Settings()) return pokemons
+//
             return pokemons
                 .weightInRange(weightRange)
                 .heightInRange(heightRange)
@@ -18,7 +22,6 @@ class PokemonFilterImpl : PokemonFilter {
         }
     }
 
-
     private fun List<SimplePokemon>.nameContains(text: String): List<SimplePokemon> {
         return filter { it.name.contains(text, true) }
     }
@@ -26,7 +29,7 @@ class PokemonFilterImpl : PokemonFilter {
     private fun List<SimplePokemon>.type(types: List<Type>): List<SimplePokemon> {
         return filter { pokemon ->
             pokemon.types.all { pokemonType ->
-                types.any { neededType ->
+                types.all { neededType ->
                     neededType == pokemonType
                 }
             }

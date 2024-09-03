@@ -10,10 +10,10 @@ interface PokemonFilter {
     ): List<SimplePokemon>
 
     data class Settings(
-        var types: List<Type>,
-        var text: String,
-        var weightRange: IntRange,
-        var heightRange: IntRange,
+        var types: List<Type> = Type.entries,
+        var text: String = "",
+        var weightRange: IntRange = MIN_WEIGHT..MAX_WEIGHT,
+        var heightRange: IntRange = MIN_HEIGHT..MAX_HEIGHT,
     )
 
     companion object {

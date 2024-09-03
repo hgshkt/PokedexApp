@@ -27,11 +27,9 @@ class RepositoryImplModule {
     @Provides
     @Singleton
     fun providePokemonRepositoryImpl(
-        pokemonDatabase: PokemonDatabase,
         pokemonRepositoryStorages: PokemonRepositoryStorages
     ): LocalPokemonRepositoryImpl {
         return LocalPokemonRepositoryImpl(
-            pokemonDatabase = pokemonDatabase,
             storages = pokemonRepositoryStorages
         )
     }

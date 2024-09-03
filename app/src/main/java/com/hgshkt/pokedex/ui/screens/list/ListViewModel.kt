@@ -97,6 +97,12 @@ class ListViewModel @Inject constructor(
                 is Result.Success -> State.Loaded(result.value.map { it.toUi() })
                 is Result.Error -> State.FilterError(result.msg) {
                     getLocalPokemons()
+                    _filterMenuState.value = FilterMenuState(
+                        selectedTypes = UiType.entries.map {
+                            FilterMenuState.SelectedType(it)
+                        },
+                        opened = true
+                    )
                 }
             }
         }
