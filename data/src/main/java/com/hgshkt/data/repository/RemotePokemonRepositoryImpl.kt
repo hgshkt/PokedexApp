@@ -2,11 +2,9 @@ package com.hgshkt.data.repository
 
 import com.hgshkt.data.repository.mappers.toAbility
 import com.hgshkt.data.repository.mappers.toLocal
-import com.hgshkt.data.repository.mappers.toPokemon
 import com.hgshkt.data.repository.remote.pokemon.network.model.finalPokemon.RemoteCompletePokemon
 import com.hgshkt.data.util.lastParamFromUrl
 import com.hgshkt.domain.data.RemotePokemonRepository
-import com.hgshkt.domain.model.Pokemon
 
 class RemotePokemonRepositoryImpl(
     private val storages: PokemonRepositoryStorages

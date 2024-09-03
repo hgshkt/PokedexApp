@@ -7,7 +7,7 @@ class AbilityLocalStorageImpl(
         abilityDao.insert(localAbility)
     }
 
-    override suspend fun getAbility(abilityId: Int): LocalAbility? {
+    override suspend fun getAbility(abilityId: Int): LocalAbility {
         return abilityDao.get(abilityId)
     }
 }

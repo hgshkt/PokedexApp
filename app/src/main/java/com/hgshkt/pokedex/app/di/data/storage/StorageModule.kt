@@ -1,6 +1,5 @@
 package com.hgshkt.pokedex.app.di.data.storage
 
-import com.hgshkt.data.repository.local.PokemonDatabase
 import com.hgshkt.data.repository.local.ability.AbilityDao
 import com.hgshkt.data.repository.local.ability.AbilityLocalStorage
 import com.hgshkt.data.repository.local.ability.AbilityLocalStorageImpl
@@ -37,13 +36,9 @@ class StorageImplModule {
     @Provides
     @Singleton
     fun providePokemonsLocalStorageImpl(
-        pokemonDao: PokemonDao,
-        pokemonDatabase: PokemonDatabase
+        pokemonDao: PokemonDao
     ): PokemonLocalStorageImpl {
-        return PokemonLocalStorageImpl(
-            pokemonDao = pokemonDao,
-            pokemonDatabase = pokemonDatabase
-        )
+        return PokemonLocalStorageImpl(pokemonDao = pokemonDao)
     }
 
     @Provides

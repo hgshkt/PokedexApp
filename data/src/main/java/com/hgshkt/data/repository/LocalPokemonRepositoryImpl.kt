@@ -25,7 +25,7 @@ class LocalPokemonRepositoryImpl(
     override suspend fun getPokemon(id: Int): Result<Pokemon> {
         val abilities = storages.local.pokemonAbilityCrossRef.getAbilityRefsForPokemon(id)
             .map { ref ->
-                storages.local.ability.getAbility(ref.abilityId)!!
+                storages.local.ability.getAbility(ref.abilityId)
                     .toAbility()
             }
         return Result.Success(storages.local.pokemon.getPokemon(id)!!.toPokemon(abilities))

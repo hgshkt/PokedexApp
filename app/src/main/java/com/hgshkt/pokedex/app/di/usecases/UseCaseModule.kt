@@ -6,6 +6,7 @@ import com.hgshkt.domain.useCases.LoadPokemonByIdUseCase
 import com.hgshkt.domain.useCases.LoadPokemonsUseCase
 import com.hgshkt.domain.useCases.GetLocalPokemonsUseCase
 import com.hgshkt.domain.data.PokemonFilter
+import com.hgshkt.domain.data.RemotePokemonRepository
 import com.hgshkt.domain.useCases.DownloadDetailInfoUseCase
 import com.hgshkt.pokedex.ui.screens.list.ListUseCases
 import dagger.Module
@@ -29,9 +30,10 @@ class UseCaseModule {
     @Provides
     @Singleton
     fun provideLoadPokemonByIdUseCase(
-        localPokemonRepository: LocalPokemonRepository
+        localPokemonRepository: LocalPokemonRepository,
+        remotePokemonRepository: RemotePokemonRepository
     ): LoadPokemonByIdUseCase {
-        return LoadPokemonByIdUseCase(localPokemonRepository)
+        return LoadPokemonByIdUseCase(localPokemonRepository, remotePokemonRepository)
     }
 
     @Provides
@@ -45,17 +47,19 @@ class UseCaseModule {
     @Provides
     @Singleton
     fun provideLoadPokemonsUseCase(
-        localPokemonRepository: LocalPokemonRepository
+        localPokemonRepository: LocalPokemonRepository,
+        remotePokemonRepository: RemotePokemonRepository
     ): LoadPokemonsUseCase {
-        return LoadPokemonsUseCase(localPokemonRepository)
+        return LoadPokemonsUseCase(localPokemonRepository, remotePokemonRepository)
     }
 
     @Provides
     @Singleton
     fun provideDownloadDetailInfoUseCase(
-        localPokemonRepository: LocalPokemonRepository
+        localPokemonRepository: LocalPokemonRepository,
+        remotePokemonRepository: RemotePokemonRepository
     ): DownloadDetailInfoUseCase {
-        return DownloadDetailInfoUseCase(localPokemonRepository)
+        return DownloadDetailInfoUseCase(localPokemonRepository, remotePokemonRepository)
     }
 
     @Provides
