@@ -1,6 +1,13 @@
 package com.hgshkt.pokedex.ui.screens.detail
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,17 +22,26 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,8 +59,6 @@ import com.hgshkt.pokedex.ui.data.model.UiPokemon
 import com.hgshkt.pokedex.ui.data.model.UiPokemonAbility
 import com.hgshkt.pokedex.ui.data.model.UiStats
 import com.hgshkt.pokedex.ui.data.model.UiType
-
-private val pokemonNameStyle = TextStyle(fontSize = 40.sp, fontWeight = FontWeight.Bold)
 
 @Preview
 @Composable
@@ -73,9 +87,8 @@ fun DetailScreenPreview() {
                 )
             )
         )
-        with(pokemon) {
 
-        }
+        DetailScreenSuccess(pokemon)
     }
 }
 
@@ -91,60 +104,7 @@ fun DetailScreen(
         is DetailViewModel.State.Error ->
             ErrorBox(state.message)
 
-        is DetailViewModel.State.Success -> with(state.pokemon) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                PokemonImage(
-                    url = imageUrl,
-                    contentDescription = "pokemon image",
-                    modifier = Modifier
-                        .widthIn(0.dp, 400.dp)
-                        .fillMaxWidth()
-                )
-                Column(
-                    modifier = Modifier
-                        .verticalScroll(rememberScrollState())
-                        .fillMaxWidth()
-                        .padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(text = "№$id", fontSize = 20.sp)
-                    AutoResizedText(text = name, style = pokemonNameStyle)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceAround
-                    ) {
-                        types.forEach { type ->
-                            PokemonType(type)
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(12.dp))
-                    AbilityList(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        abilities = abilities
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    StatsLayer(
-                        stats = stats,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceAround
-                    ) {
-                        val fontSize = 24.sp
-                        Text("Height: $height", fontSize = fontSize)
-                        Text("Weight: $weight", fontSize = fontSize)
-                    }
-                }
-            }
-        }
+        is DetailViewModel.State.Success -> DetailScreenSuccess(state.pokemon)
     }
 
     LaunchedEffect(key1 = "Fetch pokemon") {
@@ -153,11 +113,73 @@ fun DetailScreen(
 }
 
 @Composable
+fun DetailScreenSuccess(pokemon: UiPokemon) {
+    with(pokemon) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            PokemonImage(
+                url = imageUrl,
+                contentDescription = "pokemon image",
+                modifier = Modifier
+                    .widthIn(0.dp, 400.dp)
+                    .fillMaxWidth()
+            )
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "№$id", fontSize = 20.sp)
+                AutoResizedText(
+                    text = name,
+                    style = TextStyle(fontSize = 40.sp, fontWeight = FontWeight.Bold)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    types.forEach { type ->
+                        PokemonType(type)
+                    }
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                AbilityList(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    abilities = abilities
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                StatsLayer(
+                    stats = stats,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    val fontSize = 24.sp
+                    Text("Height: $height", fontSize = fontSize)
+                    Text("Weight: $weight", fontSize = fontSize)
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun PokemonType(type: UiType, modifier: Modifier = Modifier) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
-        )
+        ),
+        modifier = modifier
     ) {
         Box(
             modifier = Modifier
@@ -231,7 +253,7 @@ fun AbilityList(modifier: Modifier, abilities: List<UiPokemonAbility>) {
                         ability = ability,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(8.dp)
+                            .padding(vertical = 8.dp, horizontal = 16.dp)
                     )
                 }
             } else {
@@ -248,10 +270,14 @@ fun Ability(
     nameFontSize: TextUnit = 26.sp,
     nameFontWeight: FontWeight = FontWeight.Bold,
     textFontSize: TextUnit = 22.sp,
-    contentPadding: Dp = 8.dp
+    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
 ) {
+    var expanded by remember { mutableStateOf(false) }
+
     ElevatedCard(
-        modifier,
+        modifier.clickable {
+            expanded = !expanded
+        },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
         ),
@@ -259,9 +285,41 @@ fun Ability(
             defaultElevation = 6.dp
         )
     ) {
-        Column(Modifier.padding(contentPadding)) {
-            Text(ability.name, fontSize = nameFontSize, fontWeight = nameFontWeight)
-            Text(ability.effect, fontSize = textFontSize)
+        Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(contentPadding),
+                Arrangement.SpaceBetween
+            ) {
+                Text(
+                    ability.name,
+                    fontSize = nameFontSize,
+                    fontWeight = nameFontWeight
+                )
+                Icon(
+                    painter = rememberVectorPainter(
+                        image = if (expanded)
+                            Icons.Default.KeyboardArrowUp
+                        else
+                            Icons.Default.KeyboardArrowDown
+                    ),
+                    contentDescription = "Filter Button"
+                )
+            }
+            AnimatedVisibility(
+                visible = expanded,
+                enter = expandVertically(tween(600, easing = EaseInOut)),
+                exit = shrinkVertically(tween(600, easing = EaseOut))
+            ) {
+                Text(
+                    text = ability.effect,
+                    fontSize = textFontSize,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(contentPadding)
+                )
+            }
         }
     }
 }

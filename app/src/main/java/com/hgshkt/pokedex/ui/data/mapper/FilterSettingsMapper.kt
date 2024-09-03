@@ -1,7 +1,7 @@
 package com.hgshkt.pokedex.ui.data.mapper
 
 import com.hgshkt.domain.data.PokemonFilter
-import com.hgshkt.pokedex.ui.screens.list.FilterMenuState
+import com.hgshkt.pokedex.ui.screens.list.filter.FilterMenuState
 
 fun FilterMenuState.toDomainSettings(): PokemonFilter.Settings {
     return PokemonFilter.Settings(

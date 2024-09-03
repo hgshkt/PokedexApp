@@ -7,6 +7,8 @@ import com.hgshkt.pokedex.ui.data.mapper.toDomainSettings
 import com.hgshkt.pokedex.ui.data.mapper.toUi
 import com.hgshkt.pokedex.ui.data.model.UiSimplePokemon
 import com.hgshkt.pokedex.ui.data.model.UiType
+import com.hgshkt.pokedex.ui.screens.list.filter.FilterMenuState
+import com.hgshkt.pokedex.ui.screens.list.filter.accept
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -84,67 +86,7 @@ class ListViewModel @Inject constructor(
     }
 
     fun updateFilterPokemonType(type: FilterMenuState.SelectedType) {
-        viewModelScope.launch {
-            with(_filterMenuState.value) {
-                val selectedCount = selectedTypes.count { it.selected }
-
-                // if no type is selected
-                if (selectedCount == selectedTypes.size) {
-                    _filterMenuState.update { value ->
-                        value.copy(
-                            selectedTypes = _filterMenuState.value.selectedTypes.map {
-                                if (it.type == type.type) {
-                                    it.copy(selected = true)
-                                } else {
-                                    it.copy(selected = false)
-                                }
-                            }
-                        )
-                    }
-                } else {
-
-                    // if selected type was selected before
-                    if (selectedTypes.any { it.type == type.type && it.selected }) {
-                        if (selectedCount == 1) {
-                            _filterMenuState.update { value ->
-                                value.copy(
-                                    selectedTypes = selectedTypes.map {
-                                        it.copy(selected = true)
-                                    }
-                                )
-                            }
-                        } else {
-                            _filterMenuState.update { value ->
-                                value.copy(
-                                    selectedTypes = selectedTypes.map {
-                                        if (it.type == type.type) {
-                                            it.copy(selected = false)
-                                        } else {
-                                            it
-                                        }
-                                    }
-                                )
-                            }
-                        }
-                    }
-
-                    // if count of selected types less than maximum
-                    else if (selectedCount != MAX_SELECTED_TYPES) {
-                        _filterMenuState.update { value ->
-                            value.copy(
-                                selectedTypes = selectedTypes.map {
-                                    if (it.type == type.type) {
-                                        it.copy(selected = true)
-                                    } else {
-                                        it
-                                    }
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-        }
+        _filterMenuState.value = _filterMenuState.value.accept(type)
     }
 
     fun startFilter() {

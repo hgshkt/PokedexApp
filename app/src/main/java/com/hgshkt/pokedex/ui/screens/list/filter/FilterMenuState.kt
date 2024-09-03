@@ -1,4 +1,4 @@
-package com.hgshkt.pokedex.ui.screens.list
+package com.hgshkt.pokedex.ui.screens.list.filter
 
 import com.hgshkt.domain.data.PokemonFilter
 import com.hgshkt.pokedex.ui.data.model.UiType
