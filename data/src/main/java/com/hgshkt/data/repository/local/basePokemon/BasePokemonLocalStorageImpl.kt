@@ -1,8 +1,11 @@
 package com.hgshkt.data.repository.local.basePokemon
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.takeWhile
+
 class BasePokemonLocalStorageImpl(
     private val basePokemonDao: BasePokemonDao
-): BasePokemonLocalStorage {
+) : BasePokemonLocalStorage {
     override fun getBasePokemon(id: Int): LocalBasePokemon {
         return basePokemonDao.get(id)
     }
@@ -33,5 +36,21 @@ class BasePokemonLocalStorageImpl(
 
     override fun isInfoLoaded(id: Int): Boolean {
         return basePokemonDao.isInfoLoaded(id)
+    }
+
+    override fun loadedAsFlow(): Flow<Int> {
+        val count = basePokemonDao.count()
+        return basePokemonDao.loadedAsFlow()
+            .takeWhile {
+                it < count
+            }
+    }
+
+    override fun infoLoadedAsFlow(): Flow<Int> {
+        val count = basePokemonDao.count()
+        return basePokemonDao.infoLoadedAsFlow()
+            .takeWhile {
+                it < count
+            }
     }
 }

@@ -99,4 +99,13 @@ class LocalPokemonRepositoryImpl(
     override fun isInfoLoaded(id: Int): Boolean {
         return storages.local.basePokemon.isInfoLoaded(id)
     }
+
+
+    override fun loadedAsFlow(): Flow<Int> {
+        return storages.local.basePokemon.loadedAsFlow()
+    }
+
+    override fun infoLoadedAsFlow(): Flow<Int> {
+        return storages.local.basePokemon.infoLoadedAsFlow()
+    }
 }

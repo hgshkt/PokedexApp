@@ -3,6 +3,7 @@ package com.hgshkt.data.repository.local.basePokemon
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BasePokemonDao {
@@ -29,4 +30,13 @@ interface BasePokemonDao {
 
     @Query("SELECT infoLoaded FROM base_pokemons WHERE id = :id")
     fun isInfoLoaded(id: Int): Boolean
+
+    @Query("SELECT COUNT(*) FROM base_pokemons WHERE loaded = 1")
+    fun loadedAsFlow(): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM base_pokemons WHERE infoLoaded = 1")
+    fun infoLoadedAsFlow(): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM base_pokemons")
+    fun count(): Int
 }

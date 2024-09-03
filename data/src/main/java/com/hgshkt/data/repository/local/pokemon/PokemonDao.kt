@@ -1,6 +1,5 @@
 package com.hgshkt.data.repository.local.pokemon
 
-import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
@@ -10,9 +9,6 @@ import kotlinx.coroutines.flow.Flow
 interface PokemonDao {
     @Upsert
     suspend fun upsertAll(pokemons: List<LocalCompletePokemon>)
-
-    @Query("SELECT * FROM pokemons")
-    fun pagingSource(): PagingSource<Int, LocalCompletePokemon>
 
     @Query("SELECT * FROM pokemons")
     fun getAllAsFlow(): Flow<List<LocalCompletePokemon>>
