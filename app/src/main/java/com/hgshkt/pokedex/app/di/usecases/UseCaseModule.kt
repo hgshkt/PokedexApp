@@ -8,6 +8,7 @@ import com.hgshkt.domain.useCases.GetLocalPokemonsUseCase
 import com.hgshkt.domain.data.PokemonFilter
 import com.hgshkt.domain.data.RemotePokemonRepository
 import com.hgshkt.domain.useCases.DownloadDetailInfoUseCase
+import com.hgshkt.domain.useCases.DownloadingStateAsFlowUseCase
 import com.hgshkt.pokedex.ui.screens.list.ListUseCases
 import dagger.Module
 import dagger.Provides
@@ -69,5 +70,13 @@ class UseCaseModule {
         localPokemonRepository: LocalPokemonRepository
     ): FilterPokemonsUseCase {
         return FilterPokemonsUseCase(pokemonFilter, localPokemonRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDownloadingStateAsFlowUseCase(
+        localPokemonRepository: LocalPokemonRepository
+    ): DownloadingStateAsFlowUseCase {
+        return DownloadingStateAsFlowUseCase(localPokemonRepository)
     }
 }
