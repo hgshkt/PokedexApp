@@ -18,4 +18,20 @@ class BasePokemonLocalStorageImpl(
     override suspend fun saveBasePokemons(pokemons: List<LocalBasePokemon>) {
         basePokemonDao.save(pokemons)
     }
+
+    override fun markAsLoaded(id: Int) {
+        basePokemonDao.markAsLoaded(id)
+    }
+
+    override fun markAsInfoLoaded(id: Int) {
+        basePokemonDao.markAsInfoLoaded(id)
+    }
+
+    override fun isLoaded(id: Int): Boolean {
+        return basePokemonDao.isLoaded(id)
+    }
+
+    override fun isInfoLoaded(id: Int): Boolean {
+        return basePokemonDao.isInfoLoaded(id)
+    }
 }

@@ -18,4 +18,16 @@ interface BasePokemonDao {
 
     @Upsert
     fun save(pokemon: LocalBasePokemon)
+
+    @Query("UPDATE base_pokemons SET loaded = true WHERE id = :id")
+    fun markAsLoaded(id: Int)
+
+    @Query("UPDATE base_pokemons SET infoLoaded = true WHERE id = :id")
+    fun markAsInfoLoaded(id: Int)
+
+    @Query("SELECT loaded FROM base_pokemons WHERE id = :id")
+    fun isLoaded(id: Int): Boolean
+
+    @Query("SELECT infoLoaded FROM base_pokemons WHERE id = :id")
+    fun isInfoLoaded(id: Int): Boolean
 }

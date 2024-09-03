@@ -10,5 +10,5 @@ data class LocalBasePokemon(
     var name: String,
     var url: String,
     var loaded: Boolean = false,
-    var abilitiesLoaded: Boolean = false
+    var infoLoaded: Boolean = false
 )
