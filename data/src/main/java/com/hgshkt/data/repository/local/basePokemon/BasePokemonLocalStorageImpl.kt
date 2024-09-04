@@ -1,6 +1,7 @@
 package com.hgshkt.data.repository.local.basePokemon
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.takeWhile
 
@@ -56,6 +57,6 @@ class BasePokemonLocalStorageImpl(
     }
 
     override fun count(): Flow<Int> {
-        return basePokemonDao.countAsFlow().take(2)
+        return basePokemonDao.countAsFlow()
     }
 }

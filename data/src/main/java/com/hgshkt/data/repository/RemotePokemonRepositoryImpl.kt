@@ -19,7 +19,7 @@ class RemotePokemonRepositoryImpl(
         }
     }
 
-    override suspend fun downloadPokemon(id: Int) {
+    override suspend fun downloadPokemon(id: Int): Boolean {
         val response = storages.remote.pokemon.getPokemon(id)
         if (response.isSuccessful) {
             val pokemon = response.body()!!
@@ -27,7 +27,10 @@ class RemotePokemonRepositoryImpl(
             saveCrossRefs(pokemon)
 
             storages.local.pokemon.savePokemon(pokemon.toLocal())
+
+            return true
         }
+        return false
     }
 
     private suspend fun saveCrossRefs(pokemon: RemoteCompletePokemon) {
@@ -41,16 +44,17 @@ class RemotePokemonRepositoryImpl(
         }
     }
 
-    override suspend fun downloadInfo(id: Int) {
-        downloadAbilities(id)
+    override suspend fun downloadInfo(id: Int): Boolean {
+        return downloadAbilities(id)
     }
 
-    private suspend fun downloadAbilities(id: Int) {
+    private suspend fun downloadAbilities(id: Int): Boolean {
         storages.local.pokemonAbilityCrossRef.getAbilityRefsForPokemon(id).apply {
             forEach { ref ->
-                val ability = storages.remote.ability.getAbility(ref.abilityId)!!.toAbility()
+                val ability = storages.remote.ability.getAbility(ref.abilityId)?.toAbility() ?: return false
                 storages.local.ability.saveAbility(ability.toLocal())
             }
         }
+        return true
     }
 }

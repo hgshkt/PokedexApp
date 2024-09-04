@@ -2,6 +2,7 @@ package com.hgshkt.data.repository.remote.ability
 
 import com.hgshkt.data.repository.remote.ability.network.AbilityApiService
 import com.hgshkt.data.repository.remote.ability.network.model.ability.ResponseAbility
+import retrofit2.Response
 
 class AbilityRemoteStorageImpl(
     private val abilityApiService: AbilityApiService

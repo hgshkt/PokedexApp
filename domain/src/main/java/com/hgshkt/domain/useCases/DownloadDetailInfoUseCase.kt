@@ -18,8 +18,9 @@ class DownloadDetailInfoUseCase(
         result as Result.Success
 
         result.value.forEach { id ->
-            remoteRepository.downloadInfo(id)
-            localRepository.markAsInfoLoaded(id)
+            val loaded = remoteRepository.downloadInfo(id)
+            if(loaded) localRepository.markAsInfoLoaded(id)
+            else return
         }
     }
 }

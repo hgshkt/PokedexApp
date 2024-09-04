@@ -1,6 +1,7 @@
 package com.hgshkt.domain.useCases
 
 import com.hgshkt.domain.data.LocalPokemonRepository
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 
 class DownloadingStateAsFlowUseCase(
@@ -8,10 +9,10 @@ class DownloadingStateAsFlowUseCase(
 ) {
 
     suspend fun execute() = flow {
-        var target = 0
-        repository.pokemonCount().collect {
-            target = it
+        val target = repository.pokemonCount().first {
+            it != 0
         }
+
         repository.loadedAsFlow().collect { progress ->
             emit(DownloadingState.Default(count = progress, target = target))
         }

@@ -20,8 +20,9 @@ class LoadPokemonsUseCase(
         result as Result.Success
 
         result.value.forEach { id ->
-            remoteRepository.downloadPokemon(id)
-            localRepository.markAsLoaded(id)
+            val loaded = remoteRepository.downloadPokemon(id)
+            if (loaded) localRepository.markAsLoaded(id)
+            else return@withContext
         }
     }
 }
