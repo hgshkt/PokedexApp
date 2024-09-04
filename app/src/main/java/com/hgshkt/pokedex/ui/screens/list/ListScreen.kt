@@ -1,6 +1,8 @@
 package com.hgshkt.pokedex.ui.screens.list
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,6 +35,7 @@ fun ListScreen(
 ) {
     val screenState by viewModel.state.collectAsState()
     val filterMenuState by viewModel.filterMenuState.collectAsState()
+    val downloadingState by viewModel.downloadingState.collectAsState()
 
     if (screenState is ListViewModel.State.LoadingError) {
         ErrorBox((screenState as ListViewModel.State.LoadingError).message)
@@ -86,11 +89,16 @@ fun ListScreen(
                 val pokemons =
                     (screenState as ListViewModel.State.Loaded).pokemons
 
-                PokemonListSuccess(
-                    listState = listState,
-                    pokemons = pokemons
-                ) { saver ->
-                    onItemClick(saver)
+                Column {
+                    if (downloadingState.count < downloadingState.target)
+                        DownloadingProgressBar(downloadingState)
+
+                    PokemonListSuccess(
+                        listState = listState,
+                        pokemons = pokemons
+                    ) { saver ->
+                        onItemClick(saver)
+                    }
                 }
             } else if (screenState is ListViewModel.State.FilterError) {
                 val errorState = (screenState as ListViewModel.State.FilterError)
@@ -102,6 +110,14 @@ fun ListScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun DownloadingProgressBar(downloadingState: ListViewModel.DownloadingState) {
+    Row(modifier = Modifier.fillMaxWidth().padding(8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(downloadingState.status)
+        Text("${downloadingState.count} / ${downloadingState.target}")
     }
 }
 

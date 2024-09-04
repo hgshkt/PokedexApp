@@ -16,4 +16,5 @@ interface LocalPokemonRepository {
     fun isInfoLoaded(id: Int): Boolean
     fun loadedAsFlow(): Flow<Int>
     fun infoLoadedAsFlow(): Flow<Int>
+    fun pokemonCount(): Int
 }

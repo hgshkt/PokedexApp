@@ -23,9 +23,10 @@ class UseCaseModule {
     @Singleton
     fun provideListUseCases(
         getLocalPokemonsUseCase: GetLocalPokemonsUseCase,
-        filterPokemonsUseCase: FilterPokemonsUseCase
+        filterPokemonsUseCase: FilterPokemonsUseCase,
+        downloadingStateAsFlowUseCase: DownloadingStateAsFlowUseCase
     ): ListUseCases {
-        return ListUseCases(getLocalPokemonsUseCase, filterPokemonsUseCase)
+        return ListUseCases(getLocalPokemonsUseCase, filterPokemonsUseCase, downloadingStateAsFlowUseCase)
     }
 
     @Provides

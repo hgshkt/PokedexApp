@@ -8,24 +8,28 @@ class DownloadingStateAsFlowUseCase(
 ) {
 
     suspend fun execute() = flow {
-        repository.loadedAsFlow().collect { count ->
-            emit(DownloadingState.Default(count))
+        val target = repository.pokemonCount()
+        repository.loadedAsFlow().collect { progress ->
+            emit(DownloadingState.Default(count = progress, target = target))
         }
-        repository.infoLoadedAsFlow().collect { count ->
-            emit(DownloadingState.DetailInfo(count))
+        repository.infoLoadedAsFlow().collect { progress ->
+            emit(DownloadingState.DetailInfo(count = progress, target = target))
         }
     }
 
     sealed class DownloadingState(
         val status: String,
+        open val target: Int,
         open val count: Int
     ) {
-        data class Default(override val count: Int): DownloadingState(
+        data class Default(override val count: Int, override val target: Int): DownloadingState(
             status = "Pokemon are downloading",
+            target = target,
             count = count
         )
-        data class DetailInfo(override val count: Int): DownloadingState(
+        data class DetailInfo(override val count: Int, override val target: Int): DownloadingState(
             status = "Details are downloading",
+            target = target,
             count = count
         )
     }

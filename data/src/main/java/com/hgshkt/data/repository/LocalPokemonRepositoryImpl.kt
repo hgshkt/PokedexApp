@@ -108,4 +108,8 @@ class LocalPokemonRepositoryImpl(
     override fun infoLoadedAsFlow(): Flow<Int> {
         return storages.local.basePokemon.infoLoadedAsFlow()
     }
+
+    override fun pokemonCount(): Int {
+        return storages.local.basePokemon.count()
+    }
 }

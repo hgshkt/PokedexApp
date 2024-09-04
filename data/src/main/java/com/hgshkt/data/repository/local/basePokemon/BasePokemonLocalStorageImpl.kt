@@ -53,4 +53,8 @@ class BasePokemonLocalStorageImpl(
                 it < count
             }
     }
+
+    override fun count(): Int {
+        return basePokemonDao.count()
+    }
 }

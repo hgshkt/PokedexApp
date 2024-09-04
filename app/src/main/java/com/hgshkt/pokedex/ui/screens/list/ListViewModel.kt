@@ -34,24 +34,36 @@ class ListViewModel @Inject constructor(
     )
     val filterMenuState: StateFlow<FilterMenuState> get() = _filterMenuState
 
+    private val _downloadingState = MutableStateFlow(DownloadingState(0, 0, ""))
+    val downloadingState: StateFlow<DownloadingState> = _downloadingState
+
     init {
-        getLocalPokemons()
+        viewModelScope.launch(Dispatchers.Default) {
+            launch(Dispatchers.Default) {
+                getLocalPokemons()
+            }
+            getDownloadingStatus()
+        }
     }
 
-    private fun getLocalPokemons() {
-        viewModelScope.launch {
-            val flow = useCases.getLocalPokemons.execute()
+    private suspend fun getDownloadingStatus() {
+        useCases.downloadingStatus.execute().collect { downloadingState ->
+            _downloadingState.value = downloadingState.toUi()
+        }
+    }
 
-            _state.value = State.Loaded(emptyList())
+    private suspend fun getLocalPokemons() {
+        val flow = useCases.getLocalPokemons.execute()
 
-            flow.collect { list ->
-                if (_state.value is State.Loaded)
-                    _state.value = State.Loaded(
-                        list.map { pokemon ->
-                            pokemon.toUi()
-                        }
-                    )
-            }
+        _state.value = State.Loaded(emptyList())
+
+        flow.collect { list ->
+            if (_state.value is State.Loaded)
+                _state.value = State.Loaded(
+                    list.map { pokemon ->
+                        pokemon.toUi()
+                    }
+                )
         }
     }
 
@@ -96,13 +108,15 @@ class ListViewModel @Inject constructor(
             _state.value = when (result) {
                 is Result.Success -> State.Loaded(result.value.map { it.toUi() })
                 is Result.Error -> State.FilterError(result.msg) {
-                    getLocalPokemons()
-                    _filterMenuState.value = FilterMenuState(
-                        selectedTypes = UiType.entries.map {
-                            FilterMenuState.SelectedType(it)
-                        },
-                        opened = true
-                    )
+                    launch {
+                        getLocalPokemons()
+                        _filterMenuState.value = FilterMenuState(
+                            selectedTypes = UiType.entries.map {
+                                FilterMenuState.SelectedType(it)
+                            },
+                            opened = true
+                        )
+                    }
                 }
             }
         }
@@ -120,4 +134,10 @@ class ListViewModel @Inject constructor(
         data class LoadingError(val message: String) : State()
         data class FilterError(val message: String, val handle: () -> Unit) : State()
     }
+
+    data class DownloadingState(
+        val count: Int,
+        val target: Int,
+        val status: String
+    )
 }
