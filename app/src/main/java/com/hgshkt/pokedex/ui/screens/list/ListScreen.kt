@@ -81,8 +81,8 @@ fun ListScreen(
             expanded = filterMenuState.opened
         )
         when (screenState) {
-            is ListViewModel.State.Loading -> LoadingBox()
-            is ListViewModel.State.Error -> {
+            is State.Loading -> LoadingBox()
+            is State.Error -> {
                 ErrorBox(screenState.message) {
                     Spacer(modifier = Modifier.fillMaxHeight(0.1f))
                     Button(onClick = { screenState.handle() }) {
@@ -91,7 +91,7 @@ fun ListScreen(
                 }
             }
 
-            is ListViewModel.State.Display -> {
+            is State.Display -> {
                 val pokemons = screenState.pokemons
 
                 Column {
@@ -111,7 +111,7 @@ fun ListScreen(
 }
 
 @Composable
-fun DownloadingProgressBar(downloadingState: ListViewModel.DownloadingState) {
+fun DownloadingProgressBar(downloadingState: DownloadingState) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

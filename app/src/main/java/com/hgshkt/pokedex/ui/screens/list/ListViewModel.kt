@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.hgshkt.domain.data.Result
 import com.hgshkt.pokedex.ui.data.mapper.toDomainSettings
 import com.hgshkt.pokedex.ui.data.mapper.toUi
-import com.hgshkt.pokedex.ui.data.model.UiSimplePokemon
 import com.hgshkt.pokedex.ui.data.model.UiType
 import com.hgshkt.pokedex.ui.screens.list.filter.FilterMenuState
 import com.hgshkt.pokedex.ui.screens.list.filter.accept
@@ -54,20 +53,18 @@ class ListViewModel @Inject constructor(
     }
 
     private suspend fun collectLocalPokemons() {
-        val flow = useCases.getLocalPokemons.execute()
+        _state.value = State.Loading
 
-        _state.value = State.Display.LocalPokemons(emptyList())
-
-        flow
-            .takeWhile {
-                _state.value is State.Display.LocalPokemons
-            }
+        useCases.getLocalPokemons.execute()
+            .takeWhile { _state.value is State.Display.LocalPokemons || _state.value is State.Loading }
             .collect { list ->
-                _state.value = State.Display.LocalPokemons(
-                    list.map { pokemon ->
-                        pokemon.toUi()
-                    }
-                )
+                if (list.isNotEmpty()) {
+                    _state.value = State.Display.LocalPokemons(
+                        list.map { pokemon ->
+                            pokemon.toUi()
+                        }
+                    )
+                } else _state.value = State.Loading
             }
     }
 
@@ -112,14 +109,8 @@ class ListViewModel @Inject constructor(
             _state.value = when (result) {
                 is Result.Success -> State.Display.FilteredPokemons(result.value.map { it.toUi() })
                 is Result.Error -> State.Error(result.msg) {
-                    launch {
+                    viewModelScope.launch(Dispatchers.Default) {
                         collectLocalPokemons()
-                        _filterMenuState.value = FilterMenuState(
-                            selectedTypes = UiType.entries.map {
-                                FilterMenuState.SelectedType(it)
-                            },
-                            opened = true
-                        )
                     }
                 }
             }
@@ -131,25 +122,4 @@ class ListViewModel @Inject constructor(
             it.copy(opened = !it.opened)
         }
     }
-
-
-    sealed class State {
-        data object Loading : State()
-        data class Error(val message: String, val handle: () -> Unit) : State()
-        sealed class Display(
-            open val pokemons: List<UiSimplePokemon>
-        ) : State() {
-            data class LocalPokemons(override val pokemons: List<UiSimplePokemon>) :
-                Display(pokemons)
-
-            data class FilteredPokemons(override val pokemons: List<UiSimplePokemon>) :
-                Display(pokemons)
-        }
-    }
-
-    data class DownloadingState(
-        val count: Int,
-        val target: Int,
-        val status: String
-    )
 }
