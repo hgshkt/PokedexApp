@@ -33,61 +33,66 @@ fun ListScreen(
     onItemClick: (PokemonSaver) -> Unit,
     listState: LazyGridState
 ) {
-    val screenState by viewModel.state.collectAsState()
+    val screenState = viewModel.state.collectAsState().value
     val filterMenuState by viewModel.filterMenuState.collectAsState()
     val downloadingState by viewModel.downloadingState.collectAsState()
 
-    if (screenState is ListViewModel.State.LoadingError) {
-        ErrorBox((screenState as ListViewModel.State.LoadingError).message)
-    } else {
-        Column {
-            ExpandedView(
-                hiddenPart = {
-                    FilterMenu(
-                        menuState = filterMenuState,
-                        weightStartValueChange = { value ->
-                            viewModel.updateFilterWeightStart(value)
-                        },
-                        weightEndValueChange = { value ->
-                            viewModel.updateFilterWeightEnd(value)
-                        },
-                        heightStartValueChange = { value ->
-                            viewModel.updateFilterHeightStart(value)
-                        },
-                        heightEndValueChange = { value ->
-                            viewModel.updateFilterHeightEnd(value)
-                        },
-                        onTypeClick = { type ->
-                            viewModel.updateFilterPokemonType(type)
-                        }
-                    )
-                },
-                visiblePart = {
-                    FilterButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(4.dp),
-                        placeholder = { Text("Enter Pokemon name") },
-                        isExpanded = filterMenuState.opened,
-                        onOpenButtonClick = {
-                            viewModel.openFilterMenu()
-                        },
-                        onSearchButtonClick = {
-                            viewModel.startFilter()
-                        },
-                        onTextValueChange = { text ->
-                            viewModel.updateFilterText(text)
-                        },
-                        text = filterMenuState.text
-                    )
-                },
-                expanded = filterMenuState.opened
-            )
-            if (screenState is ListViewModel.State.Loading) {
-                LoadingBox()
-            } else if (screenState is ListViewModel.State.Loaded) {
-                val pokemons =
-                    (screenState as ListViewModel.State.Loaded).pokemons
+    Column {
+        ExpandedView(
+            hiddenPart = {
+                FilterMenu(
+                    menuState = filterMenuState,
+                    weightStartValueChange = { value ->
+                        viewModel.updateFilterWeightStart(value)
+                    },
+                    weightEndValueChange = { value ->
+                        viewModel.updateFilterWeightEnd(value)
+                    },
+                    heightStartValueChange = { value ->
+                        viewModel.updateFilterHeightStart(value)
+                    },
+                    heightEndValueChange = { value ->
+                        viewModel.updateFilterHeightEnd(value)
+                    },
+                    onTypeClick = { type ->
+                        viewModel.updateFilterPokemonType(type)
+                    }
+                )
+            },
+            visiblePart = {
+                FilterButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp),
+                    placeholder = { Text("Enter Pokemon name") },
+                    isExpanded = filterMenuState.opened,
+                    onOpenButtonClick = {
+                        viewModel.openFilterMenu()
+                    },
+                    onSearchButtonClick = {
+                        viewModel.startFilter()
+                    },
+                    onTextValueChange = { text ->
+                        viewModel.updateFilterText(text)
+                    },
+                    text = filterMenuState.text
+                )
+            },
+            expanded = filterMenuState.opened
+        )
+        when (screenState) {
+            is ListViewModel.State.Loading -> LoadingBox()
+            is ListViewModel.State.Error -> {
+                ErrorBox(screenState.message) {
+                    Spacer(modifier = Modifier.fillMaxHeight(0.1f))
+                    Button(onClick = { screenState.handle() }) {
+                        Text("Ok")
+                    }
+                }
+            }
+
+            is ListViewModel.State.Display -> {
+                val pokemons = screenState.pokemons
 
                 Column {
                     if (downloadingState.count < downloadingState.target)
@@ -100,14 +105,6 @@ fun ListScreen(
                         onItemClick(saver)
                     }
                 }
-            } else if (screenState is ListViewModel.State.FilterError) {
-                val errorState = (screenState as ListViewModel.State.FilterError)
-                ErrorBox(errorState.message) {
-                    Spacer(modifier = Modifier.fillMaxHeight(0.1f))
-                    Button(onClick = { errorState.handle() }) {
-                        Text("Ok")
-                    }
-                }
             }
         }
     }
@@ -115,7 +112,12 @@ fun ListScreen(
 
 @Composable
 fun DownloadingProgressBar(downloadingState: ListViewModel.DownloadingState) {
-    Row(modifier = Modifier.fillMaxWidth().padding(8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
         Text(downloadingState.status)
         Text("${downloadingState.count} / ${downloadingState.target}")
     }

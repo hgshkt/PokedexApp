@@ -13,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -40,31 +41,34 @@ class ListViewModel @Inject constructor(
     init {
         viewModelScope.launch(Dispatchers.Default) {
             launch(Dispatchers.Default) {
-                getLocalPokemons()
+                collectDownloadingStatus()
             }
-            getDownloadingStatus()
+            collectLocalPokemons()
         }
     }
 
-    private suspend fun getDownloadingStatus() {
+    private suspend fun collectDownloadingStatus() {
         useCases.downloadingStatus.execute().collect { downloadingState ->
             _downloadingState.value = downloadingState.toUi()
         }
     }
 
-    private suspend fun getLocalPokemons() {
+    private suspend fun collectLocalPokemons() {
         val flow = useCases.getLocalPokemons.execute()
 
-        _state.value = State.Loaded(emptyList())
+        _state.value = State.Display.LocalPokemons(emptyList())
 
-        flow.collect { list ->
-            if (_state.value is State.Loaded)
-                _state.value = State.Loaded(
+        flow
+            .takeWhile {
+                _state.value is State.Display.LocalPokemons
+            }
+            .collect { list ->
+                _state.value = State.Display.LocalPokemons(
                     list.map { pokemon ->
                         pokemon.toUi()
                     }
                 )
-        }
+            }
     }
 
     fun updateFilterText(text: String) {
@@ -106,10 +110,10 @@ class ListViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             val result = useCases.filter.execute(_filterMenuState.value.toDomainSettings())
             _state.value = when (result) {
-                is Result.Success -> State.Loaded(result.value.map { it.toUi() })
-                is Result.Error -> State.FilterError(result.msg) {
+                is Result.Success -> State.Display.FilteredPokemons(result.value.map { it.toUi() })
+                is Result.Error -> State.Error(result.msg) {
                     launch {
-                        getLocalPokemons()
+                        collectLocalPokemons()
                         _filterMenuState.value = FilterMenuState(
                             selectedTypes = UiType.entries.map {
                                 FilterMenuState.SelectedType(it)
@@ -128,11 +132,19 @@ class ListViewModel @Inject constructor(
         }
     }
 
+
     sealed class State {
         data object Loading : State()
-        data class Loaded(val pokemons: List<UiSimplePokemon>) : State()
-        data class LoadingError(val message: String) : State()
-        data class FilterError(val message: String, val handle: () -> Unit) : State()
+        data class Error(val message: String, val handle: () -> Unit) : State()
+        sealed class Display(
+            open val pokemons: List<UiSimplePokemon>
+        ) : State() {
+            data class LocalPokemons(override val pokemons: List<UiSimplePokemon>) :
+                Display(pokemons)
+
+            data class FilteredPokemons(override val pokemons: List<UiSimplePokemon>) :
+                Display(pokemons)
+        }
     }
 
     data class DownloadingState(
