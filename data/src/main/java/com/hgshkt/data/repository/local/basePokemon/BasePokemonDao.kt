@@ -39,4 +39,7 @@ interface BasePokemonDao {
 
     @Query("SELECT COUNT(*) FROM base_pokemons")
     fun count(): Int
+
+    @Query("SELECT COUNT(*) FROM base_pokemons")
+    fun countAsFlow(): Flow<Int>
 }

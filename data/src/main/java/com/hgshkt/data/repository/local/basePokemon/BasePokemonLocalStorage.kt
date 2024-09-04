@@ -13,5 +13,5 @@ interface BasePokemonLocalStorage {
     fun isInfoLoaded(id: Int): Boolean
     fun loadedAsFlow(): Flow<Int>
     fun infoLoadedAsFlow(): Flow<Int>
-    fun count(): Int
+    fun count(): Flow<Int>
 }

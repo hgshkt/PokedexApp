@@ -8,7 +8,10 @@ class DownloadingStateAsFlowUseCase(
 ) {
 
     suspend fun execute() = flow {
-        val target = repository.pokemonCount()
+        var target = 0
+        repository.pokemonCount().collect {
+            target = it
+        }
         repository.loadedAsFlow().collect { progress ->
             emit(DownloadingState.Default(count = progress, target = target))
         }
