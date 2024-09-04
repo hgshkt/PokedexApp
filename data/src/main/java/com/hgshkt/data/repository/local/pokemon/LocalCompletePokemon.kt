@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class LocalCompletePokemon(
     @PrimaryKey var id: Int,
     var name: String,
-    var imageUrl: String,
+    var imageUrl: String?,
     var type1name: String?,
     var type2name: String?,
     val weight: Int,

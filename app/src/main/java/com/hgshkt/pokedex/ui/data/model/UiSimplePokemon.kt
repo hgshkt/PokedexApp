@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class UiSimplePokemon(
     var id: Int,
     var name: String,
-    var imageUrl: String,
+    var imageUrl: String?,
     var types: List<UiType>,
     val stats: UiStats,
     val weight: Int,
