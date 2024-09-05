@@ -16,7 +16,7 @@ fun Pokemon.toUi(): UiPokemon {
         id = id,
         name = name,
         imageUrl = imageUrl,
-        abilities = abilities.map { it.toUi() },
+        abilities = abilities.map { it?.toUi() },
         types = types.map { it.toUi() },
         stats = stats.toUi(),
         weight = weight,

@@ -11,13 +11,13 @@ class LoadPokemonByIdUseCase(
 ) {
     suspend fun execute(id: Int): Result<Pokemon> {
         if (localPokemonRepository.isLoaded(id).not()) {
-            remotePokemonRepository.downloadPokemon(id)
-            localPokemonRepository.markAsLoaded(id)
+            if (remotePokemonRepository.downloadPokemon(id))
+                localPokemonRepository.markAsLoaded(id)
         }
 
         if (localPokemonRepository.isInfoLoaded(id).not()) {
-            remotePokemonRepository.downloadInfo(id)
-            localPokemonRepository.markAsInfoLoaded(id)
+            if (remotePokemonRepository.downloadInfo(id))
+                localPokemonRepository.markAsInfoLoaded(id)
         }
 
         return localPokemonRepository.getPokemon(id)

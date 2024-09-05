@@ -34,7 +34,7 @@ fun RemoteCompletePokemon.toLocal(format: Boolean = true): LocalCompletePokemon 
     )
 }
 
-fun LocalCompletePokemon.toPokemon(abilities: List<Ability>): Pokemon {
+fun LocalCompletePokemon.toPokemon(abilities: List<Ability?>): Pokemon {
     val types = mutableListOf<Type>()
     type1name?.let { types.add(typeByName(it)) }
     type2name?.let { types.add(typeByName(it)) }

@@ -9,7 +9,7 @@ data class UiPokemon(
     var id: Int,
     var name: String,
     var imageUrl: String?,
-    var abilities: List<UiPokemonAbility>,
+    var abilities: List<UiPokemonAbility?>,
     var types: List<UiType>,
     val stats: UiStats,
     val weight: Int,

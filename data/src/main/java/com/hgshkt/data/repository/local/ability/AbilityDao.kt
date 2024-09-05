@@ -11,5 +11,5 @@ interface AbilityDao {
     suspend fun insert(ability: LocalAbility)
 
     @Query("SELECT * FROM abilities WHERE id = :id")
-    suspend fun get(id: Int): LocalAbility
+    suspend fun get(id: Int): LocalAbility?
 }

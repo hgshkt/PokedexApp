@@ -229,7 +229,7 @@ fun StatsLayer(
 }
 
 @Composable
-fun AbilityList(modifier: Modifier, abilities: List<UiPokemonAbility>) {
+fun AbilityList(modifier: Modifier, abilities: List<UiPokemonAbility?>) {
     ElevatedCard(
         modifier = modifier,
         colors = CardDefaults.cardColors(
@@ -265,7 +265,7 @@ fun AbilityList(modifier: Modifier, abilities: List<UiPokemonAbility>) {
 @Composable
 fun Ability(
     modifier: Modifier = Modifier,
-    ability: UiPokemonAbility,
+    ability: UiPokemonAbility?,
     nameFontSize: TextUnit = 26.sp,
     nameFontWeight: FontWeight = FontWeight.Bold,
     textFontSize: TextUnit = 22.sp,
@@ -285,39 +285,42 @@ fun Ability(
         )
     ) {
         Column {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(contentPadding),
-                Arrangement.SpaceBetween
-            ) {
-                Text(
-                    ability.name,
-                    fontSize = nameFontSize,
-                    fontWeight = nameFontWeight
-                )
-                Icon(
-                    painter = rememberVectorPainter(
-                        image = if (expanded)
-                            Icons.Default.KeyboardArrowUp
-                        else
-                            Icons.Default.KeyboardArrowDown
-                    ),
-                    contentDescription = "Filter Button"
-                )
-            }
-            AnimatedVisibility(
-                visible = expanded,
-                enter = expandVertically(tween(600, easing = EaseInOut)),
-                exit = shrinkVertically(tween(600, easing = EaseOut))
-            ) {
-                Text(
-                    text = ability.effect,
-                    fontSize = textFontSize,
+            if (ability == null) LoadingBox()
+            else {
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(contentPadding)
-                )
+                        .padding(contentPadding),
+                    Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        ability.name,
+                        fontSize = nameFontSize,
+                        fontWeight = nameFontWeight
+                    )
+                    Icon(
+                        painter = rememberVectorPainter(
+                            image = if (expanded)
+                                Icons.Default.KeyboardArrowUp
+                            else
+                                Icons.Default.KeyboardArrowDown
+                        ),
+                        contentDescription = "Filter Button"
+                    )
+                }
+                AnimatedVisibility(
+                    visible = expanded,
+                    enter = expandVertically(tween(600, easing = EaseInOut)),
+                    exit = shrinkVertically(tween(600, easing = EaseOut))
+                ) {
+                    Text(
+                        text = ability.effect,
+                        fontSize = textFontSize,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(contentPadding)
+                    )
+                }
             }
         }
     }

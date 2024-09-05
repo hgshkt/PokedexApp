@@ -24,7 +24,7 @@ class LocalPokemonRepositoryImpl(
         val abilities = storages.local.pokemonAbilityCrossRef.getAbilityRefsForPokemon(id)
             .map { ref ->
                 storages.local.ability.getAbility(ref.abilityId)
-                    .toAbility()
+                    ?.toAbility()
             }
         return Result.Success(storages.local.pokemon.getPokemon(id)!!.toPokemon(abilities))
     }
