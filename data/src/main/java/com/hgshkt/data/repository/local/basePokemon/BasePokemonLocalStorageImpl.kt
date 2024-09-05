@@ -1,8 +1,6 @@
 package com.hgshkt.data.repository.local.basePokemon
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.count
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.takeWhile
 
 class BasePokemonLocalStorageImpl(
@@ -44,7 +42,7 @@ class BasePokemonLocalStorageImpl(
         val count = basePokemonDao.count()
         return basePokemonDao.loadedAsFlow()
             .takeWhile {
-                it < count
+                it <= count
             }
     }
 
@@ -52,7 +50,7 @@ class BasePokemonLocalStorageImpl(
         val count = basePokemonDao.count()
         return basePokemonDao.infoLoadedAsFlow()
             .takeWhile {
-                it < count
+                it <= count
             }
     }
 
